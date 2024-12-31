@@ -35,4 +35,4 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Deploy to S3
-        run: aws s3 sync .output/public ${{ secrets.AWS_BUCKET_NAME }}/landing-page --delete
+        run: aws s3 sync .output/public ${{ secrets.S3_PATH }} --delete
