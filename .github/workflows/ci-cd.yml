@@ -1,0 +1,38 @@
+name: Deploy to AWS S3
+
+on:
+  push:
+    branches: 
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Set up Node
+        uses: actions/setup-node@v4.1.0
+        with:
+          node-version: '22.12.0'
+
+      - name: Install Dependency
+        run: npm Install
+
+      - name: Build App for Static Hosting
+        run: npm run generate
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy to S3
+        run: aws s3 sync .output/public ${{ secrets.AWS_BUCKET_NAME }}/landing-page --delete
