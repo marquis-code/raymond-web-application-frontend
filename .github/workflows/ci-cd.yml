@@ -22,7 +22,7 @@ jobs:
           node-version: '22.12.0'
 
       - name: Install Dependency
-        run: npm Install
+        run: npm install
 
       - name: Build App for Static Hosting
         run: npm run generate
