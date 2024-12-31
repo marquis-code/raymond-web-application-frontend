@@ -25,7 +25,7 @@ jobs:
         run: npm install
 
       - name: Build App for Static Hosting
-        run: npm run generate
+        run: npm run generate:s3
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4

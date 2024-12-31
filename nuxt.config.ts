@@ -37,5 +37,8 @@ export default defineNuxtConfig({
       name: "CoMiles - Exprience a simpler, better way to commute.",
       lang: "fa",
     },
+  },
+  app: {
+    baseURL: process.env.DEPLOYMENT_TARGET === "s3" ? '/landing-page/' : '/'
   }
 });
