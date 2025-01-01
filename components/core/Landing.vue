@@ -50,7 +50,7 @@ onBeforeUnmount(() => {
         <h1 class="mt-10 text-pretty text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">Transit Made Easy with us at <span class="text-[#1d4449]">CoMiles</span></h1>
         
         <p class="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
-          CoMiles is an all-in-one transport solution for students and workers in search of an affordable, trendy, comfortable, and reliable ride. We bring comfort to your doorstep with just a few clicks.
+          CoMiles is an all-in-one transport solution for students and workers in search of an affordable, trendy, comfortable, and reliable ride experience. We bring comfort to your doorstep with just a few clicks.
         </p>
         
         <div class="mt-8 flex justify-start items-start gap-4">
