@@ -1,7 +1,7 @@
 <!-- components/SocialConnect.vue -->
 <template>
     <section class="py-16 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-7xl mx-auto lg:flex justify-center items-center grid lg:grid-cols-2">
+      <div class="max-w-7xl mx-auto lg:flex justify-center items-center lg:space-x-20 space-x-0 grid lg:grid-cols-2">
         <div>
             <div class="inline-block mb-8">
           <span class="px-4 py-2 rounded-full bg-[#1d4449] text-[#c2f725] text-sm font-medium">
@@ -11,7 +11,8 @@
   
         <h2 data-aos="fade-up" class="text-3xl lg:text-4xl font-bold mb-4">Connect with Us</h2>
         <p data-aos="fade-up" class="text-gray-600 mb-12 max-w-2xl">
-          Join us in our community and our Social media, to stay updated about us.
+          Stay connected with us for live updates on events
+          <!-- Join us in our community and our Social media, to stay updated about us. -->
         </p>
         </div>
   
@@ -81,7 +82,7 @@
               <div>
                 <h3 class="text-xl font-semibold mb-2">Call Us</h3>
                 <p class="text-gray-600 mb-1">
-                  Speak with any of our customer support.
+                  Speak with our customer care representative.
                 </p>
                 <a href="tel:+17097698390" class="text-[#1d4449] hover:underline">
                   +1 7097698390

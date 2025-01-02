@@ -37,18 +37,18 @@
           <!-- Brand Column -->
           <div class="lg:col-span-1">
             <img src="@/assets/img/logo_main_white.png" alt="CoMiles" class="h-8 mb-4" />
-            <p class="text-gray-400 mb-6">Scheduled Mass-Transit Solution</p>
+            <p class="text-gray-400 mb-6">CoMiles – Elevating Ride Experiences</p>
             <div class="flex gap-4">
-              <a href="#" class="text-gray-400 hover:text-white">
+              <a href="https://www.linkedin.com/company/comiles-technologies/" class="text-gray-400 hover:text-white">
                 <img src="@/assets/icons/white-linkedin.svg" alt="LinkedIn" class="h-6 w-6" />
               </a>
-              <a href="#" class="text-gray-400 hover:text-white">
+              <!-- <a href="#" class="text-gray-400 hover:text-white">
                 <img src="@/assets/icons/white-facebook.svg" alt="Facebook" class="h-6 w-6" />
-              </a>
-              <a href="#" class="text-gray-400 hover:text-white">
+              </a> -->
+              <!-- <a href="#" class="text-gray-400 hover:text-white">
                 <img src="@/assets/icons/white-instagram.svg" alt="Instagram" class="h-6 w-6" />
-              </a>
-              <a href="#" class="text-gray-400 hover:text-white">
+              </a> -->
+              <a href="https://x.com/CoMiles_Tech?t=qdlVCb2Rt_-JheB3qgA53g&s=08" class="text-gray-400 hover:text-white">
                 <img src="@/assets/icons/white-twitter.svg" alt="X" class="h-6 w-6" />
               </a>
             </div>
@@ -58,24 +58,24 @@
           <div>
             <h3 class="font-semibold mb-4">Solutions</h3>
             <ul class="space-y-3">
-              <li><a href="#" class="text-gray-400 hover:text-white">EventGo</a></li>
-              <li><a href="#" class="text-gray-400 hover:text-white">Charter a Vehicle</a></li>
-              <li><a href="#" class="text-gray-400 hover:text-white">Business</a></li>
-              <li><a href="#" class="text-gray-400 hover:text-white">Daily</a></li>
-              <li><a href="#" class="text-gray-400 hover:text-white">Drive for us</a></li>
-              <li><a href="#" class="text-gray-400 hover:text-white">Vehicle Partner</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white">Private Rides</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white">Route share</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white">Delivery</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white">Schedule</a></li>
+              <!-- <li><a href="#" class="text-gray-400 hover:text-white">Drive for us</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white">Vehicle Partner</a></li> -->
             </ul>
           </div>
   
           <!-- Products Column -->
-          <div>
+          <!-- <div>
             <h3 class="font-semibold mb-4">Products</h3>
             <ul class="space-y-3">
               <li><a href="#" class="text-gray-400 hover:text-white">Pilot</a></li>
               <li><a href="#" class="text-gray-400 hover:text-white">Vehicle partner</a></li>
               <li><a href="#" class="text-gray-400 hover:text-white">Marshal</a></li>
             </ul>
-          </div>
+          </div> -->
   
           <!-- Policies Column -->
           <div>
@@ -83,9 +83,9 @@
             <ul class="space-y-3">
               <li><a href="https://www.freeprivacypolicy.com/live/a1dc564a-a3ad-4a1f-8169-894f91eab58d" class="text-gray-400 hover:text-white">Terms of use</a></li>
               <li><a href="https://www.freeprivacypolicy.com/live/1a78f921-f078-45cc-ac85-907382cb8072" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-              <li><a href="#" class="text-gray-400 hover:text-white">Refund Policy</a></li>
+              <!-- <li><a href="#" class="text-gray-400 hover:text-white">Refund Policy</a></li>
               <li><a href="#" class="text-gray-400 hover:text-white">Behavior Policy</a></li>
-              <li><a href="#" class="text-gray-400 hover:text-white">Charter terms</a></li>
+              <li><a href="#" class="text-gray-400 hover:text-white">Charter terms</a></li> -->
             </ul>
           </div>
   
@@ -104,7 +104,7 @@
   
         <!-- Copyright -->
         <div class="text-gray-400 text-sm">
-          © {{ new Date().getFullYear() }} CoMiles Metropolitan Mobility. All rights reserved.
+          © {{ new Date().getFullYear() }} CoMiles. All rights reserved.
         </div>
       </div>
     </footer>

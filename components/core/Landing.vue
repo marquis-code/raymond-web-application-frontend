@@ -126,21 +126,20 @@ onBeforeUnmount(() => {
   <div class="min-h-screen  px-4 py-12 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
       <div class="">
-        <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
+        <!-- <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
           <p 
             class="flip-text text-[#1d4449] inline-block min-w-[180px] text-left"
             :class="{ 'flipping': isFlipping }"
           >
             {{ currentText }}
           </p>
-          <!-- <br class="sm:hidden" /> -->
           <p class="block"> transportation made</p>
-          <!-- <br /> -->
-          <p>easy with us</p>
-        </h1>
+          <p>easy with us at CoMiles</p>
+        </h1> -->
+        <h1 class="mt-10 text-pretty text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">Transit Made Easy with us at <span class="text-[#1d4449]">CoMiles</span></h1>
         
         <p class="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
-          CoMiles is your All-in-One Shared Transport Solution. Trusted by over 120 businesses and 135k passengers.
+          CoMiles is an all-in-one transport solution for students and workers in search of an affordable, trendy, comfortable, and reliable ride. We bring comfort to your doorstep with just a few clicks.
         </p>
         
         <div class="mt-8 flex justify-start items-start gap-4">

@@ -6,11 +6,11 @@
       </div>
       
       <h1 data-aos="fade-up" class="text-4xl font-medium text-gray-900 mb-4 -mt-2">
-        Don’t just take our word for it
+        Don’t just take our words for it
       </h1>
       
       <p data-aos="fade-up" class="text-gray-600  mb-16">
-        Hear from some of our amazing customers who are riding safely.
+        Hear from some of our amazing customers
       </p>
      </section>
       <div data-aos="fade-up" class="relative">

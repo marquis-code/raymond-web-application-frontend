@@ -22,19 +22,19 @@ export default defineNuxtConfig({
       enabled: true
     },
     meta: {
-      title: "CoMiles - Exprience a simpler, better way to commute.",
+      title: "CoMiles – Elevating Ride Experiences",
       author: "Marquis",
       mobileAppIOS: false,
       mobileApp: true,
       description:
-        "Exprience a simpler, better way to commute.",
+        "Elevating Ride Experiences",
       theme_color: "#27396B"
     },
     icon: {
       sizes: [64, 120, 144, 152, 192, 384, 512],
     },
     manifest: {
-      name: "CoMiles - Exprience a simpler, better way to commute.",
+      name: "CoMiles – Elevating Ride Experiences",
       lang: "fa",
     },
   },

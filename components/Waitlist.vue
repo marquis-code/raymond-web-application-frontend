@@ -2,8 +2,8 @@
     <div class="bg-white py-16 sm:py-24">
   <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
     <div class="relative isolate overflow-hidden bg-[#1d4449] px-6 py-24 shadow-2xl sm:rounded-3xl sm:px-24 xl:py-32">
-      <h2 class="mx-auto max-w-3xl text-center text-4xl font-semibold tracking-tight text-white sm:text-5xl">Get notified when we’re launching</h2>
-      <p class="mx-auto mt-6 max-w-lg text-center text-lg text-gray-300">Are you ready to exprience transport service in another dimension ? Join our waitlist today.</p>
+      <h2 class="mx-auto max-w-3xl text-center text-4xl font-semibold tracking-tight text-white sm:text-5xl"> Be the First to Know When We Launch</h2>
+      <p class="mx-auto mt-6 max-w-lg text-center text-lg text-gray-300">Ready to experience a revolutionary transportation service? Join our waitlist today and stay updated!</p>
       <form @submit.prevent="joinWaitlist" class="mx-auto mt-10 flex max-w-md gap-x-4">
         <label for="email-address" class="sr-only">Email address</label>
         <input id="email-address" name="email" v-model="payload.email" type="email" autocomplete="email" required class="min-w-0 flex-auto rounded-md bg-white/5 px-3.5 py-2 text-base text-white outline outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-white sm:text-sm/6" placeholder="Enter your email">
