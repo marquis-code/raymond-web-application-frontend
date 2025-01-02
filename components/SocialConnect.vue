@@ -24,12 +24,12 @@
                 <img src="@/assets/icons/facebook-icon.svg" alt="Facebook" class="w-full h-full" />
               </div>
               <div>
-                <h3 class="text-xl font-semibold mb-2">Follow us on Facebook</h3>
+                <h3 class="text-xl font-semibold mb-2">Follow us on LinkedIn</h3>
                 <p class="text-gray-600 mb-1">
                   Get CoMiles news, company information and resources
                 </p>
                 <a href="https://facebook.com/CoMiles_ng" class="text-[#1d4449] hover:underline">
-                  @CoMiles_ng
+                  CoMiles Technologies
                 </a>
               </div>
             </div>
@@ -46,8 +46,8 @@
                 <p class="text-gray-600 mb-1">
                   Get CoMiles news, company information and resources
                 </p>
-                <a href="https://x.com/CoMiles_ng" class="text-[#1d4449] hover:underline">
-                  @CoMiles_ng
+                <a href="https://x.com/CoMiles_Tech?t=qdlVCb2Rt_-JheB3qgA53g&s=08" class="text-[#1d4449] hover:underline">
+                  @CoMiles_Tech
                 </a>
               </div>
             </div>
@@ -55,8 +55,7 @@
    </section>
   
        <section class="lg:divide-x divide-gray-50 lg:flex">
-           <!-- Instagram -->
-           <div data-aos="fade-up" class="p-6 lg:w-1/2">
+           <!-- <div data-aos="fade-up" class="p-6 lg:w-1/2">
             <div class="flex flex-col items-start gap-4">
               <div class="w-12 h-12 flex-shrink-0">
                 <img src="@/assets/icons/instagram-icon.svg" alt="Instagram" class="w-full h-full" />
@@ -71,7 +70,7 @@
                 </a>
               </div>
             </div>
-          </div>
+          </div> -->
   
           <!-- Call Us -->
           <div data-aos="fade-up" class="p-6 lg:w-1/2 lg:pl-10">
@@ -84,8 +83,8 @@
                 <p class="text-gray-600 mb-1">
                   Speak with any of our customer support.
                 </p>
-                <a href="tel:02018891727" class="text-[#1d4449] hover:underline">
-                  02018891727
+                <a href="tel:+17097698390" class="text-[#1d4449] hover:underline">
+                  +1 7097698390
                 </a>
               </div>
             </div>
