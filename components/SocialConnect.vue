@@ -21,14 +21,14 @@
            <div data-aos="fade-up" class="p-6 lg:w-1/2">
             <div class="flex flex-col items-start gap-4">
               <div class="w-12 h-12 flex-shrink-0">
-                <img src="@/assets/icons/facebook-icon.svg" alt="Facebook" class="w-full h-full" />
+                <img src="@/assets/icons/linkedin-icon.svg" alt="Facebook" class="w-full h-full" />
               </div>
               <div>
                 <h3 class="text-xl font-semibold mb-2">Follow us on LinkedIn</h3>
                 <p class="text-gray-600 mb-1">
                   Get CoMiles news, company information and resources
                 </p>
-                <a href="https://facebook.com/CoMiles_ng" class="text-[#1d4449] hover:underline">
+                <a href="https://www.linkedin.com/company/comiles-technologies/" class="text-[#1d4449] hover:underline">
                   CoMiles Technologies
                 </a>
               </div>
