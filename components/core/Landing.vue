@@ -5,20 +5,20 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 const words = ['Employee', 'School', 'Event', 'Daily']
 const currentText = ref('Employee')
 const isFlipping = ref(false)
-const intervalTime = 4000 // 4 seconds between flips
+const intervalTime = 4000 
 let interval: NodeJS.Timer
 
 const flipText = () => {
   isFlipping.value = true
   
-  // Change text halfway through the flip animation
+
   setTimeout(() => {
     const currentIndex = words.indexOf(currentText.value)
     const nextIndex = (currentIndex + 1) % words.length
     currentText.value = words[nextIndex]
   }, 150) // Half of the flip animation duration
 
-  // Reset flipping state after animation completes
+
   setTimeout(() => {
     isFlipping.value = false
   }, 300) // Match the full animation duration
