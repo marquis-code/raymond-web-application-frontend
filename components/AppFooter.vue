@@ -25,7 +25,7 @@
               class="absolute right-0 top-1/2 transform -translate-y-1/2 max-w-none w-auto h-72 object-contain"
             />
             <img 
-              src="@/assets/img/mockup.jpg" 
+              src="@/assets/img/mockup.jpeg" 
               alt="CoMiles on devices" 
               class="absolute right-0 top-1/2 transform rounded-lg -translate-y-1/2 max-w-none w-auto h-60 object-contain"
             />
