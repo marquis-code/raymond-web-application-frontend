@@ -34,7 +34,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="min-h-screen  px-4 py-12 sm:px-6 lg:px-8">
+  <div class="min-h-screen  px-4 py-12 sm:px-6 lg:px-8  lg:mt-0">
     <div class="max-w-7xl mx-auto">
       <div class="">
         <!-- <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">

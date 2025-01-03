@@ -115,24 +115,24 @@
      },
      {
         image: image7,
-         bgCode: '#008000',
+         bgCode:'#1a1b2f',
         title: 'Route Share',
         description: `Save more, travel smarter! CoMiles Route Share connects you with co-commuters heading your way. Whether you're a driver seeking to offset costs or a passenger looking for affordable rides, this feature promises convenience without compromising on comfort. Stay tuned for the launch of this exciting option to reduce your travel expenses while enjoying a seamless commute.`,
-        icon: icon4
+        icon: icon1
      },
      {
         image: image8,
-         bgCode: '#008000',
+         bgCode:  '#800080',
         title: 'Scheduling',
         description: `Life doesn’t wait, and neither should you. CoMiles Scheduling lets you plan rides, ensuring your transportation is ready when you are. Perfect for airport runs, important meetings, or any planned travel, this upcoming feature will enhance your convenience and peace of mind.`,
-        icon: icon4
+        icon: icon1
      },
      {
         image: image5,
-         bgCode: '#008000',
+         bgCode: '#1d4449',
         title: 'City-2-City Advantage',
         description: `Ready to explore new horizons? The City-2-City Advantage by CoMiles offers seamless intercity transport designed for comfort and affordability. Whether for business or leisure, this service will revolutionize the way you travel long distances, making it easier than ever to connect with different cities.`,
-        icon: icon4
+        icon: icon1
      }
   ])
   // No additional logic needed for this component

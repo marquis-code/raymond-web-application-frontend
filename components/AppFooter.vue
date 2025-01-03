@@ -20,9 +20,14 @@
           </div>
           <div class="relative h-[400px] md:h-[500px]">
             <img 
-              src="@/assets/img/device-mockup.png" 
+              src="@/assets/img/comiles-desktop-mockup.png" 
               alt="CoMiles on devices" 
               class="absolute right-0 top-1/2 transform -translate-y-1/2 max-w-none w-auto h-72 object-contain"
+            />
+            <img 
+              src="@/assets/img/mockup.jpg" 
+              alt="CoMiles on devices" 
+              class="absolute right-0 top-1/2 transform rounded-lg -translate-y-1/2 max-w-none w-auto h-60 object-contain"
             />
           </div>
         </div>
