@@ -9,8 +9,8 @@ export const useCreateOrder = () => {
     loading.value = true
     error.value = null
     try {
-      await orders_api.$_create_order(data)
-      return true
+      const res = await orders_api.$_create_order(data)
+      return res
     } catch (e: any) {
       error.value = e.response?.data?.message || 'Failed to create order'
       throw error.value
