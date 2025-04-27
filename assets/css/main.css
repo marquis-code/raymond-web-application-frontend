@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
 .bg-white {
   background-color: white;
 }
@@ -15,4 +19,41 @@
 }
 .dark .bg-custom {
   background-color: #1a202c; /* Dark mode background */
+}
+
+
+/* Custom animations and styles */
+@layer utilities {
+  .reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  
+  .revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600;
+  }
+  
+  .btn-primary {
+    @apply px-6 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 active:shadow-md;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-md p-6 transition-all duration-300 hover:shadow-lg;
+  }
+}
+
+@layer components {
+  .prose ul {
+    @apply list-disc pl-5 mt-2;
+  }
+  
+  .prose p {
+    @apply mt-2;
+  }
 }
