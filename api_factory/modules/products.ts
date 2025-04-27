@@ -26,13 +26,13 @@ export const product_api = {
     return GATEWAY_ENDPOINT.get(`/products/search?page=${metadata.page}&limit=${metadata.limit}&sort=${metadata.sort}&order=${metadata.order}&q=${metadata.search}`);
   },
   $_get_product_by_category(id: string) {
-    return GATEWAY_ENDPOINT.post(`/products/category/${id}`);
+    return GATEWAY_ENDPOINT.get(`/products/category/${id}`);
   },
   $_delete_product(id: string) {
     return GATEWAY_ENDPOINT.delete(`/products/${id}`);
   },
   $_get_product_by_id(id: string) {
-    return GATEWAY_ENDPOINT.post(`/products/${id}`);
+    return GATEWAY_ENDPOINT.get(`/products/${id}`);
   },
   $_get_categories () {
     return GATEWAY_ENDPOINT.get("/products/categories");

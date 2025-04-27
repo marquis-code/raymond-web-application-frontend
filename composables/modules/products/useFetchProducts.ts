@@ -30,7 +30,7 @@ export const useFetchProducts = () => {
     error.value = null
     try {
       const response = await product_api.$_fetch_products()
-      console.log(response, 'res hee')
+      console.log(response, 'res heeeeeeeeee')
       products.value = response?.data?.data
       
       // Handle pagination metadata if available

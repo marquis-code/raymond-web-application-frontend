@@ -186,7 +186,7 @@ export function useCheckoutStore() {
       // First create the order in the backend
       const orderData = prepareOrderData()
       const res = await createOrder(orderData) as any
-      // console.log(createdOrder, 'create order res')
+      console.log(res, 'create order res')
       
        if(res.type !== 'ERROR'){
            // Store the order response for later use
@@ -202,7 +202,8 @@ export function useCheckoutStore() {
       })
       
       // Set the payment amount in the Flutterwave form (in USD)
-      paymentForm.value.amount = checkoutSummary.value.total
+      // paymentForm.value.amount = checkoutSummary.value.total
+      paymentForm.value.amount = res?.data?.total
       
       // Use the created order ID as transaction reference
       paymentForm.value.tx_ref = orderId.value

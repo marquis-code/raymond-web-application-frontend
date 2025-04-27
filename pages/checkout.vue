@@ -454,7 +454,7 @@
                   </div>
                 </div>
                 
-                <div 
+                <!-- <div 
                   class="border rounded-lg p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
                   :class="{ 'border-black bg-gray-50 shadow-sm': paymentMethod === 'interswitch', 'border-gray-200': paymentMethod !== 'interswitch' }"
                   @click="setPaymentMethod('interswitch')"
@@ -469,7 +469,7 @@
                       <p class="text-sm text-gray-600">Secure payment via Interswitch</p>
                     </div>
                   </div>
-                </div>
+                </div> -->
                 
                 <div 
                   class="border rounded-lg p-4 cursor-pointer transition-all duration-300 hover:shadow-md"

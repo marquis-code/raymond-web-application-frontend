@@ -1,21 +1,19 @@
 import { product_api } from '@/api_factory/modules/products'
 import { ref } from 'vue'
 
-export const useFetchProduct = () => {
-  const product = ref<any>(null)
+
+export const useFetchCategories = () => {
+  const categories = ref<any[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
-  const route = useRoute() as any
-
   // Fetch products with pagination
-  const fetchProduct = async () => {
+  const fetchCategories = async () => {
     loading.value = true
     error.value = null
     try {
-      const response = await product_api.$_get_product_by_id(route?.params?.id)
-      product.value = response.data.product || response.data
-      
-      
+      const response = await product_api.$_get_categories()
+      console.log(response, 'res hee')
+      categories.value = response?.data?.data      
       return response.data
     } catch (e: any) {
       error.value = e.response?.data?.message || 'Failed to fetch products'
@@ -26,13 +24,13 @@ export const useFetchProduct = () => {
   }
 
   onMounted(() => {
-    fetchProduct()
+    fetchCategories()
   })
 
   return {
-    fetchProduct,
-    product,
+    categories,
     loading,
-    error
+    error,
+    fetchCategories,
   }
 }
