@@ -104,9 +104,9 @@ import { useRouter } from 'vue-router'
 import { directive as motion } from '@vueuse/motion'
 
 // Import images
-import image1 from '@/assets/img/event-go.webp'
-import image2 from '@/assets/img/corporate.png'
-import image3 from '@/assets/img/event-go.webp'
+import image1 from '@/assets/img/no-love.jpg'
+import image2 from '@/assets/img/commission-art1.jpg'
+import image3 from '@/assets/img/artist.avif'
 
 interface Artwork {
   id: number

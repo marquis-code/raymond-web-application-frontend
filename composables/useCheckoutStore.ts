@@ -2,6 +2,7 @@ import { ref, reactive, computed } from 'vue'
 import { useFlutterwaveSDK } from "@/composables/modules/payment/useFlutterwave"
 import { useRouter } from 'vue-router'
 import { useCreateOrder } from '@/composables/modules/orders/useCreateOrder'
+import { useUpdateOrderStatus } from "@/composables/modules/orders/useUpdateOrderStatus"
 
 interface CartItem {
   id: number
@@ -98,6 +99,7 @@ const orderId = ref<string>('')
 const exchangeRate = ref<number>(1) // For future currency conversion needs
 const orderResponse = ref<any>(null)
 const { loading: orderLoading, createOrder } = useCreateOrder()
+const { loading, error, updateOrderStatus, } = useUpdateOrderStatus()
 
 export function useCheckoutStore() {
   const router = useRouter()
@@ -191,7 +193,7 @@ export function useCheckoutStore() {
        if(res.type !== 'ERROR'){
            // Store the order response for later use
       orderResponse.value = res
-      orderId.value = res.id || res._id || 'INTL-ORD-' + Math.floor(Math.random() * 1000000)
+      orderId.value = res?.data?.id || res?.data?._id || 'INTL-ORD-' + Math.floor(Math.random() * 1000000)
       
       // Update user data in the Flutterwave SDK
       updateUserData({
@@ -209,7 +211,7 @@ export function useCheckoutStore() {
       paymentForm.value.tx_ref = orderId.value
       
       // Call the Flutterwave payment handler for USD payment
-      handlePayment()
+      await handlePayment(res?.data)
        }
       
       // The isProcessing state will be turned off by the callback in handlePayment

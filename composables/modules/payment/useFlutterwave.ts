@@ -1,128 +1,16 @@
-// import { ref, computed } from 'vue'
-// import { useFlutterwave } from "flutterwave-vue3"
-// import { useRouter } from 'vue-router'
-// import logo from "@/assets/img/logo_main.png"
-// import { useCheckoutStore } from '@/composables/useCheckoutStore'
-
-// export const useFlutterwaveSDK = () => {
-//   const router = useRouter()
-//   const { 
-//     deliveryDetails,
-//   } = useCheckoutStore()
-  
-//   // User information - in a real application, this would come from authentication
-//   const user = ref({
-//     firstname: deliveryDetails.firstName || '',
-//     lastname: deliveryDetails.lastName || '',
-//     email: deliveryDetails.email || '',
-//     phone: deliveryDetails.phone || ''
-//   })
-
-//   const paymentForm = ref({
-//     amount: "" as any,
-//     orderRef: "",
-//     customerEmail: "",
-//     customerName: "",
-//     customerPhone: ""
-//   })
-  
-//   const loading = ref(false)
-  
-//   // Get computed username from user object
-//   const computedUsername = computed(() => {
-//     return `${user.value.firstname} ${user.value.lastname}`
-//   })
-
-//   // Generate unique transaction reference
-//   const generateTxRef = () => {
-//     return `intl-tx-${Date.now()}-${Math.floor(Math.random() * 1000000)}`
-//   }
-
-//   // Handle payment with order details if provided
-//   const handlePayment = (orderDetails = null) => {
-//     loading.value = true
-    
-//     // If order details are provided, use them instead of default user info
-//     const customerName = orderDetails?.customerName || computedUsername.value
-//     const customerEmail = orderDetails?.customerEmail || user.value.email
-//     const customerPhone = orderDetails?.customerPhone || user.value.phone
-//     const txRef = orderDetails?.orderRef ? `order-${orderDetails.orderRef}` : generateTxRef()
-    
-//     useFlutterwave({
-//       amount: Number(paymentForm.value.amount),
-//       callback(data: any): void {
-//         console.log(data.flw_ref, 'Payment callback received')
-//         if(data.status === 'successful'){
-//           loading.value = false
-//           // Redirect to order summary with payment reference
-//           location.href = `/${data.flw_ref}/order-summary?order=${paymentForm.value.orderRef || ''}`
-//         } else {
-//           loading.value = false
-//           console.error('Payment was not successful')
-//         }
-//       },
-//       // Set currency to USD for international transactions
-//       currency: "USD",
-//       // Allow payments from anywhere in the world
-//       country: "US", 
-//       customer: {
-//         email: customerEmail,
-//         name: customerName,
-//         phone_number: customerPhone,
-//       },
-//       customizations: {
-//         description: "International Order Payment",
-//         logo: logo,
-//         title: "Raymond Aworo Art",
-//       },
-//       meta: {
-//         transaction_type: "international",
-//         order_ref: paymentForm.value.orderRef || 'none',
-//       },
-//       onclose(): void {
-//         loading.value = false
-//         console.log("Payment modal closed")
-//       },
-//       payment_options: "card",
-//       public_key: import.meta.env.VITE_FLW_PUBLIC_KEY,
-//       redirect_url: undefined,
-//       tx_ref: txRef,
-//     })
-//   }
-  
-//   // Set order details for payment
-//   const setOrderDetails = (orderId: string, amount: number, customerDetails = null) => {
-//     paymentForm.value.orderRef = orderId
-//     paymentForm.value.amount = amount
-    
-//     if (customerDetails) {
-//       paymentForm.value.customerEmail = customerDetails.email || user.value.email
-//       paymentForm.value.customerName = `${customerDetails.firstName} ${customerDetails.lastName}` || computedUsername.value
-//       paymentForm.value.customerPhone = customerDetails.phone || user.value.phone
-//     }
-//   }
-  
-//   return { 
-//     handlePayment, 
-//     paymentForm, 
-//     loading,
-//     generateTxRef,
-//     setOrderDetails
-//   }
-// }
-
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useFlutterwave } from "flutterwave-vue3"
 import { useRouter } from 'vue-router'
 import logo from "@/assets/img/logo_main.png"
-
-// Remove the circular import of useCheckoutStore
+import { useUpdateOrderStatus } from "@/composables/modules/orders/useUpdateOrderStatus"
+import { useVerifyPayment } from "@/composables/modules/payment/useVerifyPayment"
+import { useCreateTransaction } from "@/composables/modules/transaction/useCreateTransaction"
 
 export const useFlutterwaveSDK = () => {
   const router = useRouter()
-  
-  // Instead of getting deliveryDetails from the store, 
-  // we'll accept them as parameters when needed
+  const { loading: processingOrder, error, updateOrderStatus } = useUpdateOrderStatus()
+  const { createTransaction, loading: creatingTransaction, apiRes } = useCreateTransaction()
+  const { verifyPayment, loading: processing } = useVerifyPayment()
   
   // User information reference that will be updated through parameters
   const user = ref({
@@ -141,6 +29,9 @@ export const useFlutterwaveSDK = () => {
   })
   
   const loading = ref(false)
+  const flutterwave = ref<any>(null)
+  const paymentDataRef = ref<any>(null)
+  const incomingOrderDetails = ref({}) as any
   
   // Get computed username from user object
   const computedUsername = computed(() => {
@@ -149,10 +40,10 @@ export const useFlutterwaveSDK = () => {
 
   // Generate unique transaction reference
   const generateTxRef = () => {
-    return `intl-tx-${Date.now()}-${Math.floor(Math.random() * 1000000)}`
+    return `ngn-tx-${Date.now()}-${Math.floor(Math.random() * 1000000)}`
   }
 
-  // Update user data from external source (like useCheckoutStore)
+  // Update user data from external source
   const updateUserData = (userData: { firstName?: string, lastName?: string, email?: string, phone?: string }) => {
     if (userData) {
       user.value.firstname = userData.firstName || user.value.firstname
@@ -162,66 +53,156 @@ export const useFlutterwaveSDK = () => {
     }
   }
 
-  // Handle payment with order details if provided
-  const handlePayment = (orderDetails = null) => {
-    loading.value = true
-    
-    // If order details are provided, use them instead of default user info
-    const customerName = orderDetails?.customerName || computedUsername.value
-    const customerEmail = orderDetails?.customerEmail || user.value.email
-    const customerPhone = orderDetails?.customerPhone || user.value.phone
-    const txRef = orderDetails?.orderRef ? `order-${orderDetails.orderRef}` : generateTxRef()
-    
-    useFlutterwave({
-      amount: Number(paymentForm.value.amount),
-      callback(data: any): void {
+  // Initialize Flutterwave - This should be called only once in the setup
+  const initializeFlutterwave = () => {
+    if (!paymentDataRef.value) {
+      console.warn("Payment data not set before initializing Flutterwave.");
+      return;
+    }
+
+    const paymentData = paymentDataRef.value;
+
+    flutterwave.value = useFlutterwave({
+      amount: Number(paymentData.amount),
+      callback: async (data: any): Promise<void> => {
         console.log(data.flw_ref, 'Payment callback received')
-        if(data.status === 'successful'){
-          loading.value = false
-          // Redirect to order summary with payment reference
-          location.href = `/${data.flw_ref}/order-summary?order=${paymentForm.value.orderRef || ''}`
+        console.log(incomingOrderDetails, 'incoming order details accessed from callbac')
+        console.log(data, 'fluttter datda')
+        if (data.status === 'successful') {
+          try {
+            // Create transaction object
+            const transactionPayloadObj = {
+              user: incomingOrderDetails.value.customer,
+              type: "payment",
+              amount: data.order?.total || paymentData.amount,
+              status: "successful",
+              order: incomingOrderDetails?.value?.id || incomingOrderDetails?.value?._id,
+              paymentMethod: data.order?.paymentMethod || "flutterwave",
+              paymentReference: data.flw_ref || data.order?.tranxReference,
+              currency: "NGN", // Changed to NGN to match the currency used in payment
+              description: `Payment for order #${incomingOrderDetails?.value?.orderNumber || data.flw_ref}`,
+            }
+            
+            // First create the transaction
+            const res = await createTransaction(transactionPayloadObj)
+            console.log(res, ' res from transaction creation')
+
+
+                // Then update the order status
+            const verifyPayloadObj = {
+              transactionId: apiRes?.value?.data?.transactionId,
+              reference: apiRes?.value?.data?.paymentReference
+            }
+
+            if(apiRes?.value?.data?.transactionId) {
+               await verifyPayment(verifyPayloadObj)
+            }
+            
+            // Then update the order status
+            const payloadObj = {
+              status: 'processing',
+              notes: '',
+              trackingNumber: '',
+              trackingUrl: '',
+              estimatedDelivery: ''
+            }
+            
+            // Use the correct order ID
+            const orderId = incomingOrderDetails.value.id || incomingOrderDetails.value._id
+            
+            if (orderId) {
+              await updateOrderStatus(orderId, payloadObj)
+              
+              // Only redirect after both operations are complete
+              loading.value = false
+              
+              // Use window.location.href for a full page redirect with query parameters
+              // window.location.href = `/order-success?tranxId=${data.flw_ref || paymentData.tx_ref}&amount=${data.amount || paymentData.amount}`
+            } else {
+              console.error('Order ID is missing')
+              loading.value = false
+            }
+          } catch (error) {
+            console.error('Error processing successful payment:', error)
+            loading.value = false
+          }
         } else {
           loading.value = false
           console.error('Payment was not successful')
         }
       },
-      // Set currency to USD for international transactions
-      currency: "USD",
-      // Allow payments from anywhere in the world
-      country: "US", 
+      currency: "NGN",
+      country: "NG", 
       customer: {
-        email: customerEmail,
-        name: customerName,
-        phone_number: customerPhone,
+        email: paymentData.customerEmail,
+        name: paymentData.customerName,
+        phone_number: paymentData.customerPhone,
       },
       customizations: {
-        description: "International Order Payment",
+        description: "Order Payment",
         logo: logo,
         title: "Raymond Aworo Art",
       },
       meta: {
-        transaction_type: "international",
-        order_ref: paymentForm.value.orderRef || 'none',
+        transaction_type: "local",
+        order_ref: paymentData.orderDetails?.orderRef || paymentForm.value.orderRef || 'none',
       },
       onclose(): void {
         loading.value = false
         console.log("Payment modal closed")
       },
-      payment_options: "card",
+      payment_options: "card,ussd,banktransfer",
       public_key: import.meta.env.VITE_FLW_PUBLIC_KEY,
       redirect_url: undefined,
-      tx_ref: txRef,
+      tx_ref: paymentData.tx_ref,
     })
+  }
+
+  // Handle payment with order details if provided
+  const handlePayment = async (orderDetails: any = null) => {
+    console.log(orderDetails, 'incomign order details')
+    incomingOrderDetails.value = orderDetails
+    try {
+      loading.value = true
+      
+      // If order details are provided, use them instead of default user info
+      const customerName = orderDetails?.customerName || computedUsername.value
+      const customerEmail = orderDetails?.customerEmail || user.value.email
+      const customerPhone = orderDetails?.customerPhone || user.value.phone
+      const txRef = orderDetails?.orderRef ? `order-${orderDetails.orderRef}` : generateTxRef()
+      const amount = orderDetails?.amount || paymentForm.value.amount
+      
+      const paymentData = {
+        amount: Number(amount),
+        customerEmail: customerEmail,
+        customerName: customerName,
+        customerPhone: customerPhone,
+        tx_ref: txRef,
+        orderDetails: orderDetails
+      }
+      
+      paymentDataRef.value = paymentData;
+      
+      // Trigger the payment
+      initializeFlutterwave()
+      
+      if (flutterwave.value) {
+        flutterwave.value.init()
+      }
+    } catch (error) {
+      console.error('Error initiating payment:', error)
+      loading.value = false
+    }
   }
   
   // Set order details for payment
-  const setOrderDetails = (orderId: string, amount: number, customerDetails = null) => {
+  const setOrderDetails = (orderId: string, amount: number, customerDetails: any = null) => {
     paymentForm.value.orderRef = orderId
     paymentForm.value.amount = amount
     
     if (customerDetails) {
       paymentForm.value.customerEmail = customerDetails.email || user.value.email
-      paymentForm.value.customerName = `${customerDetails.firstName} ${customerDetails.lastName}` || computedUsername.value
+      paymentForm.value.customerName = `${customerDetails.firstName || ''} ${customerDetails.lastName || ''}`.trim() || computedUsername.value
       paymentForm.value.customerPhone = customerDetails.phone || user.value.phone
     }
   }
@@ -232,6 +213,6 @@ export const useFlutterwaveSDK = () => {
     loading,
     generateTxRef,
     setOrderDetails,
-    updateUserData // Export the new method to update user data
+    updateUserData
   }
 }

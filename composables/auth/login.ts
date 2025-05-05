@@ -33,7 +33,7 @@ export const use_auth_login = () => {
         toastType: "success",
         duration: 3000
       });
-      router.push("/dashboard");
+      // router.push("/dashboard");
     } else {
       showToast({
         title: "Error",

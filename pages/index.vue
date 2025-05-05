@@ -7,7 +7,7 @@
     <section class="py-16 bg-gray-50">
       <div class="container mx-auto px-4">
         <h2 
-          class="text-3xl font-bold text-center mb-12"
+          class="text-xl font-bold text-center mb-12"
           v-motion
           :initial="{ opacity: 0, y: 20 }"
           :enter="{ opacity: 1, y: 0 }"
@@ -182,9 +182,6 @@
             v-for="(testimonial, index) in testimonials" 
             :key="index"
             class="bg-gray-800 p-6 rounded-lg"
-            v-motion
-            :initial="{ opacity: 0, y: 20 }"
-            :enter="{ opacity: 1, y: 0, transition: { delay: index * 100 } }"
           >
             <div class="flex items-center mb-4">
               <div class="flex text-amber-400">
@@ -525,7 +522,7 @@
       <div class="container mx-auto px-4">
         <div class="flex flex-col md:flex-row justify-between items-center mb-12">
           <h2 
-            class="text-3xl font-bold mb-4 md:mb-0"
+            class="text-2xl font-bold mb-4 md:mb-0"
             v-motion
             :initial="{ opacity: 0, y: 20 }"
             :enter="{ opacity: 1, y: 0 }"
@@ -549,7 +546,7 @@
           <div 
             v-for="(post, index) in instagramPosts" 
             :key="index"
-            class="relative aspect-square overflow-hidden group"
+            class="relative aspect-square rounded-lg overflow-hidden group"
             v-motion
             :initial="{ opacity: 0, y: 20 }"
             :enter="{ opacity: 1, y: 0, transition: { delay: index * 50 } }"
@@ -616,6 +613,11 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
 import { useFetchCategories } from "@/composables/modules/products/useFetchCategories"
 import { useCartStore } from '~/composables/useCartStore'
+import insta1 from '@/assets/img/event-go.webp'
+import insta2 from '@/assets/img/services9.jpg'
+import insta3 from '@/assets/img/services3.jpg'
+import insta4 from '@/assets/img/services5.jpg'
+import insta5 from '@/assets/img/services6.jpg'
 import { useRouter } from 'vue-router'
 
 const { addToCart: addItemToCart } = useCartStore()
@@ -636,7 +638,7 @@ const selectedBestSellerCategory = ref('all')
 const selectedFeaturedCategory = ref('all')
 
 // Testimonials
-const testimonials = [
+const testimonials = ref([
   {
     name: "Sarah Johnson",
     location: "New York, USA",
@@ -658,18 +660,18 @@ const testimonials = [
     rating: 5,
     avatar: "/images/testimonial-3.jpg"
   }
-]
+])
 
 // Instagram Posts
-const instagramPosts = [
-  { image: "/images/instagram-1.jpg", likes: 243, comments: 18 },
-  { image: "/images/instagram-2.jpg", likes: 187, comments: 12 },
-  { image: "/images/instagram-3.jpg", likes: 321, comments: 24 },
-  { image: "/images/instagram-4.jpg", likes: 156, comments: 9 },
-  { image: "/images/instagram-5.jpg", likes: 278, comments: 21 },
-  { image: "/images/instagram-6.jpg", likes: 192, comments: 15 }
+const instagramPosts = ref([
+  { image: insta1, likes: 243, comments: 18 },
+  { image: insta2, likes: 187, comments: 12 },
+  { image: insta3, likes: 321, comments: 24 },
+  { image: insta4, likes: 156, comments: 9 },
+  { image: insta5, likes: 278, comments: 21 },
+  { image: insta1, likes: 192, comments: 15 }
 ]
-
+)
 // Filter products by attributes
 const newArrivals = computed(() => {
   return products.value.filter(product => product.isNew)

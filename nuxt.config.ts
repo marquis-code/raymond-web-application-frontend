@@ -40,6 +40,14 @@ export default defineNuxtConfig({
     },
   },
   app: {
-    baseURL: process.env.DEPLOYMENT_TARGET === "s3" ? '/landing-page/' : '/'
+    baseURL: process.env.DEPLOYMENT_TARGET === "s3" ? '/landing-page/' : '/',
+    head: {
+      meta: [
+        { 
+          name: 'Content-Security-Policy', 
+          content: "frame-src 'self' https://maps.google.com https://*.google.com https://*.gstatic.com https://*.googleapis.com;"
+        }
+      ]
+    }
   }
 });

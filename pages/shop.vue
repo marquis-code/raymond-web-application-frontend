@@ -1,634 +1,796 @@
 <template>
-    <div>
-
-      <section class="relative bg-gray-900 text-white py-16">
-        <div class="absolute inset-0 overflow-hidden opacity-30">
-          <img 
-            src="@/assets/img/event-go.webp" 
-            alt="Art Works" 
-            class="w-full h-full object-cover"
-          />
-          <div class="absolute inset-0 bg-gradient-to-b from-black/70 to-black/90"></div>
-        </div>
-        
-        <div class="container mx-auto px-4 relative z-10">
-          <div class="max-w-3xl">
-            <h1 
-              class="text-4xl md:text-5xl font-bold mb-6"
-              v-motion
-              :initial="{ opacity: 0, y: 20 }"
-              :enter="{ opacity: 1, y: 0 }"
-            >
-              Art Works
+  <div class="min-h-screen bg-black text-white">
+    <!-- Floating Elements -->
+    <div class="fixed w-full h-full pointer-events-none">
+      <div class="absolute top-20 left-10 w-32 h-32 bg-rose-500/20 rounded-full mix-blend-screen blur-xl animate-float-slow"></div>
+      <div class="absolute bottom-40 right-20 w-40 h-40 bg-amber-500/20 rounded-full mix-blend-screen blur-xl animate-float-medium"></div>
+      <div class="absolute top-1/3 right-1/4 w-24 h-24 bg-emerald-500/20 rounded-full mix-blend-screen blur-xl animate-float-fast"></div>
+    </div>
+    
+    <!-- Hero Banner - Flash Sale -->
+    <section class="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div class="absolute inset-0 bg-gradient-to-r from-gray-900 to-black"></div>
+      <div class="absolute inset-0 opacity-40">
+        <img 
+          src="@/assets/img/no-love.jpg" 
+          alt="Hero Background" 
+          class="w-full h-full object-cover"
+          @error="handleImageError"
+        />
+      </div>
+      
+      <div class="relative max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div class="animate-pulse-slow mb-4">
+              <span class="inline-block px-4 py-1 bg-rose-600 text-white text-sm font-bold rounded-full">
+                NEW PRINTS EDITION!!!
+              </span>
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 text-white">
+              NO GREATER LOVE
             </h1>
-            <p 
-              class="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl"
-              v-motion
-              :initial="{ opacity: 0 }"
-              :enter="{ opacity: 1, transition: { delay: 200 } }"
-            >
-              Explore Raymond Aworo's collection of hyper-realistic artworks that blend emotion, faith, and extraordinary talent.
-            </p>
+            
+            <div class="flex items-center mb-8">
+              <div class="text-3xl font-bold text-rose-500 mr-4">GET 50% OFF!!!!!</div>
+              <div class="text-xl line-through text-gray-400">$200</div>
+              <div class="text-2xl font-bold text-white ml-2">$100</div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4">
+              <button 
+                @click="addToCart(featuredProduct)"
+                class="inline-flex items-center justify-center px-8 py-3 bg-rose-600 text-white font-medium rounded-md hover:bg-rose-700 transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+                </svg>
+                Add to Cart
+              </button>
+              
+              <a 
+                href="#shop-now" 
+                class="inline-flex items-center justify-center px-8 py-3 bg-transparent border border-white text-white font-medium rounded-md hover:bg-white/10 transition-colors"
+              >
+                Shop Now
+              </a>
+            </div>
+            
+            <!-- Countdown Timer -->
+            <div class="mt-8">
+              <p class="text-gray-300 mb-2">Flash Sale Ends In:</p>
+              <div class="flex space-x-4">
+                <div class="bg-gray-800 px-4 py-2 rounded-lg text-center min-w-[70px]">
+                  <div class="text-2xl font-bold">{{ countdown.days }}</div>
+                  <div class="text-xs text-gray-400">Days</div>
+                </div>
+                <div class="bg-gray-800 px-4 py-2 rounded-lg text-center min-w-[70px]">
+                  <div class="text-2xl font-bold">{{ countdown.hours }}</div>
+                  <div class="text-xs text-gray-400">Hours</div>
+                </div>
+                <div class="bg-gray-800 px-4 py-2 rounded-lg text-center min-w-[70px]">
+                  <div class="text-2xl font-bold">{{ countdown.minutes }}</div>
+                  <div class="text-xs text-gray-400">Minutes</div>
+                </div>
+                <div class="bg-gray-800 px-4 py-2 rounded-lg text-center min-w-[70px]">
+                  <div class="text-2xl font-bold">{{ countdown.seconds }}</div>
+                  <div class="text-xs text-gray-400">Seconds</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="relative">
+            <div class="absolute -inset-4 bg-rose-500/20 rounded-full blur-md animate-pulse-slow"></div>
+            <div class="relative bg-gray-900 p-2 rounded-lg transform rotate-3 hover:rotate-0 transition-transform duration-500">
+              <img 
+                src="@/assets/img/no-love.jpg" 
+                alt="Featured Artwork" 
+                class="w-full h-auto rounded"
+                @error="handleImageError"
+              />
+            </div>
           </div>
         </div>
-      </section>
-      
-
-      <section class="py-12">
-        <div class="container mx-auto px-4">
-          <div class="flex flex-col lg:flex-row gap-8">
-
-            <div 
-              class="lg:w-1/4"
-              v-motion
-              :initial="{ opacity: 0, x: -20 }"
-              :enter="{ opacity: 1, x: 0 }"
+      </div>
+    </section>
+    
+    <!-- Category Navigation -->
+    <section id="shop-now" class="py-8 px-4 sm:px-6 lg:px-8 bg-gray-900 sticky top-0 z-30">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <h2 class="text-2xl font-bold text-white">Shop Artwork</h2>
+          
+          <div class="flex flex-wrap gap-2">
+            <button 
+              v-for="category in categories" 
+              :key="category.id"
+              @click="setActiveCategory(category.id)"
+              class="px-4 py-2 rounded-full text-sm font-medium transition-colors"
+              :class="activeCategory === category.id ? 'bg-rose-600 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'"
             >
-              <div class="bg-white p-6 rounded-lg shadow-md sticky top-24">
-                <h2 class="text-xl font-bold mb-6">Filters</h2>
-                
-
-                <div class="mb-6">
-                  <h3 class="font-medium mb-3">Categories</h3>
-                  <div class="space-y-2">
-                    <label v-for="category in categories" :key="category.value" class="flex items-center">
-                      <input 
-                        type="checkbox" 
-                        :value="category.value" 
-                        v-model="selectedCategories"
-                        class="rounded text-primary focus:ring-primary"
-                      />
-                      <span class="ml-2 text-gray-700">{{ category.label }}</span>
-                    </label>
+              {{ category.name }}
+            </button>
+          </div>
+          
+          <div class="relative">
+            <button 
+              @click="isCartOpen = !isCartOpen"
+              class="relative p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              <span v-if="cart.length > 0" class="absolute -top-1 -right-1 bg-rose-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                {{ cart.length }}
+              </span>
+            </button>
+            
+            <!-- Mini Cart Dropdown -->
+            <transition 
+              enter-active-class="transition ease-out duration-200"
+              enter-from-class="opacity-0 scale-95"
+              enter-to-class="opacity-100 scale-100"
+              leave-active-class="transition ease-in duration-150"
+              leave-from-class="opacity-100 scale-100"
+              leave-to-class="opacity-0 scale-95"
+            >
+              <div v-if="isCartOpen" class="absolute right-0 mt-2 w-80 bg-gray-800 rounded-lg shadow-xl z-50">
+                <div class="p-4">
+                  <h3 class="text-lg font-bold text-white mb-4">Your Cart ({{ cart.length }})</h3>
+                  
+                  <div v-if="cart.length === 0" class="text-gray-400 text-center py-4">
+                    Your cart is empty
                   </div>
-                </div>
-                
-
-                <div class="mb-6">
-                  <h3 class="font-medium mb-3">Medium</h3>
-                  <div class="space-y-2">
-                    <label v-for="medium in mediums" :key="medium.value" class="flex items-center">
-                      <input 
-                        type="checkbox" 
-                        :value="medium.value" 
-                        v-model="selectedMediums"
-                        class="rounded text-primary focus:ring-primary"
-                      />
-                      <span class="ml-2 text-gray-700">{{ medium.label }}</span>
-                    </label>
-                  </div>
-                </div>
-                
- 
-                <div class="mb-6">
-                  <h3 class="font-medium mb-3">Price Range</h3>
-                  <div class="px-2">
-                    <div class="flex justify-between mb-2 text-sm text-gray-600">
-                      <span>${{ priceRange[0] }}</span>
-                      <span>${{ priceRange[1] }}</span>
+                  
+                  <div v-else class="space-y-4 max-h-60 overflow-y-auto">
+                    <div v-for="(item, index) in cart" :key="index" class="flex items-center gap-3">
+                      <div class="w-16 h-16 bg-gray-700 rounded overflow-hidden flex-shrink-0">
+                        <img 
+                          :src="item.imageUrl" 
+                          :alt="item.title" 
+                          class="w-full h-full object-cover"
+                          @error="handleImageError"
+                        />
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <h4 class="text-sm font-medium text-white truncate">{{ item.title }}</h4>
+                        <p class="text-sm text-gray-400">${{ item.price.toFixed(2) }}</p>
+                      </div>
+                      <button 
+                        @click="removeFromCart(index)"
+                        class="text-gray-400 hover:text-white"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                      </button>
                     </div>
-                    <input 
-                      type="range" 
-                      v-model="priceRange[0]" 
-                      :min="minPrice" 
-                      :max="maxPrice"
-                      class="w-full accent-primary mb-2"
-                    />
-                    <input 
-                      type="range" 
-                      v-model="priceRange[1]" 
-                      :min="minPrice" 
-                      :max="maxPrice"
-                      class="w-full accent-primary"
-                    />
+                  </div>
+                  
+                  <div v-if="cart.length > 0" class="mt-4 pt-4 border-t border-gray-700">
+                    <div class="flex justify-between text-white mb-4">
+                      <span>Total:</span>
+                      <span class="font-bold">${{ cartTotal.toFixed(2) }}</span>
+                    </div>
+                    
+                    <button 
+                      class="w-full py-2 bg-rose-600 text-white font-medium rounded hover:bg-rose-700 transition-colors"
+                    >
+                      Checkout
+                    </button>
                   </div>
                 </div>
-                
-
-                <div class="mb-6">
-                  <h3 class="font-medium mb-3">Availability</h3>
-                  <div class="space-y-2">
-                    <label class="flex items-center">
-                      <input 
-                        type="checkbox" 
-                        v-model="inStockOnly"
-                        class="rounded text-primary focus:ring-primary"
-                      />
-                      <span class="ml-2 text-gray-700">In Stock Only</span>
-                    </label>
-                  </div>
-                </div>
-                
-
-                <button 
-                  @click="clearFilters"
-                  class="w-full py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-300 text-gray-700"
+              </div>
+            </transition>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Product Grid -->
+    <section class="py-12 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto">
+        <div v-if="filteredProducts.length === 0" class="text-center py-20">
+          <p class="text-xl text-gray-400">No products found in this category.</p>
+        </div>
+        
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div 
+            v-for="product in filteredProducts" 
+            :key="product.id"
+            class="group"
+          >
+            <div class="relative overflow-hidden bg-gray-900 rounded-lg transform transition-all duration-500 hover:shadow-xl hover:shadow-rose-500/10">
+              <!-- Product Badge -->
+              <div v-if="product.badge" class="absolute top-4 left-4 z-10">
+                <span 
+                  class="inline-block px-3 py-1 text-xs font-bold rounded-full"
+                  :class="{
+                    'bg-rose-600 text-white': product.badge === 'sale',
+                    'bg-amber-500 text-black': product.badge === 'new',
+                    'bg-emerald-500 text-white': product.badge === 'limited'
+                  }"
                 >
-                  Clear All Filters
+                  {{ getBadgeText(product.badge) }}
+                </span>
+              </div>
+              
+              <!-- Quick Actions -->
+              <div class="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button 
+                  @click="toggleFavorite(product)"
+                  class="p-2 bg-black/50 rounded-full text-white hover:bg-black/80 transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" :class="{ 'text-rose-500 fill-rose-500': product.isFavorite }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </button>
+              </div>
+              
+              <!-- Product Image -->
+              <div class="aspect-[4/5] overflow-hidden">
+                <img 
+                  :src="product.imageUrl" 
+                  :alt="product.title" 
+                  class="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-110"
+                  @error="handleImageError"
+                />
+              </div>
+              
+              <!-- Product Info -->
+              <div class="p-4">
+                <h3 class="text-lg font-bold text-white mb-1 truncate">{{ product.title }}</h3>
+                <p class="text-sm text-gray-400 mb-3 line-clamp-2">{{ product.description }}</p>
+                
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <span v-if="product.salePrice" class="text-lg font-bold text-white mr-2">${{ product.salePrice.toFixed(2) }}</span>
+                    <span 
+                      class="text-base" 
+                      :class="product.salePrice ? 'line-through text-gray-500' : 'font-bold text-white'"
+                    >
+                      ${{ product.price.toFixed(2) }}
+                    </span>
+                  </div>
+                  
+                  <button 
+                    @click="addToCart(product)"
+                    class="p-2 bg-rose-600 rounded-full text-white hover:bg-rose-700 transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- View Details Button (Overlay) -->
+              <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button 
+                  @click="openProductModal(product)"
+                  class="px-6 py-2 bg-white text-black font-medium rounded-full hover:bg-gray-200 transition-colors transform transition-transform duration-300 hover:scale-105"
+                >
+                  View Details
                 </button>
               </div>
             </div>
-            
-
-            <div class="lg:w-3/4">
-
-              <div 
-                class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"
-                v-motion
-                :initial="{ opacity: 0, y: 20 }"
-                :enter="{ opacity: 1, y: 0 }"
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Product Modal -->
+    <Teleport to="body">
+      <transition 
+        enter-active-class="transition duration-300 ease-out"
+        enter-from-class="transform scale-95 opacity-0"
+        enter-to-class="transform scale-100 opacity-100"
+        leave-active-class="transition duration-200 ease-in"
+        leave-from-class="transform scale-100 opacity-100"
+        leave-to-class="transform scale-95 opacity-0"
+      >
+        <div v-if="selectedProduct" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-20" @click="closeProductModal">
+          <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" aria-hidden="true"></div>
+          
+          <div 
+            class="relative bg-gray-900 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
+            @click.stop
+          >
+            <div class="absolute top-4 right-4 z-10">
+              <button 
+                @click="closeProductModal" 
+                class="rounded-full p-2 bg-black/50 text-white hover:bg-black/80 transition-colors"
               >
-                <div class="text-gray-600">
-                  Showing <span class="font-medium text-gray-900">{{ filteredArtworks.length }}</span> artworks
-                </div>
-                
-                <div class="flex items-center gap-4">
-                  <div class="flex items-center">
-                    <label for="sort" class="mr-2 text-gray-700">Sort by:</label>
-                    <select 
-                      id="sort" 
-                      v-model="sortOption"
-                      class="border-gray-300 rounded-md focus:ring-primary py-2.5 outline-none px-3 focus:border-primary text-gray-700"
-                    >
-                      <option value="newest">Newest</option>
-                      <option value="price-low">Price: Low to High</option>
-                      <option value="price-high">Price: High to Low</option>
-                      <option value="name-asc">Name: A-Z</option>
-                      <option value="name-desc">Name: Z-A</option>
-                    </select>
-                  </div>
-                  
-                  <div class="flex items-center gap-2 border rounded-lg">
-                    <button
-                      @click="viewMode = 'grid'"
-                      class="p-2  transition-colors duration-300"
-                      :class="viewMode === 'grid' ? 'bg-black/10 text-primary' : 'text-gray-500 hover:text-gray-700'"
-                    >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M200,40H56A16,16,0,0,0,40,56V200a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,80H136V56h64ZM120,56v64H56V56ZM56,136h64v64H56Zm144,64H136V136h64v64Z"></path></svg>
-                    </button>
-                    <button
-                      @click="viewMode = 'list'"
-                      class="p-2  transition-colors duration-300"
-                      :class="viewMode === 'list' ? 'bg-black/10 text-primary' : 'text-gray-500 hover:text-gray-700'"
-                    >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M80,64a8,8,0,0,1,8-8H216a8,8,0,0,1,0,16H88A8,8,0,0,1,80,64Zm136,56H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Zm0,64H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16ZM44,52A12,12,0,1,0,56,64,12,12,0,0,0,44,52Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,116Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,180Z"></path></svg>
-                    </button>
-                  </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2">
+              <div class="relative h-[50vh] md:h-[80vh] overflow-hidden">
+                <img 
+                  :src="selectedProduct.imageUrl" 
+                  :alt="selectedProduct.title" 
+                  class="w-full h-full object-cover"
+                  @error="handleImageError"
+                />
+                <div v-if="selectedProduct.badge" class="absolute top-4 left-4">
+                  <span 
+                    class="inline-block px-3 py-1 text-xs font-bold rounded-full"
+                    :class="{
+                      'bg-rose-600 text-white': selectedProduct.badge === 'sale',
+                      'bg-amber-500 text-black': selectedProduct.badge === 'new',
+                      'bg-emerald-500 text-white': selectedProduct.badge === 'limited'
+                    }"
+                  >
+                    {{ getBadgeText(selectedProduct.badge) }}
+                  </span>
                 </div>
               </div>
               
-     
-              <div v-if="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div 
-                  v-for="(artwork, index) in filteredArtworks" 
-                  :key="artwork.id"
-                  v-motion
-                  :initial="{ opacity: 0, y: 20 }"
-                  :enter="{ opacity: 1, y: 0, transition: { delay: index * 50 } }"
-                >
-                  <ArtworkCard 
-                    :artwork="artwork" 
-                    @view="viewArtwork"
-                    @add-to-cart="addToCart"
-                  />
-                </div>
-              </div>
-              
-
-              <div v-else class="space-y-6">
-                <div 
-                  v-for="(artwork, index) in filteredArtworks" 
-                  :key="artwork.id"
-                  class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 flex flex-col sm:flex-row"
-                  v-motion
-                  :initial="{ opacity: 0, y: 20 }"
-                  :enter="{ opacity: 1, y: 0, transition: { delay: index * 50 } }"
-                >
-
-                  <div class="sm:w-1/3 relative overflow-hidden">
-                    <img 
-                      :src="artwork.image" 
-                      :alt="artwork.title"
-                      class="w-full h-full object-cover aspect-square sm:aspect-auto"
-                    />
+              <div class="p-6 md:p-8 flex flex-col h-full">
+                <div class="flex-1">
+                  <h2 class="text-2xl md:text-3xl font-bold mb-2 text-white">{{ selectedProduct.title }}</h2>
+                  
+                  <div class="flex items-center mb-4">
+                    <span v-if="selectedProduct.salePrice" class="text-2xl font-bold text-white mr-3">${{ selectedProduct.salePrice.toFixed(2) }}</span>
+                    <span 
+                      class="text-xl" 
+                      :class="selectedProduct.salePrice ? 'line-through text-gray-500' : 'font-bold text-white'"
+                    >
+                      ${{ selectedProduct.price.toFixed(2) }}
+                    </span>
                     
-
-                    <div class="absolute top-3 left-3 flex flex-col gap-2">
-                      <span 
-                        v-if="artwork.isNewArrival" 
-                        class="bg-emerald-500 text-white text-xs px-3 py-1 rounded-full"
-                      >
-                        New Arrival
-                      </span>
-                      <span 
-                        v-if="artwork.isBestSeller" 
-                        class="bg-amber-500 text-white text-xs px-3 py-1 rounded-full"
-                      >
-                        Best Seller
-                      </span>
-                      <span 
-                        v-if="artwork.isOnSale" 
-                        class="bg-rose-500 text-white text-xs px-3 py-1 rounded-full"
-                      >
-                        Sale
-                      </span>
-                    </div>
+                    <span v-if="selectedProduct.salePrice" class="ml-3 px-2 py-1 bg-rose-600 text-white text-xs font-bold rounded">
+                      {{ Math.round((1 - selectedProduct.salePrice / selectedProduct.price) * 100) }}% OFF
+                    </span>
                   </div>
                   
-
-                  <div class="sm:w-2/3 p-6 flex flex-col">
-                    <div class="mb-2">
-                      <span class="text-sm text-primary font-medium">{{ artwork.category }}</span>
+                  <p class="text-gray-300 mb-6">{{ selectedProduct.description }}</p>
+                  
+                  <div class="space-y-6">
+                    <div>
+                      <h3 class="text-lg font-semibold mb-2 text-white">Details</h3>
+                      <ul class="space-y-2 text-gray-300">
+                        <li class="flex items-start">
+                          <span class="font-medium mr-2">Medium:</span>
+                          <span>{{ selectedProduct.medium }}</span>
+                        </li>
+                        <li class="flex items-start">
+                          <span class="font-medium mr-2">Dimensions:</span>
+                          <span>{{ selectedProduct.dimensions }}</span>
+                        </li>
+                        <li class="flex items-start">
+                          <span class="font-medium mr-2">Edition:</span>
+                          <span>{{ selectedProduct.edition }}</span>
+                        </li>
+                      </ul>
                     </div>
                     
-                    <h3 class="text-xl font-semibold mb-2 text-gray-900">{{ artwork.title }}</h3>
-                    <p class="text-sm text-gray-600 mb-4">{{ artwork.medium }}</p>
-                    
-                    <p class="text-gray-700 mb-6 line-clamp-3">{{ artwork.description }}</p>
-                    
-                    <div class="mt-auto flex flex-wrap justify-between items-center gap-4">
-                      <span class="text-xl font-bold text-primary">${{ formatPrice(artwork.price) }}</span>
-                      
-                      <div class="flex gap-2">
+                    <div>
+                      <h3 class="text-lg font-semibold mb-2 text-white">Size Options</h3>
+                      <div class="flex flex-wrap gap-2">
                         <button 
-                          @click="viewArtwork(artwork)"
-                          class="px-4 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-300 text-gray-700"
+                          v-for="size in selectedProduct.sizes" 
+                          :key="size.id"
+                          @click="selectSize(size.id)"
+                          class="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                          :class="selectedSize === size.id ? 'bg-rose-600 text-white' : 'bg-gray-800 text-gray-300 hover:bg-gray-700'"
                         >
-                          View Details
-                        </button>
-                        <button 
-                          @click="addToCart(artwork)"
-                          class="px-4 py-2 bg-black text-white rounded-md hover:bg-black-dark transition-colors duration-300 flex items-center gap-2"
-                          :disabled="!artwork.inStock"
-                          :class="{ 'opacity-50 cursor-not-allowed': !artwork.inStock }"
-                        >
-                          <!-- <Icon name="lucide:shopping-bag" size="16" /> -->
-                          {{ artwork.inStock ? 'Add to Cart' : 'Sold Out' }}
+                          {{ size.name }}
                         </button>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              
-  
-              <div 
-                v-if="filteredArtworks.length === 0" 
-                class="py-12 text-center"
-                v-motion
-                :initial="{ opacity: 0 }"
-                :enter="{ opacity: 1 }"
-              >
-                <div class="w-20 h-20 mx-auto mb-4 text-gray-300">
-                  <!-- <Icon name="lucide:search-x" size="80" /> -->
+                
+                <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                  <button 
+                    @click="addToCart(selectedProduct)"
+                    class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-rose-600 text-white font-medium rounded-md hover:bg-rose-700 transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    Add to Cart
+                  </button>
+                  
+                  <button 
+                    @click="toggleFavorite(selectedProduct)"
+                    class="inline-flex items-center justify-center px-6 py-3 bg-transparent border border-gray-600 text-white font-medium rounded-md hover:bg-white/10 transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" :class="{ 'text-rose-500 fill-rose-500': selectedProduct.isFavorite }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    {{ selectedProduct.isFavorite ? 'Saved' : 'Save' }}
+                  </button>
                 </div>
-                <h3 class="text-xl font-medium text-gray-900 mb-2">No artworks found</h3>
-                <p class="text-gray-600 mb-6">Try adjusting your filters to find what you're looking for.</p>
-                <button 
-                  @click="clearFilters"
-                  class="px-6 py-2 bg-black text-white rounded-full hover:bg-black-dark transition-colors duration-300"
-                >
-                  Clear Filters
-                </button>
-              </div>
-              
-
-              <div 
-                v-if="filteredArtworks.length > 0 && hasMoreArtworks" 
-                class="mt-12 text-center"
-                v-motion
-                :initial="{ opacity: 0 }"
-                :enter="{ opacity: 1, transition: { delay: 300 } }"
-              >
-                <button 
-                  @click="loadMoreArtworks"
-                  class="px-8 py-3 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-all duration-300 transform hover:scale-105"
-                >
-                  Load More Artworks
-                </button>
               </div>
             </div>
           </div>
         </div>
-      </section>
-    </div>
-  </template>
-  
-  <script setup lang="ts">
-  import { ref, computed } from 'vue'
-  import { useCartStore } from '~/composables/useCartStore'
-  import { useRouter } from 'vue-router'
-  import { onMounted } from 'vue';
-  import image1 from '@/assets/img/corporate.png'
-import image2 from '@/assets/img/services6.jpg'
-import image3 from '@/assets/img/services8.jpg'
-import image4 from '@/assets/img/services9.jpg'
-  
-  const router = useRouter()
-  const { addToCart: addItemToCart } = useCartStore()
-  
-  // Filter state
-  const selectedCategories = ref<string[]>([])
-  const selectedMediums = ref<string[]>([])
-  const priceRange = ref([0, 3000])
-  const minPrice = 0
-  const maxPrice = 3000
-  const inStockOnly = ref(false)
-  const sortOption = ref('newest')
-  const viewMode = ref('grid')
-  const visibleCount = ref(9)
-  
-  // Categories and mediums
-  const categories = [
-    { label: 'Portraits', value: 'Portrait' },
-    { label: 'Religious', value: 'Religious' },
-    { label: 'Landscapes', value: 'Landscape' },
-    { label: 'Abstract', value: 'Abstract' },
-    { label: 'Still Life', value: 'Still Life' }
-  ]
-  
-  const mediums = [
-    { label: 'Charcoal on Paper', value: 'Charcoal on Paper' },
-    { label: 'Acrylic on Canvas', value: 'Acrylic on Canvas' },
-    { label: 'Oil on Canvas', value: 'Oil on Canvas' },
-    { label: 'Mixed Media', value: 'Mixed Media' },
-    { label: 'Pastel', value: 'Pastel' }
-  ]
-  
-  // Artwork data
-  const artworks = ref([
-    {
-      id: 1,
-      title: "No Greater Love",
-      image: image1,
-      category: "Religious",
-      price: 1200,
-      medium: "Charcoal on Paper",
-      description: "This Artwork depicts the suffering of Christ on His way to Calvary and then ponders how Christ exhibits each of the qualities of love in His Passion.",
-      inStock: true,
-      isNewArrival: true,
-      year: 2023,
-      dimensions: "24 x 36 inches"
-    },
-    {
-      id: 2,
-      title: "Divine Light",
-      image: image2,
-      category: "Religious",
-      price: 950,
-      medium: "Acrylic on Canvas",
-      description: "An exploration of spirituality through light and shadow, capturing the divine essence in everyday moments.",
-      inStock: true,
-      isNewArrival: true,
-      year: 2023,
-      dimensions: "30 x 40 inches"
-    },
-    {
-      id: 3,
-      title: "Serenity Falls",
-      image: image3,
-      category: "Landscape",
-      price: 850,
-      medium: "Mixed Media",
-      description: "A vibrant landscape capturing the tranquility of nature, with cascading waterfalls under a moonlit sky.",
-      inStock: true,
-      isNewArrival: false,
-      year: 2022,
-      dimensions: "36 x 48 inches"
-    },
-    {
-      id: 4,
-      title: "Reflection",
-      image: image4,
-      category: "Portrait",
-      price: 1100,
-      medium: "Oil on Canvas",
-      description: "A powerful portrait exploring themes of identity, introspection, and self-discovery through a striking visual composition.",
-      inStock: true,
-      isBestSeller: true,
-      year: 2022,
-      dimensions: "24 x 30 inches"
-    },
-    {
-      id: 5,
-      title: "Ethereal Wings",
-      image: image1,
-      category: "Religious",
-      price: 1300,
-      medium: "Charcoal on Paper",
-      description: "A depiction of angelic presence, symbolizing protection, guidance, and divine intervention in human affairs.",
-      inStock: true,
-      isBestSeller: true,
-      year: 2021,
-      dimensions: "30 x 40 inches"
-    },
-    {
-      id: 6,
-      title: "Moonlit Waterfall",
-      image: image2,
-      category: "Landscape",
-      price: 900,
-      medium: "Acrylic on Canvas",
-      description: "A dreamlike landscape featuring a serene waterfall under the glow of a full moon, creating a magical atmosphere.",
-      inStock: false,
-      isBestSeller: true,
-      year: 2021,
-      dimensions: "36 x 48 inches"
-    },
-    {
-      id: 7,
-      title: "Inner Vision",
-      image: image3,
-      category: "Portrait",
-      price: 1050,
-      medium: "Charcoal on Paper",
-      description: "A thought-provoking portrait that explores the concept of inner sight and spiritual perception beyond physical vision.",
-      inStock: true,
-      isBestSeller: true,
-      year: 2020,
-      dimensions: "24 x 36 inches"
-    },
-    {
-      id: 8,
-      title: "Butterfly Effect",
-      image: image4,
-      category: "Portrait",
-      price: 980,
-      medium: "Mixed Media",
-      description: "A symbolic representation of transformation and the interconnectedness of all things, featuring delicate butterfly motifs.",
-      inStock: true,
-      isOnSale: true,
-      year: 2020,
-      dimensions: "24 x 30 inches"
-    },
-    {
-      id: 9,
-      title: "Sacred Heart",
-      image: image1,
-      category: "Religious",
-      price: 1150,
-      medium: "Oil on Canvas",
-      description: "A devotional piece depicting the Sacred Heart, symbolizing divine love and compassion with intricate detail.",
-      inStock: true,
-      year: 2019,
-      dimensions: "24 x 30 inches"
-    },
-    {
-      id: 10,
-      title: "Ocean Whispers",
-      image: image2,
-      category: "Landscape",
-      price: 870,
-      medium: "Acrylic on Canvas",
-      description: "A serene seascape capturing the rhythmic dance of waves against a shoreline at sunset, evoking peace and contemplation.",
-      inStock: true,
-      year: 2019,
-      dimensions: "30 x 40 inches"
-    },
-    {
-      id: 11,
-      title: "Contemplation",
-      image: image3,
-      category: "Portrait",
-      price: 1200,
-      medium: "Charcoal on Paper",
-      description: "A powerful portrait capturing a moment of deep thought and introspection, with masterful use of light and shadow.",
-      inStock: false,
-      year: 2018,
-      dimensions: "24 x 36 inches"
-    },
-    {
-      id: 12,
-      title: "Abstract Emotions",
-      image: image4,
-      category: "Abstract",
-      price: 950,
-      medium: "Mixed Media",
-      description: "An abstract exploration of human emotions through color, texture, and form, inviting viewers to find their own meaning.",
-      inStock: true,
-      isOnSale: true,
-      year: 2018,
-      dimensions: "36 x 36 inches"
-    }
-  ])
-  
-  // // Computed properties
-  const filteredArtworks = computed(() => {
-    let result = [...artworks.value]
+      </transition>
+    </Teleport>
     
-    // Filter by category
-    if (selectedCategories.value.length > 0) {
-      result = result.filter(artwork => selectedCategories.value.includes(artwork.category))
-    }
-    
-    // Filter by medium
-    if (selectedMediums.value.length > 0) {
-      result = result.filter(artwork => selectedMediums.value.includes(artwork.medium))
-    }
-    
-    // Filter by price range
-    result = result.filter(artwork => 
-      artwork.price >= priceRange.value[0] && artwork.price <= priceRange.value[1]
-    )
-    
-    // Filter by availability
-    if (inStockOnly.value) {
-      result = result.filter(artwork => artwork.inStock)
-    }
-    
-    // Sort
-    switch (sortOption.value) {
-      case 'newest':
-        result.sort((a, b) => b.id - a.id)
-        break
-      case 'price-low':
-        result.sort((a, b) => a.price - b.price)
-        break
-      case 'price-high':
-        result.sort((a, b) => b.price - a.price)
-        break
-      case 'name-asc':
-        result.sort((a, b) => a.title.localeCompare(b.title))
-        break
-      case 'name-desc':
-        result.sort((a, b) => b.title.localeCompare(a.title))
-        break
-    }
-    
-    return result.slice(0, visibleCount.value)
-  })
-  
-  const hasMoreArtworks = computed(() => {
-    const filteredTotal = artworks.value.filter(artwork => {
-      let matches = true
-      
-      // Filter by category
-      if (selectedCategories.value.length > 0) {
-        matches = matches && selectedCategories.value.includes(artwork.category)
-      }
-      
-      // Filter by medium
-      if (selectedMediums.value.length > 0) {
-        matches = matches && selectedMediums.value.includes(artwork.medium)
-      }
-      
-      // Filter by price range
-      matches = matches && artwork.price >= priceRange.value[0] && artwork.price <= priceRange.value[1]
-      
-      // Filter by availability
-      if (inStockOnly.value) {
-        matches = matches && artwork.inStock
-      }
-      
-      return matches
-    }).length
-    
-    return visibleCount.value < filteredTotal
-  })
-  
-  // Methods
-  const clearFilters = () => {
-    selectedCategories.value = []
-    selectedMediums.value = []
-    priceRange.value = [minPrice, maxPrice]
-    inStockOnly.value = false
-    sortOption.value = 'newest'
+    <!-- Call to Action -->
+    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900 to-black">
+      <div class="max-w-5xl mx-auto text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6 text-white">
+          Interested in Collecting an Original Piece?
+        </h2>
+        
+        <p class="text-xl text-gray-300 mb-10 max-w-3xl mx-auto">
+          Own a one-of-a-kind masterpiece that captures the depth of emotion and technical excellence that defines my work.
+        </p>
+        
+        <a 
+          href="/commission" 
+          class="inline-flex items-center justify-center px-8 py-3 bg-white text-black font-medium rounded-md hover:bg-gray-200 transition-colors"
+        >
+          PURCHASE
+        </a>
+      </div>
+    </section>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import artwork1 from '@/assets/img/artist.avif'
+import artwork2 from '@/assets/img/commission-art1.jpg'
+import artwork3 from '@/assets/img/commission-art.png'
+
+interface Size {
+  id: number;
+  name: string;
+}
+
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  salePrice?: number;
+  medium: string;
+  dimensions: string;
+  edition: string;
+  imageUrl: string;
+  categoryId: number;
+  badge?: 'sale' | 'new' | 'limited';
+  isFavorite: boolean;
+  sizes: Size[];
+}
+
+interface Category {
+  id: number;
+  name: string;
+}
+
+interface CountdownTime {
+  days: string;
+  hours: string;
+  minutes: string;
+  seconds: string;
+}
+
+// Sample categories
+const categories = ref<Category[]>([
+  { id: 0, name: 'All' },
+  { id: 1, name: 'Prints' },
+  { id: 2, name: 'Originals' },
+  { id: 3, name: 'Limited Editions' },
+  { id: 4, name: 'New Arrivals' }
+])
+
+// Sample products
+const products = ref<Product[]>([
+  {
+    id: 1,
+    title: "No Greater Love",
+    description: "A powerful portrayal of sacrifice and redemption, inspired by themes of faith and humanity's capacity for love.",
+    price: 200,
+    salePrice: 100,
+    medium: "Fine Art Print",
+    dimensions: "24 x 36 inches",
+    edition: "Limited Edition of 20",
+    imageUrl: artwork1,
+    categoryId: 1,
+    badge: 'sale',
+    isFavorite: false,
+    sizes: [
+      { id: 1, name: 'Medium (18" x 24")' },
+      { id: 2, name: 'Large (24" x 36")' }
+    ]
+  },
+  {
+    id: 2,
+    title: "Heart of Hope",
+    description: "A delicate study of hands cradling a heart, symbolizing the fragility and strength of hope in difficult times.",
+    price: 150,
+    medium: "Fine Art Print",
+    dimensions: "18 x 24 inches",
+    edition: "Limited Edition of 20",
+    imageUrl: artwork2,
+    categoryId: 1,
+    isFavorite: false,
+    sizes: [
+      { id: 1, name: 'Medium (18" x 24")' },
+      { id: 2, name: 'Large (24" x 36")' }
+    ]
+  },
+  {
+    id: 3,
+    title: "Signs & Symbols of Hope I",
+    description: "Part of a series exploring religious iconography and its role in providing comfort and guidance through life's challenges.",
+    price: 180,
+    medium: "Fine Art Print",
+    dimensions: "24 x 30 inches",
+    edition: "Limited Edition of 20",
+    imageUrl: artwork3,
+    categoryId: 1,
+    isFavorite: false,
+    sizes: [
+      { id: 1, name: 'Medium (18" x 24")' },
+      { id: 2, name: 'Large (24" x 36")' }
+    ]
+  },
+  {
+    id: 4,
+    title: "Bound Together",
+    description: "An intimate portrayal of human connection, showing hands intertwined in a gesture of solidarity and support.",
+    price: 150,
+    medium: "Fine Art Print",
+    dimensions: "20 x 24 inches",
+    edition: "Limited Edition of 20",
+    imageUrl: artwork1,
+    categoryId: 1,
+    isFavorite: false,
+    sizes: [
+      { id: 1, name: 'Medium (18" x 24")' },
+      { id: 2, name: 'Large (24" x 36")' }
+    ]
+  },
+  {
+    id: 5,
+    title: "Rebirth",
+    description: "A vibrant depiction of renewal and transformation, using warm colors to evoke the energy of a new beginning.",
+    price: 800,
+    medium: "Original Acrylic on Canvas",
+    dimensions: "30 x 40 inches",
+    edition: "Original",
+    imageUrl: artwork2,
+    categoryId: 2,
+    badge: 'new',
+    isFavorite: false,
+    sizes: [
+      { id: 3, name: 'Original Size (30" x 40")' }
+    ]
+  },
+  {
+    id: 6,
+    title: "Coastal Serenity",
+    description: "A peaceful landscape capturing the tranquility of a coastal scene at dawn, with subtle color transitions.",
+    price: 700,
+    medium: "Original Acrylic on Canvas",
+    dimensions: "24 x 36 inches",
+    edition: "Original",
+    imageUrl: artwork3,
+    categoryId: 2,
+    isFavorite: false,
+    sizes: [
+      { id: 3, name: 'Original Size (24" x 36")' }
+    ]
+  },
+  {
+    id: 7,
+    title: "Divine Protection",
+    description: "A powerful image of an angel protecting a vulnerable figure, symbolizing divine intervention in times of need.",
+    price: 250,
+    medium: "Fine Art Print",
+    dimensions: "36 x 48 inches",
+    edition: "Limited Edition of 10",
+    imageUrl: artwork1,
+    categoryId: 3,
+    badge: 'limited',
+    isFavorite: false,
+    sizes: [
+      { id: 2, name: 'Large (24" x 36")' },
+      { id: 4, name: 'Extra Large (36" x 48")' }
+    ]
+  },
+  {
+    id: 8,
+    title: "Radiant Heart",
+    description: "A striking anatomical heart surrounded by radiating lines, representing the power of love to illuminate darkness.",
+    price: 200,
+    medium: "Fine Art Print",
+    dimensions: "24 x 24 inches",
+    edition: "Limited Edition of 10",
+    imageUrl: artwork2,
+    categoryId: 3,
+    badge: 'limited',
+    isFavorite: false,
+    sizes: [
+      { id: 1, name: 'Medium (18" x 18")' },
+      { id: 2, name: 'Large (24" x 24")' }
+    ]
+  },
+])
+
+// Featured product
+const featuredProduct = computed(() => products.value.find(p => p.id === 1) || products.value[0])
+
+// State management
+const activeCategory = ref(0)
+const selectedProduct = ref<Product | null>(null)
+const selectedSize = ref(1)
+const isCartOpen = ref(false)
+const cart = ref<Product[]>([])
+
+// Countdown timer
+const countdown = ref<CountdownTime>({
+  days: '00',
+  hours: '00',
+  minutes: '00',
+  seconds: '00'
+})
+
+let countdownInterval: number | null = null
+
+// Filter products by category
+const filteredProducts = computed(() => {
+  if (activeCategory.value === 0) {
+    return products.value
   }
+  return products.value.filter(product => product.categoryId === activeCategory.value)
+})
+
+// Calculate cart total
+const cartTotal = computed(() => {
+  return cart.value.reduce((total, item) => {
+    return total + (item.salePrice || item.price)
+  }, 0)
+})
+
+// Set active category
+const setActiveCategory = (categoryId: number) => {
+  activeCategory.value = categoryId
+}
+
+// Open product modal
+const openProductModal = (product: Product) => {
+  selectedProduct.value = product
+  selectedSize.value = product.sizes[0].id
+  document.body.classList.add('overflow-hidden')
+}
+
+// Close product modal
+const closeProductModal = () => {
+  selectedProduct.value = null
+  document.body.classList.remove('overflow-hidden')
+}
+
+// Select size
+const selectSize = (sizeId: number) => {
+  selectedSize.value = sizeId
+}
+
+// Add to cart
+const addToCart = (product: Product) => {
+  cart.value.push({...product})
+  isCartOpen.value = true
   
-  const loadMoreArtworks = () => {
-    visibleCount.value += 6
+  // Auto close cart after 3 seconds
+  setTimeout(() => {
+    isCartOpen.value = false
+  }, 3000)
+}
+
+// Remove from cart
+const removeFromCart = (index: number) => {
+  cart.value.splice(index, 1)
+}
+
+// Toggle favorite
+const toggleFavorite = (product: Product) => {
+  product.isFavorite = !product.isFavorite
+}
+
+// Get badge text
+const getBadgeText = (badge: string) => {
+  switch (badge) {
+    case 'sale': return 'SALE'
+    case 'new': return 'NEW'
+    case 'limited': return 'LIMITED'
+    default: return ''
   }
+}
+
+// Image error handling
+const handleImageError = (event: Event) => {
+  const target = event.target as HTMLImageElement
+  target.src = '/placeholder.svg?height=400&width=300'
+}
+
+// Update countdown timer
+const updateCountdown = () => {
+  const now = new Date().getTime()
+  // Set end date to 7 days from now
+  const endDate = now + (7 * 24 * 60 * 60 * 1000)
+  const distance = endDate - now
   
-  const viewArtwork = (artwork: any) => {
-    router.push(`/artworks/${artwork.id}`)
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((distance % (1000 * 60)) / 1000)
+  
+  countdown.value = {
+    days: days.toString().padStart(2, '0'),
+    hours: hours.toString().padStart(2, '0'),
+    minutes: minutes.toString().padStart(2, '0'),
+    seconds: seconds.toString().padStart(2, '0')
   }
-  
-  const addToCart = (artwork: any) => {
-    if (artwork.inStock) {
-      addItemToCart({
-        id: artwork.id,
-        title: artwork.title,
-        image: artwork.image,
-        price: artwork.price,
-        quantity: 1
-      })
-    }
+}
+
+// Lifecycle hooks
+onMounted(() => {
+  updateCountdown()
+  countdownInterval = window.setInterval(updateCountdown, 1000)
+})
+
+onBeforeUnmount(() => {
+  if (countdownInterval) {
+    clearInterval(countdownInterval)
   }
-  
-  const formatPrice = (price: number) => {
-    return price.toLocaleString('en-US')
-  }
-  
-  // Initialize with URL params if any
-  const initializeWithQueryParams = () => {
-    const route = router.currentRoute.value;
-    if (route.query.category) {
-      const category = route.query.category as string;
-      selectedCategories.value = [category];
-    }
-  };
-  
-  onMounted(() => {
-    initializeWithQueryParams();
-  });
-  </script>
+})
+</script>
+
+<style scoped>
+/* Animations */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+@keyframes float-medium {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-15px) rotate(-5deg); }
+}
+
+@keyframes float-fast {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-10px) rotate(3deg); }
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.animate-float-slow {
+  animation: float-slow 8s ease-in-out infinite;
+}
+
+.animate-float-medium {
+  animation: float-medium 6s ease-in-out infinite;
+}
+
+.animate-float-fast {
+  animation: float-fast 4s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+/* Line clamp for product descriptions */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>
