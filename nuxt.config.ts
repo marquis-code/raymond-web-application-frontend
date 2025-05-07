@@ -23,7 +23,7 @@ export default defineNuxtConfig({
       enabled: true
     },
     meta: {
-      title: "CoMiles – Elevating Ride Experiences",
+      title: "Raymond Arts | Discover Unique Artistic Expressions.",
       author: "Marquis",
       mobileAppIOS: false,
       mobileApp: true,
@@ -35,7 +35,7 @@ export default defineNuxtConfig({
       sizes: [64, 120, 144, 152, 192, 384, 512],
     },
     manifest: {
-      name: "CoMiles – Elevating Ride Experiences",
+      name: "Raymond Arts | Discover Unique Artistic Expressions.",
       lang: "fa",
     },
   },

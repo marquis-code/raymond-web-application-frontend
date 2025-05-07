@@ -567,7 +567,7 @@
                       <p class="text-sm text-gray-600">Secure payment via Flutterwave</p>
                     </div>
                     <div class="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center">
-                      <img src="/images/flutterwave-icon.svg" alt="Flutterwave" class="w-6 h-6" @error="handleImageError" />
+                      <img src="@/assets/icons/flutterwave.svg" alt="Flutterwave" class="w-6 h-6" @error="handleImageError" />
                     </div>
                   </div>
                 </div>
@@ -588,10 +588,10 @@
                     </div>
                     <div class="flex space-x-1">
                       <div class="w-8 h-6 bg-gray-100 rounded flex items-center justify-center">
-                        <img src="/images/visa.svg" alt="Visa" class="h-3" @error="handleImageError" />
+                        <img src="@/assets/icons/card.svg" alt="Visa" class="h-3" @error="handleImageError" />
                       </div>
                       <div class="w-8 h-6 bg-gray-100 rounded flex items-center justify-center">
-                        <img src="/images/mastercard.svg" alt="Mastercard" class="h-3" @error="handleImageError" />
+                        <img src="@/assets/icons/card.svg" alt="Mastercard" class="h-3" @error="handleImageError" />
                       </div>
                     </div>
                   </div>
@@ -770,16 +770,16 @@
               </div>
               <div class="flex gap-2">
                 <div class="w-10 h-6 bg-gray-100 rounded flex items-center justify-center">
-                  <img src="/images/visa.svg" alt="Visa" class="h-3" @error="handleImageError" />
+                  <img src="@/assets/icons/card.svg" alt="Visa" class="h-3" @error="handleImageError" />
                 </div>
                 <div class="w-10 h-6 bg-gray-100 rounded flex items-center justify-center">
-                  <img src="/images/mastercard.svg" alt="Mastercard" class="h-3" @error="handleImageError" />
+                  <img src="@/assets/icons/card.svg" alt="Mastercard" class="h-3" @error="handleImageError" />
                 </div>
                 <div class="w-10 h-6 bg-gray-100 rounded flex items-center justify-center">
-                  <img src="/images/amex.svg" alt="American Express" class="h-3" @error="handleImageError" />
+                  <img src="@/assets/icons/card.svg" alt="American Express" class="h-3" @error="handleImageError" />
                 </div>
                 <div class="w-10 h-6 bg-gray-100 rounded flex items-center justify-center">
-                  <img src="/images/paypal.svg" alt="PayPal" class="h-3" @error="handleImageError" />
+                  <img src="@/assets/icons/card.svg" alt="PayPal" class="h-3" @error="handleImageError" />
                 </div>
               </div>
             </div>
