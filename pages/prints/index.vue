@@ -180,8 +180,6 @@
           </div>
         </div>
       </div>
-
-      <TestimonialsCarousel />
       
       <!-- Print Modal -->
       <Teleport to="body">

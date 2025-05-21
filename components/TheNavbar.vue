@@ -19,8 +19,9 @@
           <div class="flex items-center justify-between">
             <!-- Logo -->
             <NuxtLink to="/" class="text-2xl font-bold relative overflow-hidden group">
-              <span class="inline-block transition-transform duration-500 group-hover:-translate-y-full">Raymond</span>
-              <span class="inline-block text-primary transition-transform duration-500 absolute top-0 left-0 translate-y-full group-hover:translate-y-0">Aworo Art</span>
+              <img src="@/assets/img/raymond-logo.png" class="h-16" />
+              <!-- <span class="inline-block transition-transform duration-500 group-hover:-translate-y-full">Raymond</span> -->
+              <!-- <span class="inline-block text-primary transition-transform duration-500 absolute top-0 left-0 translate-y-full group-hover:translate-y-0">Aworo Art</span> -->
             </NuxtLink>
   
             <!-- Desktop Navigation -->

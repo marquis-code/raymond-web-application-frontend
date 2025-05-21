@@ -429,12 +429,14 @@
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
 import { useFetchProduct } from "@/composables/modules/products/useFetchProduct"
+import { useCustomToast } from '@/composables/core/useCustomToast'
 import { useCartStore } from '~/composables/useCartStore'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
 const { addToCart: addItemToCart } = useCartStore()
+const { showToast } = useCustomToast();
 
 // Fetch product data
 const productId = computed(() => route.params.id as string)
@@ -529,7 +531,13 @@ const addToCart = () => {
     })
     
     // Show success notification
-    alert(`Added ${quantity.value} ${product.value.name} to cart`)
+    // alert(`Added ${quantity.value} ${product.value.name} to cart`)
+    showToast({
+        title: "Success",
+        message: `Added ${quantity.value} ${product.value.name} to cart`,
+        toastType: "success",
+        duration: 3000
+      });
   }
 }
 
@@ -543,7 +551,13 @@ const addRelatedToCart = (relatedProduct: any) => {
   })
   
   // Show success notification
-  alert(`Added ${relatedProduct.name} to cart`)
+  // alert(`Added ${relatedProduct.name} to cart`)
+  showToast({
+        title: "Success",
+        message: `Added ${relatedProduct.name} to cart`,
+        toastType: "success",
+        duration: 3000
+      });
 }
 
 const formatPrice = (price: number) => {

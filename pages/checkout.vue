@@ -41,7 +41,7 @@
           <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
             <div class="flex justify-between mb-2">
               <span class="text-gray-600">Order Number:</span>
-              <span class="font-medium">#{{ generateOrderNumber() }}</span>
+              <span class="font-medium">#{{ orderId || generateOrderNumber() }}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-gray-600">Total Amount:</span>
@@ -59,7 +59,7 @@
     <div v-else class="container mx-auto px-4 py-8">
       <h1 class="text-2xl font-bold mb-8 text-center md:text-left animate-fade-in">Checkout</h1>
       
-      <!-- Authentication Check Modal -->
+      <!-- Authentication Modal -->
       <Transition name="fade">
         <div v-if="showAuthModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
           <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-scale-in">
@@ -235,27 +235,6 @@
         </div>
       </Transition>
       
-      <!-- Success Modal -->
-      <Transition name="fade">
-        <div v-if="showSuccessModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div class="bg-white rounded-xl shadow-lg max-w-md w-full p-6 animate-bounce-in">
-            <div class="text-center">
-              <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-500 mb-4">
-                <CheckCircle class="w-8 h-8" />
-              </div>
-              <h2 class="text-2xl font-bold mb-2">Account Created!</h2>
-              <p class="text-gray-600 mb-6">Your account has been created successfully. You can now proceed with checkout.</p>
-              <button 
-                @click="showSuccessModal = false"
-                class="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105"
-              >
-                Continue to Checkout
-              </button>
-            </div>
-          </div>
-        </div>
-      </Transition>
-      
       <!-- Checkout Steps Progress -->
       <div class="max-w-4xl mx-auto mb-12 animate-fade-in">
         <div class="flex items-center justify-between">
@@ -347,6 +326,7 @@
                     type="text"
                     required
                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    @input="persistDeliveryDetails"
                   />
                 </div>
                 
@@ -358,6 +338,7 @@
                     type="text"
                     required
                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    @input="persistDeliveryDetails"
                   />
                 </div>
                 
@@ -369,6 +350,7 @@
                     type="email"
                     required
                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    @input="persistDeliveryDetails"
                   />
                 </div>
                 
@@ -380,6 +362,7 @@
                     type="tel"
                     required
                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    @input="persistDeliveryDetails"
                   />
                 </div>
                 
@@ -391,6 +374,7 @@
                     type="text"
                     required
                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    @input="persistDeliveryDetails"
                   />
                 </div>
                 
@@ -402,6 +386,7 @@
                     type="text"
                     required
                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    @input="persistDeliveryDetails"
                   />
                 </div>
                 
@@ -413,6 +398,7 @@
                     type="text"
                     required
                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    @input="persistDeliveryDetails"
                   />
                 </div>
                 
@@ -424,6 +410,7 @@
                     type="text"
                     required
                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    @input="persistDeliveryDetails"
                   />
                 </div>
                 
@@ -434,6 +421,7 @@
                     v-model="deliveryDetails.country"
                     required
                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    @change="persistDeliveryDetails"
                   >
                     <option value="Nigeria">Nigeria</option>
                     <option value="Ghana">Ghana</option>
@@ -601,6 +589,7 @@
               <!-- Manual Payment Form -->
               <Transition name="fade">
                 <div v-if="paymentMethod === 'manual'" class="border-t border-gray-200 pt-6 mt-6">
+                  <!-- <h3 class="text-lg font-medium mb-4  class="border-t border-gray-200 pt-6 mt-6"> -->
                   <h3 class="text-lg font-medium mb-4">Card Details</h3>
                   <form class="space-y-4">
                     <div class="form-group">
@@ -712,14 +701,14 @@
                   <div class="flex items-center mt-2">
                     <button 
                       @click="updateItemQuantity(item.id, Math.max(1, item.quantity - 1))"
-                      class="w-7 h-7 flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
+                      class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
                     >
                       <Minus class="w-3 h-3" />
                     </button>
                     <span class="mx-2 text-sm font-medium">{{ item.quantity }}</span>
                     <button 
                       @click="updateItemQuantity(item.id, item.quantity + 1)"
-                      class="w-7 h-7 flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
+                      class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
                     >
                       <Plus class="w-3 h-3" />
                     </button>
@@ -807,10 +796,8 @@ import { useCartStore } from '@/composables/useCartStore'
 import { use_auth_signup } from '@/composables/auth/register'
 import { use_auth_login } from '@/composables/auth/login'
 import { useCheckoutStore } from '@/composables/useCheckoutStore'
-import { useCreateOrder } from '@/composables/modules/orders/useCreateOrder'
 import { useUser } from '@/composables/auth/user'
-
-const { loading: orderLoading, createOrder, apiRes } = useCreateOrder()
+import { useLocalStorage } from '@/composables/useLocalStorage'
 import { 
   ShoppingBag, 
   CheckCircle, 
@@ -829,14 +816,21 @@ import {
   HelpCircle,
   Clock
 } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+
+// Router
+const router = useRouter()
 
 // Cart store
-const { cart, removeFromCart, updateCartItemQuantity, clearCart } = useCartStore()
+const { cart, removeFromCart, updateCartItemQuantity } = useCartStore()
 
 // Auth
 const { signup } = use_auth_signup()
 const { login } = use_auth_login()
-const { isLoggedIn } = useUser()
+const { isLoggedIn, user } = useUser()
+
+// Local storage
+const { setItem, getItem, removeItem: removeStorageItem } = useLocalStorage()
 
 // Checkout store
 const { 
@@ -848,17 +842,19 @@ const {
   cardDetails,
   isProcessing,
   orderComplete,
+  orderId,
   nextStep,
   prevStep,
   setDeliveryMethod,
   setPaymentMethod,
-  processPayment: originalProcessPayment
+  processPayment,
+  persistDeliveryDetails,
+  resetCheckout
 } = useCheckoutStore()
 
 // Authentication state
 const showAuthModal = ref(false)
 const authModalMode = ref('check') // 'check', 'signin', 'signup'
-const showSuccessModal = ref(false)
 const isSigningUp = ref(false)
 const isSigningIn = ref(false)
 
@@ -885,6 +881,7 @@ const signinData = ref({
 // Proceed as guest
 const proceedAsGuest = () => {
   showAuthModal.value = false
+  setItem('checkout-guest-mode', 'true')
 }
 
 // Close auth modal
@@ -912,14 +909,14 @@ const handleSignup = async () => {
     if (response) {
       showAuthModal.value = false
       
-      // Show success modal
-      showSuccessModal.value = true
-      
       // Pre-fill delivery details with user info
-      deliveryDetails.value.firstName = signupData.value.firstName
-      deliveryDetails.value.lastName = signupData.value.lastName
-      deliveryDetails.value.email = signupData.value.email
-      deliveryDetails.value.phone = signupData.value.phone || ''
+      deliveryDetails.firstName = signupData.value.firstName
+      deliveryDetails.lastName = signupData.value.lastName
+      deliveryDetails.email = signupData.value.email
+      deliveryDetails.phone = signupData.value.phone || ''
+      
+      // Persist delivery details
+      persistDeliveryDetails()
     }
   } catch (error) {
     console.error('Signup failed:', error)
@@ -947,10 +944,13 @@ const handleSignin = async () => {
       // Pre-fill delivery details if available from user data
       const userData = JSON.parse(localStorage.getItem('user-data') || '{}')
       if (userData) {
-        deliveryDetails.value.firstName = userData.firstName || ''
-        deliveryDetails.value.lastName = userData.lastName || ''
-        deliveryDetails.value.email = userData.email || ''
-        deliveryDetails.value.phone = userData.phone || ''
+        deliveryDetails.firstName = userData.firstName || ''
+        deliveryDetails.lastName = userData.lastName || ''
+        deliveryDetails.email = userData.email || ''
+        deliveryDetails.phone = userData.phone || ''
+        
+        // Persist delivery details
+        persistDeliveryDetails()
       }
     }
   } catch (error) {
@@ -958,20 +958,6 @@ const handleSignin = async () => {
     // Handle error (could add error state and message)
   } finally {
     isSigningIn.value = false
-  }
-}
-
-// Process payment with fixed loading state
-const processPayment = async () => {
-  try {
-    await originalProcessPayment()
-  } finally {
-    // Ensure isProcessing is reset regardless of success/failure
-    setTimeout(() => {
-      if (isProcessing.value) {
-        isProcessing.value = false
-      }
-    }, 500)
   }
 }
 
@@ -1025,22 +1011,31 @@ const handleImageError = (event: Event) => {
 
 // Check if user is logged in on page load
 const checkUserAuth = () => {
-  const token = localStorage.getItem('token')
-  const userData = localStorage.getItem('user-data')
+  // Only show auth modal if user is not logged in and not in guest mode
+  const isGuestMode = getItem('checkout-guest-mode') === 'true'
   
-  if (!token || !userData) {
+  if (!isLoggedIn.value && !isGuestMode) {
     showAuthModal.value = true
   }
 }
 
 // Start checkout timer
 const startCheckoutTimer = () => {
+  // Restore timer from localStorage if exists
+  const savedTimer = getItem('checkout-timer')
+  if (savedTimer) {
+    checkoutTimer.value = parseInt(savedTimer)
+  }
+  
   timerInterval = setInterval(() => {
     if (checkoutTimer.value > 0) {
       checkoutTimer.value--
+      // Save timer to localStorage
+      setItem('checkout-timer', checkoutTimer.value.toString())
     } else {
       clearInterval(timerInterval)
-      // Handle expired timer (could redirect to cart or show message)
+      // Handle expired timer - redirect to cart
+      router.push('/cart')
     }
   }, 1000)
 }
@@ -1053,15 +1048,39 @@ watch(cart, () => {
   }
 }, { deep: true })
 
-// Check if cart is empty
-const isCartEmpty = computed(() => {
-  return !checkoutSummary.value || checkoutSummary.value.items.length === 0
+// Watch for login status changes
+watch(isLoggedIn, (newValue) => {
+  if (newValue) {
+    // User is now logged in, close auth modal if open
+    showAuthModal.value = false
+    
+    // Pre-fill delivery details with user info if available
+    if (user.value) {
+      deliveryDetails.firstName = user.value.firstName || ''
+      deliveryDetails.lastName = user.value.lastName || ''
+      deliveryDetails.email = user.value.email || ''
+      deliveryDetails.phone = user.value.phone || ''
+      
+      // Persist updated delivery details
+      persistDeliveryDetails()
+    }
+  } else {
+    // User is logged out, check if we should show auth modal
+    checkUserAuth()
+  }
 })
 
-// Watch for empty cart
-watch(isCartEmpty, (newValue) => {
+// Watch for order completion
+watch(orderComplete, (newValue) => {
   if (newValue) {
-    // If cart becomes empty, redirect or show message
+    // Clear checkout timer on successful order
+    if (timerInterval) {
+      clearInterval(timerInterval)
+    }
+    
+    // Reset checkout timer
+    checkoutTimer.value = 15 * 60
+    removeStorageItem('checkout-timer')
   }
 })
 
@@ -1074,8 +1093,9 @@ onMounted(() => {
   startCheckoutTimer()
   
   // Check if cart is empty
-  if (cart.value.length === 0) {
-    // Handle empty cart
+  if (!checkoutSummary.value || (checkoutSummary.value.items.length === 0)) {
+    // Redirect to cart page
+    router.push('/')
   }
 })
 
@@ -1123,10 +1143,6 @@ onBeforeUnmount(() => {
   animation: scaleIn 0.5s ease-out forwards;
 }
 
-.animate-bounce-in {
-  animation: bounceIn 0.5s ease-out forwards;
-}
-
 .animate-bounce-once {
   animation: bounceOnce 1s ease-out forwards;
 }
@@ -1167,6 +1183,10 @@ onBeforeUnmount(() => {
   animation-delay: 0.5s;
 }
 
+.delay-600 {
+  animation-delay: 0.6s;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -1184,20 +1204,6 @@ onBeforeUnmount(() => {
     transform: scale(0.95);
   }
   to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes bounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
     opacity: 1;
     transform: scale(1);
   }

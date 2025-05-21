@@ -1,515 +1,710 @@
 <template>
-  <div class="min-h-screen bg-black text-white overflow-hidden">
-    <!-- Floating Elements -->
-    <div class="fixed w-full h-full pointer-events-none">
-      <div class="absolute top-20 left-10 w-32 h-32 bg-rose-500/20 rounded-full mix-blend-screen blur-xl animate-float-slow"></div>
-      <div class="absolute bottom-40 right-20 w-40 h-40 bg-amber-500/20 rounded-full mix-blend-screen blur-xl animate-float-medium"></div>
-      <div class="absolute top-1/3 right-1/4 w-24 h-24 bg-emerald-500/20 rounded-full mix-blend-screen blur-xl animate-float-fast"></div>
-    </div>
-    
-    <!-- Hero Section -->
-    <section class="relative py-16 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-7xl mx-auto">
-        <div class="text-center mb-12">
-          <h1 class="text-5xl md:text-7xl font-bold mb-4 relative inline-block">
-            <span class="bg-clip-text text-transparent bg-gradient-to-r from-rose-400 via-amber-300 to-rose-400 animate-gradient">
-              ARTWORKS
-            </span>
-          </h1>
-          <p class="text-xl text-gray-300 max-w-2xl mx-auto">
-            Explore the soul-stirring creations that blend faith, emotion, and technical mastery.
-          </p>
+    <div class="min-h-screen  text-white mt-20">
+      <!-- Animated CTA Banner -->
+      <!-- <div class="relative py-10 bg-black overflow-hidden">
+        <div class="container mx-auto text-center">
+          <h2 
+            class="text-xl md:text-2xl font-medium mb-4 animate-pulse"
+            v-motion
+            :initial="{ opacity: 0, y: 50 }"
+            :enter="{ opacity: 1, y: 0, transition: { duration: 800 } }"
+          >
+            IF YOU ARE INTERESTED IN COLLECTING AN ORIGINAL PIECE, CLICK BELOW
+          </h2>
+          <NuxtLink to="/contact-us"
+            class="bg-white text-black rounded-sm px-8 py-2 hover:bg-gray-200 transition-all duration-300 transform hover:scale-105"
+            v-motion
+            :initial="{ opacity: 0 }"
+            :enter="{ opacity: 1, transition: { delay: 400, duration: 600 } }"
+            @click="navigateTo('/shop')"
+          >
+            PURCHASE
+          </NuxtLink>
         </div>
+      </div> -->
+      <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900 to-black">
+      <div class="max-w-5xl mx-auto text-center">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6 text-white">
+          Interested in Collecting an Original Piece?
+        </h2>
+        
+        <p class="text-xl text-gray-300 mb-10 max-w-3xl mx-auto">
+          Own a one-of-a-kind masterpiece that captures the depth of emotion and technical excellence that defines my work.
+        </p>
+        
+        <a 
+          href="/contact-us" 
+          class="inline-flex items-center justify-center px-8 py-3 bg-white text-black font-medium rounded-md hover:bg-gray-200 transition-colors"
+        >
+          PURCHASE
+        </a>
       </div>
     </section>
-    
-    <!-- Unique Artwork Layout -->
-    <section class="relative px-4 sm:px-6 lg:px-8 pb-24">
-      <div class="max-w-7xl mx-auto">
-        <!-- Honeycomb Layout for Desktop -->
-        <div class="hidden lg:block">
-          <div class="honeycomb">
-            <div 
-              v-for="(artwork, index) in artworks" 
-              :key="artwork.id"
-              class="honeycomb-cell"
-              :class="{ 'honeycomb-cell-featured': index % 7 === 0 }"
-              @click="openArtworkModal(artwork)"
-            >
-              <div class="honeycomb-cell-inner">
-                <img 
-                  :src="artwork.imageUrl" 
-                  :alt="artwork.title" 
-                  class="honeycomb-cell-image"
-                  @error="handleImageError"
-                />
-                <div class="honeycomb-cell-overlay">
-                  <h3 class="text-lg font-bold">{{ artwork.title }}</h3>
+  
+      <!-- Artwork Gallery -->
+      <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div 
+            v-for="(artwork, index) in artworks" 
+            :key="index" 
+            class="relative overflow-hidden rounded-lg cursor-pointer group"
+            @click="openArtworkModal(artwork)"
+          >
+            <!-- Artwork Card with Flip Effect -->
+            <div class="relative w-full h-[400px] perspective-1000">
+              <div 
+                class="absolute w-full h-full transition-all duration-700 transform-style-3d"
+                :class="{'rotate-y-180': artwork.isFlipped}"
+                @mouseenter="artwork.isFlipped = true"
+                @mouseleave="artwork.isFlipped = false"
+              >
+                <!-- Front of Card -->
+                <div class="absolute w-full h-full backface-hidden">
+                  <img 
+                    :src="artwork.image" 
+                    :alt="artwork.title" 
+                    class="w-full h-full object-cover"
+                  />
+                </div>
+                
+                <!-- Back of Card (Flipped View) -->
+                <div class="absolute w-full h-full backface-hidden rotate-y-180 bg-gray-900">
+                  <img 
+                    :src="artwork.imageAlt" 
+                    :alt="artwork.title + ' (alternate view)'" 
+                    class="w-full h-full object-cover opacity-80"
+                  />
+                  <div class="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black/80 to-transparent">
+                    <h3 class="text-xl font-bold mb-2">{{ artwork.title }}</h3>
+                    <p class="text-sm mb-3">{{ artwork.shortDescription }}</p>
+                    <p class="text-lg font-semibold">From ${{ artwork.price }}</p>
+                  </div>
                 </div>
               </div>
             </div>
+            
+            <!-- Hover Overlay -->
+            <div 
+              class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
+              v-if="!artwork.isFlipped"
+            >
+              <h3 class="text-xl font-bold mb-2">{{ artwork.title }}</h3>
+              <p class="text-sm mb-3">{{ artwork.shortDescription }}</p>
+              <p class="text-lg font-semibold">From ${{ artwork.price }}</p>
+              <button class="bg-white rounded-lg text-black px-4 py-2.5 mt-2 hover:bg-gray-200 transition-all duration-300">
+                View Details
+              </button>
+            </div>
           </div>
         </div>
-        
-        <!-- Staggered Grid for Mobile/Tablet -->
-        <div class="lg:hidden">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div class="space-y-6">
-              <div 
-                v-for="artwork in artworksLeft" 
-                :key="artwork.id"
-                class="artwork-card"
-                @click="openArtworkModal(artwork)"
-              >
-                <div class="relative overflow-hidden rounded-lg transform transition-all duration-500 hover:scale-[1.02] hover:shadow-xl">
-                  <img 
-                    :src="artwork.imageUrl" 
-                    :alt="artwork.title" 
-                    class="w-full h-auto object-cover"
-                    @error="handleImageError"
-                  />
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end">
-                    <div class="p-4">
-                      <h3 class="text-lg font-bold text-white">{{ artwork.title }}</h3>
+      </div>
+
+      <TestimonialsCarousel />
+  
+      <!-- Artwork Preview Modal -->
+      <Teleport to="body">
+        <div 
+          v-if="selectedArtwork" 
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 transition-all duration-500"
+          :class="{'opacity-100': modalOpen, 'opacity-0': !modalOpen}"
+        >
+          <div 
+            class="relative w-full max-w-4xl bg-white p-4 md:p-8 rounded-lg shadow-xl transform transition-all duration-500"
+            :class="{'translate-y-0 scale-100': modalOpen, 'translate-y-8 scale-95': !modalOpen}"
+          >
+            <div class="flex flex-col md:flex-row gap-8">
+              <div class="w-full md:w-1/2">
+                <img 
+                  :src="selectedArtwork.image" 
+                  :alt="selectedArtwork.title" 
+                  class="w-full h-auto object-cover rounded"
+                />
+              </div>
+              <div class="w-full md:w-1/2">
+                <h2 class="text-2xl font-bold mb-4">{{ selectedArtwork.title }}</h2>
+                <p class="text-lg mb-2">From ${{ selectedArtwork.price }}</p>
+                <p class="text-sm text-gray-400 mb-6">{{ selectedArtwork.description }}</p>
+                
+                <div class="mb-4">
+                  <label class="block text-sm font-medium mb-2">Size *</label>
+                  <select 
+                    v-model="selectedSize" 
+                    class="w-full p-2 border border-gray-700 bg-black text-white rounded"
+                  >
+                    <option disabled value="">Select</option>
+                    <option 
+                      v-for="size in selectedArtwork.sizes" 
+                      :key="size.id" 
+                      :value="size.id"
+                    >
+                      {{ size.name }} - ${{ size.price }}
+                    </option>
+                  </select>
+                </div>
+                
+                <div class="mb-6">
+                  <label class="block text-sm font-medium mb-2">Quantity *</label>
+                  <div class="flex items-center">
+                    <button 
+                      @click="quantity > 1 ? quantity-- : null" 
+                      class="px-3 py-1 border border-gray-700 hover:bg-gray-800"
+                    >
+                      -
+                    </button>
+                    <input 
+                      v-model="quantity" 
+                      type="number" 
+                      min="1" 
+                      class="w-16 p-1 text-center border-t border-b border-gray-700 bg-black text-white"
+                    />
+                    <button 
+                      @click="quantity++" 
+                      class="px-3 py-1 border border-gray-700 hover:bg-gray-800"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                
+                <button 
+                  @click="addToCart" 
+                  class="w-full text-white py-3 font-medium  border rounded-lg bg-black transition-colors duration-300"
+                >
+                  Add to Cart
+                </button>
+                
+                <div class="mt-8 space-y-4">
+                  <div class="border-t border-gray-800 pt-4">
+                    <div class="flex justify-between items-center">
+                      <h3 class="font-medium">PRODUCT INFO</h3>
+                      <button class="text-xl">+</button>
+                    </div>
+                  </div>
+                  <div class="border-t border-gray-800 pt-4">
+                    <div class="flex justify-between items-center">
+                      <h3 class="font-medium">RETURN & REFUND POLICY</h3>
+                      <button class="text-xl">+</button>
+                    </div>
+                  </div>
+                  <div class="border-t border-gray-800 pt-4">
+                    <div class="flex justify-between items-center">
+                      <h3 class="font-medium">SHIPPING INFO</h3>
+                      <button class="text-xl">-</button>
+                    </div>
+                    <div class="mt-2 text-sm">
+                      <p>Free worldwide shipping</p>
+                      <p>Estimated delivery time: 5-8 Business days after placing order.</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div class="space-y-6 mt-12 sm:mt-24">
-              <div 
-                v-for="artwork in artworksRight" 
-                :key="artwork.id"
-                class="artwork-card"
-                @click="openArtworkModal(artwork)"
-              >
-                <div class="relative overflow-hidden rounded-lg transform transition-all duration-500 hover:scale-[1.02] hover:shadow-xl">
-                  <img 
-                    :src="artwork.imageUrl" 
-                    :alt="artwork.title" 
-                    class="w-full h-auto object-cover"
-                    @error="handleImageError"
-                  />
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end">
-                    <div class="p-4">
-                      <h3 class="text-lg font-bold text-white">{{ artwork.title }}</h3>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Artwork Modal -->
-    <Teleport to="body">
-      <transition 
-        enter-active-class="transition duration-300 ease-out"
-        enter-from-class="transform scale-95 opacity-0"
-        enter-to-class="transform scale-100 opacity-100"
-        leave-active-class="transition duration-200 ease-in"
-        leave-from-class="transform scale-100 opacity-100"
-        leave-to-class="transform scale-95 opacity-0"
-      >
-        <div v-if="selectedArtwork" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-20" @click="closeArtworkModal">
-          <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" aria-hidden="true"></div>
-          
-          <div 
-            class="relative bg-black border border-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
-            @click.stop
-          >
-            <div class="absolute top-4 right-4 z-10">
+            <!-- Navigation Buttons -->
+            <div class="absolute top-1/2 -translate-y-1/2 flex justify-between w-full px-4">
               <button 
-                @click="closeArtworkModal" 
-                class="rounded-full p-2 bg-black/50 text-white hover:bg-black/80 transition-colors"
+                @click="navigateToPrevArtwork" 
+                class="bg-white/10 hover:bg-white/20 border-4 p-2 rounded-full"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <button 
+                @click="navigateToNextArtwork" 
+                class="bg-white/10 hover:bg-white/20 border-4 p-2 rounded-full"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
               </button>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2">
-              <div class="relative h-[50vh] md:h-[80vh] overflow-hidden">
+            <!-- Close button - intentionally not included as per requirements -->
+          </div>
+        </div>
+      </Teleport>
+  
+      <!-- Full Screen Modal -->
+      <Teleport to="body">
+        <div 
+          v-if="fullScreenModalOpen" 
+          class="fixed inset-0 z-50 bg-white transition-all duration-500 overflow-y-auto"
+          :class="{'opacity-100': fullScreenModalOpen, 'opacity-0': !fullScreenModalOpen}"
+        >
+          <div class="container mx-auto px-4 py-8">
+            <div class="flex justify-between items-center mb-6">
+              <div class="text-sm breadcrumbs">
+                <ul class="flex space-x-2">
+                  <li><NuxtLink to="/" class="hover:text-gray-300">Home</NuxtLink></li>
+                  <li><span>/</span></li>
+                  <li><NuxtLink to="/shop" class="hover:text-gray-300">Shop</NuxtLink></li>
+                  <li><span>/</span></li>
+                  <li>{{ fullScreenArtwork?.title }}</li>
+                </ul>
+              </div>
+              <div class="flex space-x-4">
+                <button 
+                  @click="navigateToPrevFullScreen" 
+                  class="flex items-center hover:text-gray-300"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+                  <span>Prev</span>
+                </button>
+                <button 
+                  @click="navigateToNextFullScreen" 
+                  class="flex items-center hover:text-gray-300"
+                >
+                  <span>Next</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
                 <img 
-                  :src="selectedArtwork.imageUrl" 
-                  :alt="selectedArtwork.title" 
-                  class="w-full h-full object-cover"
-                  @error="handleImageError"
+                  :src="fullScreenArtwork?.image" 
+                  :alt="fullScreenArtwork?.title" 
+                  class="w-full h-auto object-contain"
                 />
-                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent md:hidden"></div>
+                <div class="grid grid-cols-5 gap-2 mt-4">
+                  <div 
+                    v-for="(thumb, index) in fullScreenArtwork?.thumbnails" 
+                    :key="index" 
+                    class="cursor-pointer border-2"
+                    :class="{'border-white': selectedThumb === index, 'border-transparent': selectedThumb !== index}"
+                    @click="selectedThumb = index"
+                  >
+                    <img :src="thumb" :alt="`Thumbnail ${index + 1}`" class="w-full h-auto" />
+                  </div>
+                </div>
               </div>
               
-              <div class="p-6 md:p-8 flex flex-col h-full justify-between">
-                <div>
-                  <h2 class="text-2xl md:text-3xl font-bold mb-4 text-white">{{ selectedArtwork.title }}</h2>
+              <div>
+                <h1 class="text-2xl font-bold mb-4">{{ fullScreenArtwork?.title }}</h1>
+                <p class="text-xl mb-2">From ${{ fullScreenArtwork?.price }}</p>
+                <p class="text-sm text-gray-400 mb-4">{{ fullScreenArtwork?.saleInfo }}</p>
+                
+                <div class="mb-4">
+                  <label class="block text-sm font-medium mb-2">Size *</label>
+                  <select 
+                    v-model="selectedFullScreenSize" 
+                    class="w-full p-2 border border-gray-700 bg-black text-white rounded"
+                  >
+                    <option disabled value="">Select</option>
+                    <option 
+                      v-for="size in fullScreenArtwork?.sizes" 
+                      :key="size.id" 
+                      :value="size.id"
+                    >
+                      {{ size.name }} - ${{ size.price }}
+                    </option>
+                  </select>
+                </div>
+                
+                <div class="mb-6">
+                  <label class="block text-sm font-medium mb-2">Quantity *</label>
+                  <div class="flex items-center">
+                    <button 
+                      @click="fullScreenQuantity > 1 ? fullScreenQuantity-- : null" 
+                      class="px-3 py-2.5 border border-gray-700"
+                    >
+                      -
+                    </button>
+                    <input 
+                      v-model="fullScreenQuantity" 
+                      type="number" 
+                      min="1" 
+                      class="w-16 p-1 py-2.5 text-center border-t border-b border-gray-700 bg-black text-white"
+                    />
+                    <button 
+                      @click="fullScreenQuantity++" 
+                      class="px-3 py-2.5 border border-gray-700"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                
+                <button 
+                  @click="addToCartFromFullScreen" 
+                  class="w-full text-white bg-black py-3 text-sm font-medium rounded-lg  transition-colors duration-300"
+                >
+                  Add to Cart
+                </button>
+                
+                <div class="mt-8 space-y-4">
+                  <div class="border-t border-gray-800 pt-4">
+                    <div 
+                      class="flex justify-between items-center cursor-pointer"
+                      @click="toggleSection('productInfo')"
+                    >
+                      <h3 class="font-medium">PRODUCT INFO</h3>
+                      <button class="text-xl">{{ openSections.productInfo ? '-' : '+' }}</button>
+                    </div>
+                    <div v-if="openSections.productInfo" class="mt-2 text-sm">
+                      <p>{{ fullScreenArtwork?.description }}</p>
+                    </div>
+                  </div>
                   
-                  <div class="space-y-4">
-                    <p class="text-gray-300">{{ selectedArtwork.description }}</p>
-                    
-                    <div class="border-t border-gray-800 pt-4">
-                      <h3 class="text-lg font-semibold mb-2 text-white">Details</h3>
-                      <ul class="space-y-2 text-gray-300">
-                        <li class="flex items-start">
-                          <span class="font-medium mr-2">Medium:</span>
-                          <span>{{ selectedArtwork.medium }}</span>
-                        </li>
-                        <li class="flex items-start">
-                          <span class="font-medium mr-2">Dimensions:</span>
-                          <span>{{ selectedArtwork.dimensions }}</span>
-                        </li>
-                        <li class="flex items-start">
-                          <span class="font-medium mr-2">Year:</span>
-                          <span>{{ selectedArtwork.year }}</span>
-                        </li>
-                      </ul>
+                  <div class="border-t border-gray-800 pt-4">
+                    <div 
+                      class="flex justify-between items-center cursor-pointer"
+                      @click="toggleSection('returnPolicy')"
+                    >
+                      <h3 class="font-medium">RETURN & REFUND POLICY</h3>
+                      <button class="text-xl">{{ openSections.returnPolicy ? '-' : '+' }}</button>
+                    </div>
+                    <div v-if="openSections.returnPolicy" class="mt-2 text-sm">
+                      <p>All sales are final. Due to the custom nature of our artwork, we do not accept returns or exchanges.</p>
+                    </div>
+                  </div>
+                  
+                  <div class="border-t border-gray-800 pt-4">
+                    <div 
+                      class="flex justify-between items-center cursor-pointer"
+                      @click="toggleSection('shippingInfo')"
+                    >
+                      <h3 class="font-medium">SHIPPING INFO</h3>
+                      <button class="text-xl">{{ openSections.shippingInfo ? '-' : '+' }}</button>
+                    </div>
+                    <div v-if="openSections.shippingInfo" class="mt-2 text-sm">
+                      <p>Free worldwide shipping</p>
+                      <p>Estimated delivery time: 5-8 Business days after placing order.</p>
                     </div>
                   </div>
                 </div>
                 
-                <div class="mt-8 flex flex-col sm:flex-row gap-4">
-                  <a 
-                    :href="`/shop/${selectedArtwork.id}`" 
-                    class="inline-flex items-center justify-center px-6 py-3 bg-rose-600 text-white font-medium rounded-md hover:bg-rose-700 transition-colors"
-                  >
-                    Purchase Print
-                  </a>
+                <div class="mt-8">
+                  <h3 class="text-xl font-medium mb-4">Reviews</h3>
+                  <div class="flex items-center mb-2">
+                    <div class="flex">
+                      <span v-for="i in 5" :key="i" class="text-xl">
+                        <span v-if="i <= Math.floor(fullScreenArtwork?.rating || 0)">★</span>
+                        <span v-else-if="i - 0.5 <= fullScreenArtwork?.rating || 0">★</span>
+                        <span v-else>☆</span>
+                      </span>
+                    </div>
+                    <span class="ml-2 text-xl">{{ fullScreenArtwork?.rating }}</span>
+                  </div>
+                  <p class="text-sm text-gray-400 mb-4">Based on {{ fullScreenArtwork?.reviewCount }} reviews</p>
                   
-                  <button 
-                    @click="addToFavorites(selectedArtwork)" 
-                    class="inline-flex items-center justify-center px-6 py-3 bg-transparent border border-gray-600 text-white font-medium rounded-md hover:bg-white/10 transition-colors"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
-                    </svg>
-                    Add to Favorites
+                  <button class="border border-white px-6 py-2 hover:bg-white hover:text-black transition-colors duration-300">
+                    Leave a Review
                   </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </transition>
-    </Teleport>
-    
-    <!-- Prints Information Section -->
-    <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-black to-gray-900">
-      <div class="max-w-7xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 class="text-3xl font-bold mb-6 text-white">PRINTS</h2>
-            <div class="space-y-4 text-gray-300">
-              <p>
-                Limited edition of 10 and 20 prints printed on Hahnemühle german etching 310 gsm. Prints are available in 2 sizes which are medium and large.
-              </p>
-              <p>
-                All prints arrive with Certificate of Authenticity.
-              </p>
-              <p>
-                All prints are shipped rolled in a protective tube only.
-              </p>
-            </div>
-            
-            <div class="mt-8">
-              <a 
-                href="/shop" 
-                class="inline-flex items-center justify-center px-8 py-3 bg-white text-black font-medium rounded-md hover:bg-gray-200 transition-colors"
-              >
-                Shop Prints
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-              </a>
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-2 gap-4">
-            <div class="aspect-[3/4] bg-gray-800 rounded-lg overflow-hidden">
-              <img 
-                src="@/assets/img/commission-art.png" 
-                alt="Print Sample 1" 
-                class="w-full h-full object-cover"
-                @error="handleImageError"
-              />
-            </div>
-            <div class="aspect-[3/4] bg-gray-800 rounded-lg overflow-hidden">
-              <img 
-                src="@/assets/img/artist.avif" 
-                alt="Print Sample 2" 
-                class="w-full h-full object-cover"
-                @error="handleImageError"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
-</template>
-
-<script setup lang="ts">
-import { ref, computed } from 'vue'
-import artwork1 from '@/assets/img/artist.avif'
-import artwork2 from '@/assets/img/commission-art1.jpg'
-import artwork3 from '@/assets/img/commission-art.png'
-
-interface Artwork {
-  id: number;
-  title: string;
-  description: string;
-  medium: string;
-  dimensions: string;
-  year: number;
-  imageUrl: string;
-}
-
-// Sample artwork data
-const artworks = ref<Artwork[]>([
-  {
-    id: 1,
-    title: "No Greater Love",
-    description: "A powerful portrayal of sacrifice and redemption, inspired by themes of faith and humanity's capacity for love.",
-    medium: "Charcoal on paper",
-    dimensions: "24 x 36 inches",
-    year: 2023,
-    imageUrl: artwork1
-  },
-  {
-    id: 2,
-    title: "Heart of Hope",
-    description: "A delicate study of hands cradling a heart, symbolizing the fragility and strength of hope in difficult times.",
-    medium: "Charcoal on paper",
-    dimensions: "18 x 24 inches",
-    year: 2022,
-    imageUrl: artwork2
-  },
-  {
-    id: 3,
-    title: "Signs & Symbols of Hope I",
-    description: "Part of a series exploring religious iconography and its role in providing comfort and guidance through life's challenges.",
-    medium: "Charcoal on paper",
-    dimensions: "24 x 30 inches",
-    year: 2023,
-    imageUrl: artwork3
-  },
-  {
-    id: 4,
-    title: "Bound Together",
-    description: "An intimate portrayal of human connection, showing hands intertwined in a gesture of solidarity and support.",
-    medium: "Charcoal on paper",
-    dimensions: "20 x 24 inches",
-    year: 2022,
-    imageUrl: artwork1
-  },
-  {
-    id: 5,
-    title: "Rebirth",
-    description: "A vibrant depiction of renewal and transformation, using warm colors to evoke the energy of a new beginning.",
-    medium: "Acrylic on canvas",
-    dimensions: "30 x 40 inches",
-    year: 2023,
-    imageUrl: artwork2
-  },
-  {
-    id: 6,
-    title: "Coastal Serenity",
-    description: "A peaceful landscape capturing the tranquility of a coastal scene at dawn, with subtle color transitions.",
-    medium: "Acrylic on canvas",
-    dimensions: "24 x 36 inches",
-    year: 2021,
-    imageUrl: artwork3
-  },
-  {
-    id: 7,
-    title: "Divine Protection",
-    description: "A powerful image of an angel protecting a vulnerable figure, symbolizing divine intervention in times of need.",
-    medium: "Charcoal and pastel on paper",
-    dimensions: "36 x 48 inches",
-    year: 2023,
-    imageUrl: artwork1
-  },
-  {
-    id: 8,
-    title: "Radiant Heart",
-    description: "A striking anatomical heart surrounded by radiating lines, representing the power of love to illuminate darkness.",
-    medium: "Mixed media on canvas",
-    dimensions: "24 x 24 inches",
-    year: 2022,
-    imageUrl: artwork2
-  },
-  {
-    id: 9,
-    title: "Ascension",
-    description: "A dramatic portrayal of spiritual elevation, featuring a figure rising above earthly constraints.",
-    medium: "Charcoal and white chalk on toned paper",
-    dimensions: "30 x 40 inches",
-    year: 2023,
-    imageUrl: artwork3
-  },
-])
-
-// Split artworks for staggered mobile layout
-const artworksLeft = computed(() => {
-  return artworks.value.filter((_, index) => index % 2 === 0)
-})
-
-const artworksRight = computed(() => {
-  return artworks.value.filter((_, index) => index % 2 === 1)
-})
-
-// Modal functionality
-const selectedArtwork = ref<Artwork | null>(null)
-
-const openArtworkModal = (artwork: Artwork) => {
-  selectedArtwork.value = artwork
-  document.body.classList.add('overflow-hidden')
-}
-
-const closeArtworkModal = () => {
-  selectedArtwork.value = null
-  document.body.classList.remove('overflow-hidden')
-}
-
-// Favorites functionality
-const addToFavorites = (artwork: Artwork) => {
-  // Here you would implement the logic to add to favorites
-  alert(`Added "${artwork.title}" to favorites!`)
-}
-
-// Image error handling
-const handleImageError = (event: Event) => {
-  const target = event.target as HTMLImageElement
-  target.src = '/placeholder.svg?height=400&width=300'
-}
-</script>
-
-<style scoped>
-/* Animations */
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0) rotate(0); }
-  50% { transform: translateY(-20px) rotate(5deg); }
-}
-
-@keyframes float-medium {
-  0%, 100% { transform: translateY(0) rotate(0); }
-  50% { transform: translateY(-15px) rotate(-5deg); }
-}
-
-@keyframes float-fast {
-  0%, 100% { transform: translateY(0) rotate(0); }
-  50% { transform: translateY(-10px) rotate(3deg); }
-}
-
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animate-float-slow {
-  animation: float-slow 8s ease-in-out infinite;
-}
-
-.animate-float-medium {
-  animation: float-medium 6s ease-in-out infinite;
-}
-
-.animate-float-fast {
-  animation: float-fast 4s ease-in-out infinite;
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient-shift 3s ease infinite;
-}
-
-/* Honeycomb Layout */
-.honeycomb {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0 auto;
-  transform: translateY(25px);
-  max-width: 1200px;
-}
-
-.honeycomb-cell {
-  flex: 0 1 250px;
-  max-width: 250px;
-  height: 280px;
-  margin: 25px 12px 0;
-  position: relative;
-  padding: 0.5em;
-  text-align: center;
-  z-index: 1;
-  cursor: pointer;
-  transform: scale(1);
-  transition: transform 0.4s ease;
-}
-
-.honeycomb-cell:hover {
-  transform: scale(1.05);
-  z-index: 2;
-}
-
-.honeycomb-cell-featured {
-  flex: 0 1 300px;
-  max-width: 300px;
-  height: 330px;
-}
-
-.honeycomb-cell-inner {
-  height: 100%;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-  background-color: #1a1a1a;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-}
-
-.honeycomb-cell-image {
-  object-fit: cover;
-  object-position: center;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.5s ease;
-}
-
-.honeycomb-cell:hover .honeycomb-cell-image {
-  transform: scale(1.1);
-}
-
-.honeycomb-cell-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 2rem 1rem 1rem;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.honeycomb-cell:hover .honeycomb-cell-overlay {
-  opacity: 1;
-}
-
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-  .honeycomb {
-    display: none;
+      </Teleport>
+    </div>
+  </template>
+  
+  <script setup lang="ts">
+  import { ref, reactive, computed } from 'vue'
+  import hero1 from "@/assets/img/commission-art1.jpg";
+import hero2 from "@/assets/img/snap.jpg";
+  import featured1 from "@/assets/img/featured1.avif";
+    import featured2 from "@/assets/img/featured2.jpg";
+    import featured3 from "@/assets/img/featured3.jpg";
+    import featured4 from "@/assets/img/featured4.avif";
+    import featured5 from "@/assets/img/featured5.avif";
+    import featured6 from "@/assets/img/featured6.avif";
+    import featured7 from "@/assets/img/featured7.avif";
+    import featured8 from "@/assets/img/featured8.avif";
+    import featured9 from "@/assets/img/featured9.avif";
+    import featured10 from "@/assets/img/featured10.avif";
+    import featured11 from "@/assets/img/featured11.avif";
+  
+  // Types
+  interface Size {
+    id: string;
+    name: string;
+    price: number;
   }
-}
-
-/* Artwork cards for mobile */
-.artwork-card {
-  transform: translateY(0);
-  transition: transform 0.5s ease;
-}
-
-.artwork-card:hover {
-  transform: translateY(-10px);
-}
-</style>
+  
+  interface Artwork {
+    id: string;
+    title: string;
+    image: string;
+    imageAlt: string;
+    price: number;
+    description: string;
+    shortDescription: string;
+    sizes: Size[];
+    isFlipped: boolean;
+    thumbnails: string[];
+    rating: number;
+    reviewCount: number;
+    saleInfo: string;
+  }
+  
+  // Sample data
+  const artworks = reactive<Artwork[]>([
+    {
+      id: '1',
+      title: 'Guardian Angel',
+      image: featured11,
+      imageAlt: featured10,
+      price: 185,
+      shortDescription: 'A powerful depiction of divine protection',
+      description: 'This artwork denotes the suffering of Christ on His way to Calvary and then ponder how Christ exhibits each of the qualities of love in His Passion.',
+      sizes: [
+        { id: 'medium', name: 'Medium (18" x 24")', price: 185 },
+        { id: 'large', name: 'Large (24" x 36")', price: 285 }
+      ],
+      isFlipped: false,
+      thumbnails: [
+        featured1,   featured2,   featured3,   featured4,   featured5,
+      ],
+      rating: 4.7,
+      reviewCount: 3,
+      saleInfo: 'Spring Sale!!! Enjoy 50% off!'
+    },
+    {
+      id: '2',
+      title: 'Avenging Angel',
+      image: hero1,
+      imageAlt: hero1,
+      price: 195,
+      shortDescription: 'A striking image of divine justice',
+      description: 'This powerful artwork represents divine justice and protection, showing the balance between mercy and judgment.',
+      sizes: [
+        { id: 'medium', name: 'Medium (18" x 24")', price: 195 },
+        { id: 'large', name: 'Large (24" x 36")', price: 295 }
+      ],
+      isFlipped: false,
+      thumbnails: [
+      hero1,   featured2,   featured3,   featured4,   featured5,
+      ],
+      rating: 4.9,
+      reviewCount: 7,
+      saleInfo: 'Spring Sale!!! Enjoy 50% off!'
+    },
+    {
+      id: '3',
+      title: 'Cosmic Waterfall',
+      image: featured11,
+      imageAlt: featured10,
+      price: 165,
+      shortDescription: 'A mesmerizing blend of cosmic energy and natural beauty',
+      description: 'This artwork combines the beauty of a waterfall with the mystery of the cosmos, creating a unique visual experience that transcends ordinary reality.',
+      sizes: [
+        { id: 'medium', name: 'Medium (18" x 24")', price: 165 },
+        { id: 'large', name: 'Large (24" x 36")', price: 265 }
+      ],
+      isFlipped: false,
+      thumbnails: [
+      featured1,   featured2,   featured3,   featured4,   featured5,
+      ],
+      rating: 4.8,
+      reviewCount: 5,
+      saleInfo: 'Spring Sale!!! Enjoy 50% off!'
+    },
+    {
+      id: '4',
+      title: 'Sacred Hands',
+      image: featured11,
+      imageAlt: featured10,
+      price: 155,
+      shortDescription: 'A powerful symbol of faith and devotion',
+      description: 'This artwork captures the essence of faith through the simple yet profound imagery of hands in prayer, reminding us of our connection to the divine.',
+      sizes: [
+        { id: 'medium', name: 'Medium (18" x 24")', price: 155 },
+        { id: 'large', name: 'Large (24" x 36")', price: 255 }
+      ],
+      isFlipped: false,
+      thumbnails: [
+      featured1,   featured2,   featured3,   featured4,   featured5,
+      ],
+      rating: 4.6,
+      reviewCount: 4,
+      saleInfo: 'Spring Sale!!! Enjoy 50% off!'
+    },
+    {
+      id: '5',
+      title: 'Sunset Silhouette',
+      image: featured11,
+      imageAlt: featured10,
+      price: 175,
+      shortDescription: 'A dramatic silhouette against a vibrant sunset',
+      description: 'This artwork captures the magic of a sunset, with a silhouette figure creating a powerful contrast against the vibrant colors of the sky.',
+      sizes: [
+        { id: 'medium', name: 'Medium (18" x 24")', price: 175 },
+        { id: 'large', name: 'Large (24" x 36")', price: 275 }
+      ],
+      isFlipped: false,
+      thumbnails: [
+      featured1,   featured2,   featured3,   featured4,   featured5,
+      ],
+      rating: 4.5,
+      reviewCount: 6,
+      saleInfo: 'Spring Sale!!! Enjoy 50% off!'
+    },
+    {
+      id: '6',
+      title: 'Moonlit Lake',
+      image: featured11,
+      imageAlt: featured10,
+      price: 185,
+      shortDescription: 'A serene landscape bathed in moonlight',
+      description: 'This artwork captures the tranquil beauty of a lake at night, with the moon casting its gentle light across the water and surrounding landscape.',
+      sizes: [
+        { id: 'medium', name: 'Medium (18" x 24")', price: 185 },
+        { id: 'large', name: 'Large (24" x 36")', price: 285 }
+      ],
+      isFlipped: false,
+      thumbnails: [
+      featured1,   featured2,   featured3,   featured4,   featured5,
+      ],
+      rating: 4.9,
+      reviewCount: 8,
+      saleInfo: 'Spring Sale!!! Enjoy 50% off!'
+    }
+  ]);
+  
+  // Modal state
+  const modalOpen = ref(false);
+  const selectedArtwork = ref<Artwork | null>(null);
+  const selectedSize = ref('');
+  const quantity = ref(1);
+  
+  // Full screen modal state
+  const fullScreenModalOpen = ref(false);
+  const fullScreenArtwork = ref<Artwork | null>(null);
+  const selectedFullScreenSize = ref('');
+  const fullScreenQuantity = ref(1);
+  const selectedThumb = ref(0);
+  
+  // Accordion sections
+  const openSections = reactive({
+    productInfo: false,
+    returnPolicy: false,
+    shippingInfo: true
+  });
+  
+  // Methods
+  const openArtworkModal = (artwork: Artwork) => {
+    selectedArtwork.value = artwork;
+    selectedSize.value = artwork.sizes[0].id;
+    quantity.value = 1;
+    modalOpen.value = true;
+  };
+  
+  const closeArtworkModal = () => {
+    modalOpen.value = false;
+    setTimeout(() => {
+      selectedArtwork.value = null;
+    }, 500);
+  };
+  
+  const openFullScreenModal = (artwork: Artwork) => {
+    fullScreenArtwork.value = artwork;
+    selectedFullScreenSize.value = artwork.sizes[0].id;
+    fullScreenQuantity.value = 1;
+    fullScreenModalOpen.value = true;
+    selectedThumb.value = 0;
+  };
+  
+  const closeFullScreenModal = () => {
+    fullScreenModalOpen.value = false;
+    setTimeout(() => {
+      fullScreenArtwork.value = null;
+    }, 500);
+  };
+  
+  const addToCart = () => {
+    if (!selectedArtwork.value || !selectedSize.value) return;
+    
+    const size = selectedArtwork.value.sizes.find(s => s.id === selectedSize.value);
+    if (!size) return;
+    
+    // Add to cart logic would go here
+    // alert(`Added ${quantity.value} ${selectedArtwork.value.title} (${size.name}) to cart`);
+    
+    // Open full screen modal
+    openFullScreenModal(selectedArtwork.value);
+    closeArtworkModal();
+  };
+  
+  const addToCartFromFullScreen = () => {
+    if (!fullScreenArtwork.value || !selectedFullScreenSize.value) return;
+    
+    const size = fullScreenArtwork.value.sizes.find(s => s.id === selectedFullScreenSize.value);
+    if (!size) return;
+    
+    // Add to cart logic would go here
+    // alert(`Added ${fullScreenQuantity.value} ${fullScreenArtwork.value.title} (${size.name}) to cart`);
+  };
+  
+  const navigateToPrevArtwork = () => {
+    if (!selectedArtwork.value) return;
+    
+    const currentIndex = artworks.findIndex(a => a.id === selectedArtwork.value?.id);
+    const prevIndex = (currentIndex - 1 + artworks.length) % artworks.length;
+    selectedArtwork.value = artworks[prevIndex];
+    selectedSize.value = selectedArtwork.value.sizes[0].id;
+  };
+  
+  const navigateToNextArtwork = () => {
+    if (!selectedArtwork.value) return;
+    
+    const currentIndex = artworks.findIndex(a => a.id === selectedArtwork.value?.id);
+    const nextIndex = (currentIndex + 1) % artworks.length;
+    selectedArtwork.value = artworks[nextIndex];
+    selectedSize.value = selectedArtwork.value.sizes[0].id;
+  };
+  
+  const navigateToPrevFullScreen = () => {
+    if (!fullScreenArtwork.value) return;
+    
+    const currentIndex = artworks.findIndex(a => a.id === fullScreenArtwork.value?.id);
+    const prevIndex = (currentIndex - 1 + artworks.length) % artworks.length;
+    fullScreenArtwork.value = artworks[prevIndex];
+    selectedFullScreenSize.value = fullScreenArtwork.value.sizes[0].id;
+    selectedThumb.value = 0;
+  };
+  
+  const navigateToNextFullScreen = () => {
+    if (!fullScreenArtwork.value) return;
+    
+    const currentIndex = artworks.findIndex(a => a.id === fullScreenArtwork.value?.id);
+    const nextIndex = (currentIndex + 1) % artworks.length;
+    fullScreenArtwork.value = artworks[nextIndex];
+    selectedFullScreenSize.value = fullScreenArtwork.value.sizes[0].id;
+    selectedThumb.value = 0;
+  };
+  
+  const toggleSection = (section: keyof typeof openSections) => {
+    openSections[section] = !openSections[section];
+  };
+  </script>
+  
+  <style scoped>
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  </style>

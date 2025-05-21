@@ -1,12 +1,12 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div class="min-h-screen bg-gradient-to-br mt-10 from-gray-50 to-gray-100">
       <!-- Decorative Elements -->
       <div class="absolute top-20 left-10 w-64 h-64 bg-rose-100 rounded-full mix-blend-multiply opacity-30 blur-3xl"></div>
       <div class="absolute bottom-20 right-10 w-64 h-64 bg-amber-100 rounded-full mix-blend-multiply opacity-30 blur-3xl"></div>
       
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
         <div class="text-center mb-16">
-          <h1 class="text-5xl font-bold text-gray-800 mb-4 relative inline-block">
+          <h1 class="text-3xl font-bold text-gray-800 mb-4 relative inline-block">
             CONTACT
             <span class="absolute -bottom-2 left-0 w-full h-1 bg-rose-400"></span>
           </h1>
@@ -104,7 +104,7 @@
                   </div>
                   <div class="ml-4">
                     <h3 class="text-lg font-medium text-gray-900">Email</h3>
-                    <p class="mt-1 text-gray-600">contact@artistname.com</p>
+                    <a href="mailto:raymondraphael321@gmail.com" class="mt-1 text-gray-600">raymondraphael321@gmail.com</a>
                   </div>
                 </div>
                 
@@ -120,7 +120,7 @@
                   </div>
                 </div>
                 
-                <div class="flex items-start">
+                <!-- <div class="flex items-start">
                   <div class="flex-shrink-0 h-10 w-10 bg-emerald-100 rounded-full flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
                       <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
@@ -130,7 +130,7 @@
                     <h3 class="text-lg font-medium text-gray-900">Location</h3>
                     <p class="mt-1 text-gray-600">Lagos, Nigeria</p>
                   </div>
-                </div>
+                </div> -->
               </div>
             </div>
             
@@ -138,77 +138,38 @@
               <h2 class="text-2xl font-bold text-gray-800 mb-6">Follow Me</h2>
               
               <div class="flex space-x-4">
-                <a href="#" class="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700">
-                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                  </svg>
+                <a href="https://www.facebook.com/people/raymondaworo/100067199633701/?mibextid=LQQJ4d" class="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
+                  <img class="h-8 w-8 rounded-full" src="@/assets/icons/facebook.svg" />
                 </a>
                 
-                <a href="#" class="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                  </svg>
+                <a href="https://www.instagram.com/raymondaworo/?igshid=OGQ5ZDc2ODk2ZA%3D%3D" class="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
+                  <img class="h-8 w-8" src="@/assets/icons/instagram.svg" />
                 </a>
                 
-                <a href="#" class="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700">
-                    <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
-                  </svg>
+                <a href="https://x.com/raymondaworo/status/1546911697776115714?s=46&t=wja9T8NIysGx2Vtni1WECQ" class="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
+                  <img class="h-8 w-8" src="@/assets/icons/logo-black.png" />
+                </a>
+
+                <a href="https://www.tiktok.com/@raymondaworo?_t=8fvTbrYZSA1&_r=1" class="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
+                  <img class="h-8 w-8" src="@/assets/icons/tiktok.svg" />
+                </a>
+
+                <a href="https://www.youtube.com/@raymondaworo" class="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
+                  <img class="h-8 w-8" src="@/assets/icons/youtube.svg" />
                 </a>
                 
-                <a href="#" class="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700">
-                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-                    <rect x="2" y="9" width="4" height="12"></rect>
-                    <circle cx="4" cy="4" r="2"></circle>
-                  </svg>
-                </a>
               </div>
               
               <div class="mt-8 p-4 bg-gray-50 rounded-lg">
                 <p class="text-gray-600 text-sm">
                   For business inquiries or collaborations, please email me directly at 
-                  <a href="mailto:business@artistname.com" class="text-rose-600 font-medium hover:underline">business@artistname.com</a>
+                  <a href="mailto:raymondraphael321@gmail.com" class="text-rose-600 font-medium hover:underline">raymondraphael321@gmail.com</a>
                 </p>
               </div>
             </div>
           </div>
         </div>
         
-        <!-- Map or Additional Info Section -->
-        <div class="mt-16 bg-white rounded-2xl shadow-xl p-8 transform transition-all duration-500 hover:shadow-2xl">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
-              <h2 class="text-2xl font-bold text-gray-800 mb-4">Visit My Studio</h2>
-              <p class="text-gray-600 mb-6">
-                I welcome visitors to my studio by appointment. Please contact me to schedule a visit and see my artwork in person.
-              </p>
-              
-              <div class="bg-gray-100 p-4 rounded-lg">
-                <p class="text-gray-700 font-medium">Studio Hours:</p>
-                <ul class="mt-2 space-y-1 text-gray-600">
-                  <li>Monday - Friday: 10:00 AM - 6:00 PM</li>
-                  <li>Saturday: 11:00 AM - 4:00 PM</li>
-                  <li>Sunday: Closed</li>
-                </ul>
-              </div>
-            </div>
-            
-            <div class="h-64 bg-gray-200 rounded-lg relative overflow-hidden">
-              <!-- This would be a map in a real application -->
-              <div class="absolute inset-0 flex items-center justify-center">
-                <!-- <p class="text-gray-500 font-medium">Interactive Map Would Be Here</p> -->
-                <GoogleMap 
-                    mapUrl="https://maps.google.com/maps?width=520&amp;height=400&amp;hl=en&amp;q=lagos%20university%20teaching%20hospital%20+(Art%20Studio)&amp;t=&amp;z=12&amp;ie=UTF8&amp;iwloc=B&amp;output=embed" 
-                    width="100%" 
-                    height="500px"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </template>

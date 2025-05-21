@@ -1,641 +1,284 @@
 <template>
   <div>
-    <!-- Hero Section -->
-    <HeroSection />
-    <!-- {{allCategories}} -->
-    <!-- Featured Categories -->
-    <section class="py-16 bg-gray-50">
-      <div class="container mx-auto px-4">
-        <h2 
-          class="text-xl font-bold text-center mb-12"
-          v-motion
-          :initial="{ opacity: 0, y: 20 }"
-          :enter="{ opacity: 1, y: 0 }"
-        >
-          Explore Art Categories
-        </h2>
-        
-        <div v-if="loading" class="flex justify-center">
-          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
-        </div>
-        
-        <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div 
-            v-for="(category, index) in allCategories" 
-            :key="category._id"
-            class="relative overflow-hidden rounded-lg aspect-[4/3] group cursor-pointer"
-            v-motion
-            :initial="{ opacity: 0, y: 20 }"
-            :enter="{ opacity: 1, y: 0, transition: { delay: index * 100 } }"
-            @click="navigateToCategory(category._id)"
-          >
-            <img 
-              :src="category.image" 
-              :alt="category.name"
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-            <div class="absolute bottom-0 left-0 right-0 p-6">
-              <h3 class="text-xl font-bold text-white mb-2">{{ category.name }}</h3>
-              <p class="text-white/80 mb-4">{{ category.description }}</p>
-              <span class="inline-flex items-center text-white text-sm font-medium">
-                Explore
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1 transition-transform duration-300 group-hover:translate-x-1"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <!-- New Arrivals -->
-    <section v-if="newArrivals.length > 0" class="py-16">
-      <div class="container mx-auto px-4">
-        <h2 
-          class="text-3xl font-bold text-center mb-4"
-          v-motion
-          :initial="{ opacity: 0, y: 20 }"
-          :enter="{ opacity: 1, y: 0 }"
-        >
-          New Arrivals
-        </h2>
-        <p 
-          class="text-gray-600 text-center mb-12 max-w-2xl mx-auto"
-          v-motion
-          :initial="{ opacity: 0 }"
-          :enter="{ opacity: 1, transition: { delay: 100 } }"
-        >
-          Discover the latest additions to our collection
-        </p>
-        
-        <div v-if="loading" class="flex justify-center">
-          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
-        </div>
-        
-        <div v-else>
-          <!-- Category filters -->
-          <div class="flex flex-wrap justify-center gap-2 mb-8">
-            <button 
-              class="px-6 py-2 rounded-full transition-colors duration-300"
-              :class="selectedNewArrivalCategory === 'all' ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-300'"
-              @click="selectedNewArrivalCategory = 'all'"
-            >
-              All
-            </button>
-            <button 
-              v-for="category in newArrivalCategories" 
-              :key="category._id"
-              class="px-6 py-2 rounded-full transition-colors duration-300"
-              :class="selectedNewArrivalCategory === category._id ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-300'"
-              @click="selectedNewArrivalCategory = category._id"
-            >
-              {{ category.name }}
-            </button>
-          </div>
-          
-          <!-- Products grid -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div 
-              v-for="product in filteredNewArrivals" 
-              :key="product._id"
-              class="bg-white rounded-lg overflow-hidden shadow-md group"
-              v-motion
-              :initial="{ opacity: 0, y: 20 }"
-              :enter="{ opacity: 1, y: 0 }"
-            >
-              <div class="relative overflow-hidden aspect-square">
-                <!-- Image carousel -->
-                <div class="relative w-full h-full">
-                  <div 
-                    v-for="(image, imageIndex) in product.images" 
-                    :key="imageIndex"
-                    class="absolute inset-0 transition-opacity duration-1000 ease-in-out"
-                    :class="imageIndex === productImageIndices[product._id] ? 'opacity-100' : 'opacity-0'"
-                  >
-                    <img 
-                      :src="image" 
-                      :alt="product.name"
-                      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  </div>
-                </div>
-                
-                <!-- Badge -->
-                <div class="absolute top-4 left-4 bg-amber-400 text-black px-3 py-1 rounded-full text-sm font-medium">
-                  New Arrival
-                </div>
-                
-                <!-- Quick actions -->
-                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                  <button 
-                    @click="viewProduct(product)"
-                    class="bg-white text-black rounded-full p-3 hover:bg-gray-100 transition-colors duration-300"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                  </button>
-                  <button 
-                    @click="addToCart(product)"
-                    class="bg-black text-white rounded-full p-3 hover:bg-gray-800 transition-colors duration-300"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-                  </button>
-                </div>
-              </div>
-              
-              <div class="p-4">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-sm text-gray-500">{{ product.category?.name || 'Uncategorized' }}</span>
-                  <div class="flex items-center">
-                    <span class="text-amber-500 mr-1">★</span>
-                    <span class="text-sm">{{ product.rating || 0 }}</span>
-                  </div>
-                </div>
-                <h3 class="font-medium mb-2 truncate">{{ product.name }}</h3>
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <span class="font-bold">${{ product.discountPrice.toFixed(2) }}</span>
-                    <span class="text-sm text-gray-500 line-through">${{ product.price.toFixed(2) }}</span>
-                  </div>
-                  <span class="text-green-600 text-sm">-{{ product.discountPercentage }}%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Testimonial Section -->
-    <section class="py-16 bg-gray-900 text-white">
-      <div class="container mx-auto px-4">
-        <h2 
-          class="text-3xl font-bold text-center mb-12"
-          v-motion
-          :initial="{ opacity: 0, y: 20 }"
-          :enter="{ opacity: 1, y: 0 }"
-        >
-          What Our Collectors Say
-        </h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div 
-            v-for="(testimonial, index) in testimonials" 
+    <!-- Hero Section with animated image carousel and typewriter effect -->
+    <section class="relative pt-20">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <!-- Left side with artist image carousel -->
+        <div class="relative h-screen overflow-hidden">
+          <div
+            v-for="(image, index) in heroImages"
             :key="index"
-            class="bg-gray-800 p-6 rounded-lg"
+            class="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+            :class="{
+              'opacity-100': currentImageIndex === index,
+              'opacity-0': currentImageIndex !== index,
+            }"
           >
-            <div class="flex items-center mb-4">
-              <div class="flex text-amber-400">
-                <svg v-for="i in 5" :key="i" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="i <= testimonial.rating ? 'fill-amber-400' : 'text-gray-600'"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-              </div>
-            </div>
-            <p class="text-gray-300 mb-6">{{ testimonial.text }}</p>
-            <div class="flex items-center">
-              <div class="w-10 h-10 rounded-full bg-gray-600 overflow-hidden mr-3">
-                <img v-if="testimonial.avatar" :src="testimonial.avatar" :alt="testimonial.name" class="w-full h-full object-cover" />
-                <div v-else class="w-full h-full flex items-center justify-center bg-black text-white font-bold">
-                  {{ testimonial.name.charAt(0) }}
-                </div>
-              </div>
-              <div>
-                <h4 class="font-medium">{{ testimonial.name }}</h4>
-                <p class="text-sm text-gray-400">{{ testimonial.location }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Best Sellers -->
-    <section v-if="bestSellers.length > 0" class="py-16">
-      <div class="container mx-auto px-4">
-        <h2 
-          class="text-3xl font-bold text-center mb-4"
-          v-motion
-          :initial="{ opacity: 0, y: 20 }"
-          :enter="{ opacity: 1, y: 0 }"
-        >
-          Best Sellers
-        </h2>
-        <p 
-          class="text-gray-600 text-center mb-12 max-w-2xl mx-auto"
-          v-motion
-          :initial="{ opacity: 0 }"
-          :enter="{ opacity: 1, transition: { delay: 100 } }"
-        >
-          Our most popular artworks loved by collectors worldwide
-        </p>
-        
-        <div v-if="loading" class="flex justify-center">
-          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
-        </div>
-        
-        <div v-else>
-          <!-- Category filters -->
-          <div class="flex flex-wrap justify-center gap-2 mb-8">
-            <button 
-              class="px-6 py-2 rounded-full transition-colors duration-300"
-              :class="selectedBestSellerCategory === 'all' ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-300'"
-              @click="selectedBestSellerCategory = 'all'"
-            >
-              All
-            </button>
-            <button 
-              v-for="category in bestSellerCategories" 
-              :key="category._id"
-              class="px-6 py-2 rounded-full transition-colors duration-300"
-              :class="selectedBestSellerCategory === category._id ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-300'"
-              @click="selectedBestSellerCategory = category._id"
-            >
-              {{ category.name }}
-            </button>
-          </div>
-          
-          <!-- Products grid -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div 
-              v-for="product in filteredBestSellers" 
-              :key="product._id"
-              class="bg-white rounded-lg overflow-hidden shadow-md group"
-              v-motion
-              :initial="{ opacity: 0, y: 20 }"
-              :enter="{ opacity: 1, y: 0 }"
-            >
-              <div class="relative overflow-hidden aspect-square">
-                <!-- Image carousel -->
-                <div class="relative w-full h-full">
-                  <div 
-                    v-for="(image, imageIndex) in product.images" 
-                    :key="imageIndex"
-                    class="absolute inset-0 transition-opacity duration-1000 ease-in-out"
-                    :class="imageIndex === productImageIndices[product._id] ? 'opacity-100' : 'opacity-0'"
-                  >
-                    <img 
-                      :src="image" 
-                      :alt="product.name"
-                      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  </div>
-                </div>
-                
-                <!-- Badge -->
-                <div class="absolute top-4 left-4 bg-amber-400 text-black px-3 py-1 rounded-full text-sm font-medium">
-                  Best Seller
-                </div>
-                
-                <!-- Quick actions -->
-                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                  <button 
-                    @click="viewProduct(product)"
-                    class="bg-white text-black rounded-full p-3 hover:bg-gray-100 transition-colors duration-300"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                  </button>
-                  <button 
-                    @click="addToCart(product)"
-                    class="bg-black text-white rounded-full p-3 hover:bg-gray-800 transition-colors duration-300"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-                  </button>
-                </div>
-              </div>
-              
-              <div class="p-4">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-sm text-gray-500">{{ product.category?.name || 'Uncategorized' }}</span>
-                  <div class="flex items-center">
-                    <span class="text-amber-500 mr-1">★</span>
-                    <span class="text-sm">{{ product.rating || 0 }}</span>
-                  </div>
-                </div>
-                <h3 class="font-medium mb-2 truncate">{{ product.name }}</h3>
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <span class="font-bold">${{ product.discountPrice.toFixed(2) }}</span>
-                    <span class="text-sm text-gray-500 line-through">${{ product.price.toFixed(2) }}</span>
-                  </div>
-                  <span class="text-green-600 text-sm">-{{ product.discountPercentage }}%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Featured Products -->
-    <section v-if="featuredProducts.length > 0" class="py-16 bg-gray-50">
-      <div class="container mx-auto px-4">
-        <h2 
-          class="text-2xl font-bold text-center mb-4"
-          v-motion
-          :initial="{ opacity: 0, y: 20 }"
-          :enter="{ opacity: 1, y: 0 }"
-        >
-          Featured Products
-        </h2>
-        <p 
-          class="text-gray-600 text-center mb-12 max-w-2xl mx-auto"
-          v-motion
-          :initial="{ opacity: 0 }"
-          :enter="{ opacity: 1, transition: { delay: 100 } }"
-        >
-          Handpicked selections from our exclusive collection
-        </p>
-        
-        <div v-if="loading" class="flex justify-center">
-          <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
-        </div>
-        
-        <div v-else>
-          <!-- Category filters -->
-          <div class="flex flex-wrap justify-center gap-2 mb-8">
-            <button 
-              class="px-6 py-2 rounded-full transition-colors duration-300"
-              :class="selectedFeaturedCategory === 'all' ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-300'"
-              @click="selectedFeaturedCategory = 'all'"
-            >
-              All
-            </button>
-            <button 
-              v-for="category in featuredCategories" 
-              :key="category._id"
-              class="px-6 py-2 rounded-full transition-colors duration-300"
-              :class="selectedFeaturedCategory === category._id ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-300'"
-              @click="selectedFeaturedCategory = category._id"
-            >
-              {{ category.name }}
-            </button>
-          </div>
-          
-          <!-- Products grid -->
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div 
-              v-for="product in filteredFeaturedProducts" 
-              :key="product._id"
-              class="bg-white rounded-lg overflow-hidden shadow-md group"
-              v-motion
-              :initial="{ opacity: 0, y: 20 }"
-              :enter="{ opacity: 1, y: 0 }"
-            >
-              <div class="relative overflow-hidden aspect-square">
-                <!-- Image carousel -->
-                <div class="relative w-full h-full">
-                  <div 
-                    v-for="(image, imageIndex) in product.images" 
-                    :key="imageIndex"
-                    class="absolute inset-0 transition-opacity duration-1000 ease-in-out"
-                    :class="imageIndex === productImageIndices[product._id] ? 'opacity-100' : 'opacity-0'"
-                  >
-                    <img 
-                      :src="image" 
-                      :alt="product.name"
-                      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  </div>
-                </div>
-                
-                <!-- Badge -->
-                <div class="absolute top-4 left-4 bg-amber-400 text-black px-3 py-1 rounded-full text-sm font-medium">
-                  Featured
-                </div>
-                
-                <!-- Quick actions -->
-                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                  <button 
-                    @click="viewProduct(product)"
-                    class="bg-white text-black rounded-full p-3 hover:bg-gray-100 transition-colors duration-300"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                  </button>
-                  <button 
-                    @click="addToCart(product)"
-                    class="bg-black text-white rounded-full p-3 hover:bg-gray-800 transition-colors duration-300"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path><path d="M3 6h18"></path><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-                  </button>
-                </div>
-              </div>
-              
-              <div class="p-4">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-sm text-gray-500">{{ product.category?.name || 'Uncategorized' }}</span>
-                  <div class="flex items-center">
-                    <span class="text-amber-500 mr-1">★</span>
-                    <span class="text-sm">{{ product.rating || 0 }}</span>
-                  </div>
-                </div>
-                <h3 class="font-medium mb-2 truncate">{{ product.name }}</h3>
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-2">
-                    <span class="font-bold">${{ product.discountPrice.toFixed(2) }}</span>
-                    <span class="text-sm text-gray-500 line-through">${{ product.price.toFixed(2) }}</span>
-                  </div>
-                  <span class="text-green-600 text-sm">-{{ product.discountPercentage }}%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Commission CTA -->
-    <section class="py-20 bg-black/10">
-      <div class="container mx-auto px-4">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div 
-            v-motion
-            :initial="{ opacity: 0, x: -50 }"
-            :enter="{ opacity: 1, x: 0 }"
-          >
-            <h2 class="text-3xl font-bold mb-6">Commission Your Custom Artwork</h2>
-            <p class="text-gray-700 mb-8">
-              Looking for something truly unique? Commission a custom artwork tailored to your vision. Whether it's a portrait, landscape, or conceptual piece, Raymond brings your ideas to life with exceptional skill and attention to detail.
-            </p>
-            <div class="space-y-4">
-              <div class="flex items-start">
-                <div class="bg-black/20 p-2 rounded-full mr-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#000000" viewBox="0 0 256 256"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"></path></svg>
-                </div>
-                <div>
-                  <h4 class="font-medium">Personalized Consultation</h4>
-                  <p class="text-gray-600">Discuss your vision directly with the artist</p>
-                </div>
-              </div>
-              <div class="flex items-start">
-                <div class="bg-black/20 p-2 rounded-full mr-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#000000" viewBox="0 0 256 256"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"></path></svg>
-                </div>
-                <div>
-                  <h4 class="font-medium">Progress Updates</h4>
-                  <p class="text-gray-600">Receive regular updates throughout the creation process</p>
-                </div>
-              </div>
-              <div class="flex items-start">
-                <div class="bg-black/20 p-2 rounded-full mr-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#000000" viewBox="0 0 256 256"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"></path></svg>
-                </div>
-                <div>
-                  <h4 class="font-medium">Worldwide Shipping</h4>
-                  <p class="text-gray-600">Safe and secure delivery to your doorstep</p>
-                </div>
-              </div>
-            </div>
-            <NuxtLink 
-              to="/commission" 
-              class="mt-8 inline-block px-8 py-3 bg-black text-white rounded-full hover:bg-black-dark transition-all duration-300 transform hover:scale-105"
-            >
-              Start Your Commission
-            </NuxtLink>
-          </div>
-          
-          <div 
-            class="relative"
-            v-motion
-            :initial="{ opacity: 0, x: 50 }"
-            :enter="{ opacity: 1, x: 0 }"
-          >
-            <img 
-              src="@/assets/img/event-go.webp" 
-              alt="Commission artwork" 
-              class="rounded-lg shadow-xl w-full"
+            <img
+              :src="image"
+              alt="Artist with artwork"
+              class="w-full h-full object-cover"
             />
-            <div class="absolute -bottom-6 -right-6 bg-white p-4 rounded-lg shadow-lg max-w-xs hidden md:block">
-              <div class="flex items-center gap-3 mb-2">
-                <div class="w-10 h-10 rounded-full bg-black/20 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#000000" viewBox="0 0 256 256"><path d="M178,40c-20.65,0-38.73,8.88-50,23.89C116.73,48.88,98.65,40,78,40a62.07,62.07,0,0,0-62,62c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,228.66,240,172,240,102A62.07,62.07,0,0,0,178,40ZM128,214.8C109.74,204.16,32,155.69,32,102A46.06,46.06,0,0,1,78,56c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.ZM128,214.8C109.74,204.16,32,155.69,32,102A46.06,46.06,0,0,1,78,56c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,155.61,146.24,204.15,128,214.8Z"></path></svg>
-                </div>
-                <div>
-                  <h4 class="font-medium">100% Satisfaction</h4>
-                  <p class="text-sm text-gray-600">Guaranteed or full refund</p>
-                </div>
-              </div>
-            </div>
           </div>
+        </div>
+
+        <!-- Right side with text and typewriter effect -->
+        <div
+          class="bg-zinc-800 text-white p-8 md:p-16 flex flex-col justify-center"
+        >
+          <h1
+            ref="titleRef"
+            class="text-3xl md:text-4xl font-bold mb-4 slide-up"
+          >
+            RAYMOND AWORO ART
+          </h1>
+          <p
+            ref="taglineRef"
+            class="text-lg md:text-xl text-zinc-300 italic mb-8 overflow-hidden"
+          >
+            <span class="typewriter-text"
+              >Creating Art: Exploring Life at the Intersection of Faith and
+              Creativity</span
+            >
+          </p>
         </div>
       </div>
     </section>
-    
-    <!-- Instagram Feed -->
-    <section class="py-16">
-      <div class="container mx-auto px-4">
-        <div class="flex flex-col md:flex-row justify-between items-center mb-12">
-          <h2 
-            class="text-2xl font-bold mb-4 md:mb-0"
-            v-motion
-            :initial="{ opacity: 0, y: 20 }"
-            :enter="{ opacity: 1, y: 0 }"
-          >
-            Follow Us on Instagram
-          </h2>
-          <a 
-            href="https://instagram.com" 
-            target="_blank" 
-            class="flex items-center text-primary hover:text-primary-dark transition-colors duration-300"
-            v-motion
-            :initial="{ opacity: 0 }"
-            :enter="{ opacity: 1, transition: { delay: 200 } }"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
-            @raymondaworoart
-          </a>
-        </div>
-        
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          <div 
-            v-for="(post, index) in instagramPosts" 
-            :key="index"
-            class="relative aspect-square rounded-lg overflow-hidden group"
-            v-motion
-            :initial="{ opacity: 0, y: 20 }"
-            :enter="{ opacity: 1, y: 0, transition: { delay: index * 50 } }"
-          >
-            <img 
-              :src="post.image" 
-              :alt="`Instagram post ${index + 1}`"
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-              <div class="flex gap-3 text-white">
-                <div class="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path></svg>
-                  <span>{{ post.likes }}</span>
-                </div>
-                <div class="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path></svg>
-                  <span>{{ post.comments }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+
+    <!-- Promotion Banner with parallax effect -->
+    <section
+      ref="promotionRef"
+      class="relative text-white py-60 overflow-hidden"
+    >
+      <!-- Background Image -->
+      <div class="absolute inset-0 z-0">
+        <img
+          src="@/assets/img/no-love.jpg"
+          alt="Artwork background"
+          class="w-full h-full object-cover"
+          ref="parallaxBgRef"
+        />
+      </div>
+
+      <!-- Dark Overlay -->
+      <div class="absolute inset-0 bg-black opacity-60 z-10"></div>
+
+      <!-- Content -->
+      <div class="container mx-auto px-4 relative z-20 text-center">
+        <h2 class="text-lg md:text-xl uppercase tracking-wider mb-4 fade-in">
+          NEW PRINTS EDITION!!!
+        </h2>
+        <h3 class="text-4xl md:text-6xl font-bold mb-6 slide-up">
+          NO GREATER LOVE
+        </h3>
+        <p class="text-2xl md:text-3xl mb-8 fade-in">GET 50% OFF!!!!!</p>
+        <button
+          class="bg-white text-black px-8 py-3 font-medium hover:bg-gray-200 transition-all hover:scale-105 transform"
+        >
+          Shop Here
+        </button>
       </div>
     </section>
-    
-    <!-- Newsletter -->
-    <section class="py-20 bg-gray-900 text-white">
-      <div 
-        class="container mx-auto px-4 max-w-4xl text-center"
-        v-motion
-        :initial="{ opacity: 0, y: 20 }"
-        :enter="{ opacity: 1, y: 0 }"
+
+    <!-- Gallery & Portrait Order Section with hover animations -->
+    <section class="grid grid-cols-1 md:grid-cols-2">
+      <!-- Gallery Section -->
+      <div
+        class="relative h-[500px] overflow-hidden section-transition cursor-pointer"
+        @click="navigateTo('/gallery')"
       >
-        <h2 class="text-3xl font-bold mb-4">Join Our Art Community</h2>
-        <p class="text-gray-300 mb-8 max-w-2xl mx-auto">
-          Subscribe to our newsletter to receive updates on new artworks, exhibitions, and exclusive offers.
-        </p>
-        <form @submit.prevent="subscribeNewsletter" class="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
-          <input 
-            v-model="email"
-            type="email"
-            placeholder="Your email address"
-            class="px-6 py-3 bg-gray-800 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-primary flex-grow"
-            required
-          />
-          <button 
-            type="submit"
-            class="px-8 py-3 bg-black hover:bg-black-dark text-white rounded-full transition-colors duration-300"
-          >
-            Subscribe
-          </button>
-        </form>
-        <p class="text-gray-400 text-sm mt-4">
-          By subscribing, you agree to our Privacy Policy and consent to receive updates from Raymond Aworo Art.
-        </p>
+        <img
+          src="@/assets/img/snap.jpg"
+          alt="Artist with artwork"
+          class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+        />
+        <div
+          class="absolute bottom-0 left-0 right-0 bg-blue-900 text-white p-4 transition-all duration-300 hover:bg-blue-800"
+        >
+          <h3 class="text-2xl font-bold mb-1">Gallery</h3>
+          <p class="text-sm">
+            Click here to view collection of original artworks
+          </p>
+        </div>
+      </div>
+
+      <!-- Portrait Order Section -->
+      <div
+        class="relative h-[500px] overflow-hidden section-transition cursor-pointer"
+        @click="navigateTo('/commission')"
+      >
+        <img
+          src="@/assets/img/potrait.avif"
+          alt="Portrait display"
+          class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+        />
+        <div
+          class="absolute bottom-0 left-0 right-0 bg-amber-800 text-white p-4 transition-all duration-300 hover:bg-amber-700"
+        >
+          <h3 class="text-2xl font-bold mb-1">Order a Portrait</h3>
+          <p class="text-sm">
+            Click here to order for a custom artwork made for you.
+          </p>
+        </div>
       </div>
     </section>
+
+    <!-- Product Gallery with advanced scroll and hover effects -->
+    <section ref="productGalleryRef" class="py-16 overflow-hidden">
+      <div class="mx-auto px-4">
+        <h2 class="text-2xl font-bold text-center mb-12 slide-up">
+          Featured Artworks
+        </h2>
+
+        <div class="relative product-slider">
+          <!-- Navigation Arrows -->
+          <button
+            class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-md hover:bg-gray-100 transition-colors"
+            @click="scrollProducts('left')"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+
+          <div
+            ref="productContainerRef"
+            class="flex space-x-6 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory"
+            @mousedown="startDrag"
+            @mousemove="onDrag"
+            @mouseup="endDrag"
+            @mouseleave="endDrag"
+            @touchstart="startDragTouch"
+            @touchmove="onDragTouch"
+            @touchend="endDragTouch"
+          >
+            <div
+              v-for="(product, index) in products"
+              :key="index"
+              class="product-card flex-shrink-0 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 snap-start relative group"
+              :ref="
+                (el) => {
+                  if (el) productRefs[index] = el;
+                }
+              "
+            >
+              <div class="relative mb-4 overflow-hidden">
+                <img
+                  :src="product.image"
+                  :alt="product.title"
+                  class="w-full h-80 rounded-lg object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div
+                  v-if="product.badge"
+                  class="absolute top-2 rounded-lg left-2 bg-black text-white text-xs px-2 py-1"
+                >
+                  {{ product.badge }}
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                >
+                  <button
+                    class="bg-white text-black text-sm px-6 py-2 font-medium hover:bg-gray-100 transition quick-view-button"
+                    @click="navigateTo(`/product/${product.id}`)"
+                  >
+                    Quick View
+                  </button>
+                </div>
+              </div>
+              <h3 class="text-center text-sm font-medium text-lg mb-1">
+                {{ product.title }}
+              </h3>
+              <p class="text-center text-sm text-gray-700 mb-1">
+                From ${{ product.price }}
+              </p>
+              <p
+                v-if="product.saleText"
+                class="text-center text-gray-500 text-sm"
+              >
+                {{ product.saleText }}
+              </p>
+            </div>
+          </div>
+
+          <button
+            class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-md hover:bg-gray-100 transition-colors"
+            @click="scrollProducts('right')"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <TestimonialsCarousel />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
-import { useFetchCategories } from "@/composables/modules/products/useFetchCategories"
-import { useCartStore } from '~/composables/useCartStore'
-import insta1 from '@/assets/img/event-go.webp'
-import insta2 from '@/assets/img/services9.jpg'
-import insta3 from '@/assets/img/services3.jpg'
-import insta4 from '@/assets/img/services5.jpg'
-import insta5 from '@/assets/img/services6.jpg'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
+import { useRouter } from "vue-router";
+import hero1 from "@/assets/img/commission-art1.jpg";
+import hero2 from "@/assets/img/snap.jpg";
+import featured1 from "@/assets/img/featured1.avif";
+import featured2 from "@/assets/img/featured2.jpg";
+import featured3 from "@/assets/img/featured3.jpg";
+import featured4 from "@/assets/img/featured4.avif";
+import featured5 from "@/assets/img/featured5.avif";
+import featured6 from "@/assets/img/featured6.avif";
+import featured7 from "@/assets/img/featured7.avif";
+import featured8 from "@/assets/img/featured8.avif";
+import featured9 from "@/assets/img/featured9.avif";
+import featured10 from "@/assets/img/featured10.avif";
+import featured11 from "@/assets/img/featured11.avif";
 
-const { addToCart: addItemToCart } = useCartStore()
-const email = ref('')
-const router = useRouter()
+import gsap from "gsap";
 
-// Fetch products and categories
-const { products, loading } = useFetchProducts()
-const { categories: allCategories, loading: categoriesLoading } = useFetchCategories()
+const router = useRouter();
 
-// Product image carousel
-const productImageIndices = ref<Record<string, number>>({})
-const carouselIntervals = ref<Record<string, number>>({})
+// Hero section image carousel
+const heroImages = [hero1, hero2];
+const currentImageIndex = ref(0);
+let imageInterval: number | null = null;
 
-// Category filters
-const selectedNewArrivalCategory = ref('all')
-const selectedBestSellerCategory = ref('all')
-const selectedFeaturedCategory = ref('all')
+// Typewriter effect refs
+const titleRef = ref<HTMLElement | null>(null);
+const taglineRef = ref<HTMLElement | null>(null);
+
+// Parallax effect refs
+const promotionRef = ref<HTMLElement | null>(null);
+const parallaxBgRef = ref<HTMLElement | null>(null);
+
+// Product gallery refs and state
+const productGalleryRef = ref<HTMLElement | null>(null);
+const productContainerRef = ref<HTMLElement | null>(null);
+const productRefs = reactive<HTMLElement[]>([]);
+const isDragging = ref(false);
+const startX = ref(0);
+const scrollLeft = ref(0);
 
 // Testimonials
 const testimonials = ref([
@@ -644,7 +287,7 @@ const testimonials = ref([
     location: "New York, USA",
     text: "The portrait Raymond created for me exceeded all my expectations. His attention to detail and ability to capture emotion is truly remarkable. I'll cherish this artwork forever.",
     rating: 5,
-    avatar: "/images/testimonial-1.jpg"
+    avatar: "/images/testimonial-1.jpg."
   },
   {
     name: "Michael Chen",
@@ -662,123 +305,287 @@ const testimonials = ref([
   }
 ])
 
-// Instagram Posts
-const instagramPosts = ref([
-  { image: insta1, likes: 243, comments: 18 },
-  { image: insta2, likes: 187, comments: 12 },
-  { image: insta3, likes: 321, comments: 24 },
-  { image: insta4, likes: 156, comments: 9 },
-  { image: insta5, likes: 278, comments: 21 },
-  { image: insta1, likes: 192, comments: 15 }
-]
-)
-// Filter products by attributes
-const newArrivals = computed(() => {
-  return products.value.filter(product => product.isNew)
-})
+// Products data
+const products = ref([
+  {
+    id: 1,
+    title: "GUARDIAN ANGEL (PSALM 91:11-12)",
+    price: "175.00",
+    image: featured1,
+    badge: "New Arrival",
+    saleText: "",
+  },
+  {
+    id: 2,
+    title: "HOPE & NEARNESS TO GOD",
+    price: "175.00",
+    image: featured2,
+    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
+    badge: "Sale",
+    saleText: "",
+  },
+  {
+    id: 3,
+    title: "ANGEL AT THE LAST JUDGEMENT",
+    price: "175.00",
+    image: featured3,
+    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
+    badge: "Sale",
+    saleText: "",
+  },
+  {
+    id: 4,
+    title: "FINDING PEACE IN A BROKEN WORLD",
+    price: "175.00",
+    image: featured4,
+    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
+    badge: "Sale",
+    saleText: "",
+  },
+  {
+    id: 5,
+    title: "NO GREATER LOVE",
+    price: "185.00",
+    image: featured5,
+    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
+    badge: "New Arrival",
+    saleText: "Spring Sale!!! (Enjoy 50% off)",
+  },
+  {
+    id: 6,
+    title: "CORPUS CHRISTI",
+    price: "175.00",
+    image: featured6,
+    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
+    badge: "Best Seller",
+    saleText: "",
+  },
+  {
+    id: 7,
+    title: "CORPUS CHRISTI",
+    price: "175.00",
+    image: featured7,
+    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
+    badge: "Best Seller",
+    saleText: "",
+  },
+  {
+    id: 8,
+    title: "CORPUS CHRISTI",
+    price: "175.00",
+    image: featured8,
+    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
+    badge: "Best Seller",
+    saleText: "",
+  },
+  {
+    id: 9,
+    title: "CORPUS CHRISTI",
+    price: "175.00",
+    image: featured9,
+    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
+    badge: "Best Seller",
+    saleText: "",
+  },
+  {
+    id: 10,
+    title: "CORPUS CHRISTI",
+    price: "175.00",
+    image: featured10,
+    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
+    badge: "Best Seller",
+    saleText: "",
+  },
+  {
+    id: 11,
+    title: "CORPUS CHRISTI",
+    price: "175.00",
+    image: featured11,
+    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
+    badge: "Best Seller",
+    saleText: "",
+  },
+]);
 
-const bestSellers = computed(() => {
-  return products.value.filter(product => product.isBestseller)
-})
+// Navigation helper
+const navigateTo = (path: string) => {
+  router.push(path);
+};
 
-const featuredProducts = computed(() => {
-  return products.value.filter(product => product.isFeatured)
-})
+// Image carousel functionality
+const startImageCarousel = () => {
+  imageInterval = window.setInterval(() => {
+    currentImageIndex.value = (currentImageIndex.value + 1) % heroImages.length;
+  }, 5000);
+};
 
-// Get unique categories for each product group
-const newArrivalCategories = computed(() => {
-  const categoryIds = new Set(newArrivals.value.map(product => product.category?._id))
-  return allCategories.value.filter(category => categoryIds.has(category._id))
-})
+// Parallax scroll effect
+const handleScroll = () => {
+  if (parallaxBgRef.value && promotionRef.value) {
+    const scrollPosition = window.scrollY;
+    const promotionPosition = promotionRef.value.offsetTop;
+    const offset = scrollPosition - promotionPosition;
 
-const bestSellerCategories = computed(() => {
-  const categoryIds = new Set(bestSellers.value.map(product => product.category?._id))
-  return allCategories.value.filter(category => categoryIds.has(category._id))
-})
-
-const featuredCategories = computed(() => {
-  const categoryIds = new Set(featuredProducts.value.map(product => product.category?._id))
-  return allCategories.value.filter(category => categoryIds.has(category._id))
-})
-
-// Filter products by selected category
-const filteredNewArrivals = computed(() => {
-  if (selectedNewArrivalCategory.value === 'all') {
-    return newArrivals.value
-  }
-  return newArrivals.value.filter(product => product.category?._id === selectedNewArrivalCategory.value)
-})
-
-const filteredBestSellers = computed(() => {
-  if (selectedBestSellerCategory.value === 'all') {
-    return bestSellers.value
-  }
-  return bestSellers.value.filter(product => product.category?._id === selectedBestSellerCategory.value)
-})
-
-const filteredFeaturedProducts = computed(() => {
-  if (selectedFeaturedCategory.value === 'all') {
-    return featuredProducts.value
-  }
-  return featuredProducts.value.filter(product => product.category?._id === selectedFeaturedCategory.value)
-})
-
-// Initialize image carousel for each product
-watch(() => products.value, (newProducts) => {
-  newProducts.forEach(product => {
-    if (!productImageIndices.value[product._id]) {
-      productImageIndices.value[product._id] = 0
-      
-      // Start carousel for products with multiple images
-      if (product.images.length > 1) {
-        startImageCarousel(product._id, product.images.length)
-      }
+    if (
+      scrollPosition > promotionPosition - window.innerHeight &&
+      scrollPosition < promotionPosition + promotionRef.value.offsetHeight
+    ) {
+      parallaxBgRef.value.style.transform = `translateY(${offset * 0.4}px)`;
     }
-  })
-}, { immediate: true })
-
-// Start image carousel
-const startImageCarousel = (productId: string, imageCount: number) => {
-  // Clear any existing interval
-  if (carouselIntervals.value[productId]) {
-    clearInterval(carouselIntervals.value[productId])
   }
-  
-  // Set new interval
-  carouselIntervals.value[productId] = window.setInterval(() => {
-    productImageIndices.value[productId] = (productImageIndices.value[productId] + 1) % imageCount
-  }, 3000)
-}
+};
 
-// Clean up intervals on component unmount
+// Product slider drag functionality
+const startDrag = (e: MouseEvent) => {
+  if (!productContainerRef.value) return;
+
+  isDragging.value = true;
+  startX.value = e.pageX - productContainerRef.value.offsetLeft;
+  scrollLeft.value = productContainerRef.value.scrollLeft;
+};
+
+const onDrag = (e: MouseEvent) => {
+  if (!isDragging.value || !productContainerRef.value) return;
+
+  e.preventDefault();
+  const x = e.pageX - productContainerRef.value.offsetLeft;
+  const walk = (x - startX.value) * 2; // Scroll speed multiplier
+  productContainerRef.value.scrollLeft = scrollLeft.value - walk;
+};
+
+const endDrag = () => {
+  isDragging.value = false;
+};
+
+// Touch events for mobile
+const startDragTouch = (e: TouchEvent) => {
+  if (!productContainerRef.value) return;
+
+  isDragging.value = true;
+  startX.value = e.touches[0].pageX - productContainerRef.value.offsetLeft;
+  scrollLeft.value = productContainerRef.value.scrollLeft;
+};
+
+const onDragTouch = (e: TouchEvent) => {
+  if (!isDragging.value || !productContainerRef.value) return;
+
+  const x = e.touches[0].pageX - productContainerRef.value.offsetLeft;
+  const walk = (x - startX.value) * 2;
+  productContainerRef.value.scrollLeft = scrollLeft.value - walk;
+};
+
+const endDragTouch = () => {
+  isDragging.value = false;
+};
+
+// Button scroll functionality
+const scrollProducts = (direction: "left" | "right") => {
+  if (!productContainerRef.value) return;
+
+  const scrollAmount = productContainerRef.value.clientWidth * 0.8;
+  if (direction === "left") {
+    productContainerRef.value.scrollBy({
+      left: -scrollAmount,
+      behavior: "smooth",
+    });
+  } else {
+    productContainerRef.value.scrollBy({
+      left: scrollAmount,
+      behavior: "smooth",
+    });
+  }
+};
+
+// Animation on scroll
+const animateOnScroll = () => {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("fade-in");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+
+  // Observe product cards
+  productRefs.forEach((el) => {
+    if (el) observer.observe(el);
+  });
+};
+
 onMounted(() => {
-    Object.values(carouselIntervals.value).forEach(interval => {
-      clearInterval(interval)
-    })
-})
+  // Start image carousel
+  startImageCarousel();
 
-// Methods
-const navigateToCategory = (categoryId: string) => {
-  router.push(`/artworks?category=${categoryId}`)
-}
+  // Initialize GSAP animations
+  if (titleRef.value && taglineRef.value) {
+    gsap.from(titleRef.value, {
+      opacity: 0,
+      y: 30,
+      duration: 1,
+      ease: "power3.out",
+    });
 
-const viewProduct = (product: any) => {
-  router.push(`/artworks/${product._id}`)
-}
+    gsap.from(taglineRef.value.querySelector(".typewriter-text"), {
+      width: 0,
+      duration: 3,
+      ease: "steps(40)",
+      delay: 1,
+    });
+  }
 
-const addToCart = (product: any) => {
-  addItemToCart({
-    id: product._id,
-    title: product.name,
-    image: product.images[0],
-    price: product.discountPrice || product.price,
-    quantity: 1
-  })
-}
+  // Add scroll event listener for parallax
+  window.addEventListener("scroll", handleScroll);
 
-const subscribeNewsletter = () => {
-  // Handle newsletter subscription
-  alert(`Thank you for subscribing with ${email.value}!`)
-  email.value = ''
-}
+  // Initialize animations on scroll
+  animateOnScroll();
+});
+
+onBeforeUnmount(() => {
+  // Clean up
+  if (imageInterval) clearInterval(imageInterval);
+  window.removeEventListener("scroll", handleScroll);
+});
 </script>
+
+<style scoped>
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+.typewriter-text {
+  display: inline-block;
+  overflow: hidden;
+  border-right: 0.15em solid #888;
+  white-space: nowrap;
+  margin: 0 auto;
+  letter-spacing: 0.05em;
+  animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink-caret {
+  from,
+  to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #888;
+  }
+}
+</style>

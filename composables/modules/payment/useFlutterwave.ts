@@ -115,9 +115,9 @@ export const useFlutterwaveSDK = () => {
               
               // Only redirect after both operations are complete
               loading.value = false
-              
+               router.push(`/order-success?tranxId=${data.flw_ref || paymentData.tx_ref}&amount=${data.amount || paymentData.amount}`)
               // Use window.location.href for a full page redirect with query parameters
-              // window.location.href = `/order-success?tranxId=${data.flw_ref || paymentData.tx_ref}&amount=${data.amount || paymentData.amount}`
+              window.location.href = `/order-success?tranxId=${data.flw_ref || paymentData.tx_ref}&amount=${data.amount || paymentData.amount}`
             } else {
               console.error('Order ID is missing')
               loading.value = false
