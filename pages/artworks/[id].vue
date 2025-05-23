@@ -1,5 +1,6 @@
 <template>
   <div>
+{{course}}
     <div v-if="loading" class="container mx-auto px-4 py-20 flex justify-center items-center">
       <div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-black"></div>
     </div>
@@ -11,6 +12,7 @@
         Browse All Artworks
       </NuxtLink>
     </div>
+    
     
     <div v-else class="container mx-auto px-4 py-12 md:py-20">
       <!-- Breadcrumb -->
@@ -432,6 +434,8 @@ import { useFetchProduct } from "@/composables/modules/products/useFetchProduct"
 import { useCustomToast } from '@/composables/core/useCustomToast'
 import { useCartStore } from '~/composables/useCartStore'
 import { useRoute, useRouter } from 'vue-router'
+import { useGetCourseById } from "@/composables/modules/courses/useGetCourseById"
+const { loading: fetching, course } = useGetCourseById()
 
 const route = useRoute()
 const router = useRouter()

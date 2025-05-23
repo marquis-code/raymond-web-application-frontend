@@ -1,5 +1,7 @@
 <template>
     <div class="min-h-screen bg-black text-white">
+      <!-- {{courseObj.objectives}} -->
+       <!-- {{coursesList}} -->
       <!-- Floating Elements -->
       <div class="fixed w-full h-full pointer-events-none">
         <div class="absolute top-20 left-10 w-32 h-32 bg-rose-500/20 rounded-full mix-blend-screen blur-xl animate-float-slow"></div>
@@ -36,15 +38,15 @@
                   v-if="!isHeaderSticky" 
                   class="text-gray-400 text-sm"
                 >
-                  A course by {{ course.instructor }}
+                  A course by {{ courseObj?.instructor?.fullName }}
                 </p>
               </div>
             </div>
             
             <div class="flex items-center gap-4">
               <div v-if="isHeaderSticky" class="hidden md:block">
-                <span class="text-rose-500 font-bold">${{ course.salePrice.toFixed(2) }}</span>
-                <span class="text-gray-400 text-sm line-through ml-2">${{ course.regularPrice.toFixed(2) }}</span>
+                <span class="text-rose-500 font-bold">${{ course?.price?.toFixed(2) }}</span>
+                <span class="text-gray-400 text-sm line-through ml-2">${{ course?.price?.toFixed(2) }}</span>
               </div>
               
               <button 
@@ -76,7 +78,7 @@
                   </button>
                 </div>
                 <img 
-                  :src="course.imageUrl" 
+                  :src="course.thumbnail" 
                   :alt="course.title" 
                   class="w-full h-full object-cover"
                   @error="handleImageError"
@@ -91,11 +93,11 @@
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                     </div>
-                    <span class="text-white">{{ course.rating }}% ({{ course.reviewCount }} reviews)</span>
+                    <span class="text-white">{{ course.averageRating }}% ({{ course.reviewCount }} reviews)</span>
                   </div>
                   
                   <div class="text-gray-400">
-                    <span>{{ course.studentCount }} students</span>
+                    <span>{{ course.enrollmentCount }} students</span>
                   </div>
                   
                   <div class="text-gray-400">
@@ -113,14 +115,14 @@
                   <div class="flex items-center">
                     <div class="h-12 w-12 bg-gray-700 rounded-full overflow-hidden">
                       <img 
-                        :src="instructorAvatar" 
+                        src="@/assets/img/raymond-logo.png" 
                         :alt="course.instructor" 
                         class="w-full h-full object-cover"
                         @error="handleImageError"
                       />
                     </div>
                     <div class="ml-4">
-                      <h4 class="font-bold text-white">{{ course.instructor }}</h4>
+                      <h4 class="font-bold text-white">{{ course?.instructor?.fullName }}</h4>
                       <p class="text-gray-400 text-sm">{{ instructorTitle }}</p>
                     </div>
                   </div>
@@ -202,7 +204,7 @@
                 <h2 class="text-2xl font-bold text-white mb-6">Requirements</h2>
                 
                 <ul class="space-y-2 text-gray-300">
-                  <li v-for="(req, index) in courseRequirements" :key="index" class="flex items-start">
+                  <li v-for="(req, index) in courseObj?.requirements" :key="index" class="flex items-start">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-500 mr-2 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                     </svg>
@@ -216,7 +218,7 @@
                 <h2 class="text-2xl font-bold text-white mb-6">What You'll Learn</h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div v-for="(item, index) in courseOutcomes" :key="index" class="flex items-start">
+                  <div v-for="(item, index) in courseObj?.objectives" :key="index" class="flex items-start">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-500 mr-2 mt-0.5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                       <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                     </svg>
@@ -233,7 +235,7 @@
                   <div class="flex flex-col sm:flex-row items-start gap-6">
                     <div class="w-24 h-24 bg-gray-700 rounded-full overflow-hidden flex-shrink-0">
                       <img 
-                        :src="instructorAvatar" 
+                        src="@/assets/img/raymond-logo.png" 
                         :alt="course.instructor" 
                         class="w-full h-full object-cover"
                         @error="handleImageError"
@@ -274,7 +276,7 @@
                         </div>
                       </div>
                       
-                      <p class="text-gray-300">
+                      <p class="text-gray-300 leading-loose">
                         {{ instructorBio }}
                       </p>
                     </div>
@@ -381,12 +383,14 @@
                   <div class="space-y-4 mb-6">
                     <button 
                       id="enroll-button"
-                      class="w-full py-3 bg-rose-600 text-white font-medium rounded-md hover:bg-rose-700 transition-colors flex items-center justify-center"
+                        @click="enrollInCourse"
+                        :disabled="enrolling"
+                      class="w-full py-3 bg-rose-600 disabled:cursor-not-allowed disabled:opacity-25 text-white font-medium rounded-md hover:bg-rose-700 transition-colors flex items-center justify-center"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd" />
                       </svg>
-                      Enroll Now
+                       {{ enrolling ? 'processing..' : 'Enroll Now'}}
                     </button>
                     
                     <button class="w-full py-3 bg-transparent border border-white text-white font-medium rounded-md hover:bg-white/10 transition-colors">
@@ -485,14 +489,14 @@
           
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div 
-              v-for="(relatedCourse, index) in relatedCourses" 
+              v-for="(relatedCourse, index) in coursesList" 
               :key="index"
               class="bg-gray-800 rounded-xl overflow-hidden shadow-lg transform hover:translate-y-[-8px] transition-all duration-300"
             >
               <div class="relative">
                 <img 
-                  :src="relatedCourse.imageUrl" 
-                  :alt="relatedCourse.title" 
+                  :src="relatedCourse?.thumbnail" 
+                  :alt="relatedCourse?.title" 
                   class="w-full h-48 object-cover"
                   @error="handleImageError"
                 />
@@ -504,8 +508,9 @@
               </div>
               
               <div class="p-6">
-                <h4 class="text-xl font-bold text-white mb-2 line-clamp-2">{{ relatedCourse.title }}</h4>
-                <p class="text-gray-400 text-sm mb-4">A course by {{ relatedCourse.instructor }}</p>
+                <h4 class="text-xl font-bold text-white mb-2 line-clamp-2">{{ relatedCourse?.title }}</h4>
+                <p class="text-gray-400 text-sm mb-4">A course by Raymond Aworo</p>
+                <!-- <p class="text-gray-400 text-sm mb-4">A course by {{ relatedCourse?.instructor?.fullName }}</p> -->
                 
                 <div class="flex items-center mb-4">
                   <div class="flex text-amber-400 mr-2">
@@ -513,17 +518,17 @@
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                     </svg>
                   </div>
-                  <span class="text-white text-sm">{{ relatedCourse.rating }}% ({{ relatedCourse.reviewCount }})</span>
+                  <span class="text-white text-sm">{{ relatedCourse?.averagerating }}% ({{ relatedCourse?.reviewCount }})</span>
                 </div>
                 
                 <div class="flex items-center justify-between">
                   <div>
-                    <span class="text-rose-500 font-bold">${{ relatedCourse.salePrice.toFixed(2) }}</span>
-                    <span class="text-gray-400 text-sm line-through ml-2">${{ relatedCourse.regularPrice.toFixed(2) }}</span>
+                    <span class="text-rose-500 font-bold">${{ relatedCourse?.price.toFixed(2) }}</span>
+                    <span class="text-gray-400 text-sm line-through ml-2">${{ relatedCourse?.price?.toFixed(2) }}</span>
                   </div>
                   
                   <router-link 
-                    :to="`/academy/course/${relatedCourse.id}`" 
+                    :to="`/academy/course/${relatedCourse?.id}`" 
                     class="inline-flex items-center justify-center px-4 py-2 bg-rose-600 text-white text-sm font-medium rounded-md hover:bg-rose-700 transition-colors"
                   >
                     View Course
@@ -566,7 +571,7 @@
               <iframe 
                 width="100%" 
                 height="100%" 
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" 
+                :src="course.previewVideo" 
                 title="YouTube video player" 
                 frameborder="0" 
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
@@ -585,6 +590,9 @@
   import artwork1 from '@/assets/img/artist.avif'
 import artwork2 from '@/assets/img/commission-art1.jpg'
 import artwork3 from '@/assets/img/commission-art.png'
+import { useGetCourses } from "@/composables/modules/courses/useGetCourses"
+import { useGetCourseById } from "@/composables/modules/courses/useGetCourseById"
+import { useEnrollInCourse } from "@/composables/modules/courses/useEnrollInCourse"
   
   // Route
   const route = useRoute()
@@ -595,6 +603,9 @@ import artwork3 from '@/assets/img/commission-art.png'
   const isVideoModalOpen = ref(false)
   const courseHeader = ref<HTMLElement | null>(null)
   const courseSidebar = ref<HTMLElement | null>(null)
+    const { courses: coursesList, loading } = useGetCourses()
+    const { course: courseObj, loading:loadingCourse } = useGetCourseById()
+    const { enrollInCourse, loading: enrolling} = useEnrollInCourse()
   
   // Sample course data
   const courses = ref([
@@ -779,7 +790,7 @@ import artwork3 from '@/assets/img/commission-art.png'
   })
   
   const courseDuration = computed(() => {
-    return '9h 35m'
+    return  course?.value?.durationInMinutes
   })
   
   const courseResources = computed(() => {
