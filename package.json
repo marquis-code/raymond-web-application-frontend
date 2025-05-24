@@ -5,11 +5,13 @@
     "url": ""
   },
   "scripts": {
+    "prebuild": "rm -rf .nuxt dist",
     "dev": "nuxt dev --port 3030",
     "build": "nuxt build",
     "start": "node .output/server/index.mjs",
     "generate": "nuxt generate",
-    "preview": "nuxt preview --port 3030"
+    "preview": "nuxt preview --port 3030",
+    "postbuild": "echo 'Build completed successfully'"
   },
   "devDependencies": {
     "@kevinmarrec/nuxt-pwa": "^0.17.0",
