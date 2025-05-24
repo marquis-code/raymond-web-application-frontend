@@ -1,65 +1,65 @@
 {
   "version": 3,
   "overrides": {
-    "login/index.html": {
-      "path": "login"
-    },
-    "shop/index.html": {
-      "path": "shop"
-    },
     "about/index.html": {
       "path": "about"
-    },
-    "terms/index.html": {
-      "path": "terms"
-    },
-    "signup/index.html": {
-      "path": "signup"
     },
     "index1/index.html": {
       "path": "index1"
     },
+    "shop/index.html": {
+      "path": "shop"
+    },
+    "terms/index.html": {
+      "path": "terms"
+    },
     "shopss/index.html": {
       "path": "shopss"
     },
-    "contact-us/index.html": {
-      "path": "contact-us"
-    },
-    "checkout/index.html": {
-      "path": "checkout"
-    },
-    "contact/index.html": {
-      "path": "contact"
-    },
-    "academy/index.html": {
-      "path": "academy"
+    "signup/index.html": {
+      "path": "signup"
     },
     "commission/index.html": {
       "path": "commission"
     },
-    "artworks/index.html": {
-      "path": "artworks"
+    "login/index.html": {
+      "path": "login"
     },
-    "prints/index.html": {
-      "path": "prints"
+    "checkout/index.html": {
+      "path": "checkout"
+    },
+    "contact-us/index.html": {
+      "path": "contact-us"
     },
     "privacy-policy/index.html": {
       "path": "privacy-policy"
     },
-    "order-success/index.html": {
-      "path": "order-success"
-    },
     "refund-policy/index.html": {
       "path": "refund-policy"
     },
-    "index.html": {
-      "path": ""
+    "prints/index.html": {
+      "path": "prints"
+    },
+    "order-success/index.html": {
+      "path": "order-success"
+    },
+    "academy/index.html": {
+      "path": "academy"
+    },
+    "artworks/index.html": {
+      "path": "artworks"
     },
     "shipping-policy/index.html": {
       "path": "shipping-policy"
     },
+    "contact/index.html": {
+      "path": "contact"
+    },
     "artworks/indexa/index.html": {
       "path": "artworks/indexa"
+    },
+    "index.html": {
+      "path": ""
     }
   },
   "routes": [

@@ -5,7 +5,6 @@
     "url": ""
   },
   "scripts": {
-    "prebuild": "rm -rf .nuxt dist",
     "dev": "nuxt dev --port 3030",
     "build": "nuxt build",
     "start": "node .output/server/index.mjs",
