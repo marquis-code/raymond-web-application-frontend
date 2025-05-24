@@ -289,7 +289,7 @@
                     <div class="flex items-center mb-4">
                       <div class="h-12 w-12 bg-gray-700 rounded-full overflow-hidden">
                         <img 
-                          src="@/assets/img/event-go.webp" 
+                          src="@/assets/img/event-go.png" 
                           alt="Student Review" 
                           class="w-full h-full object-cover"
                           @error="handleImageError"
@@ -318,7 +318,7 @@
                     <div class="flex items-center mb-4">
                       <div class="h-12 w-12 bg-gray-700 rounded-full overflow-hidden">
                         <img 
-                          src="@/assets/img/event-go.webp" 
+                          src="@/assets/img/event-go.png" 
                           alt="Student Review" 
                           class="w-full h-full object-cover"
                           @error="handleImageError"
@@ -583,7 +583,7 @@
   <script setup lang="ts">
   import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
   import { useRoute } from 'vue-router'
-  import artwork1 from '@/assets/img/artist.avif'
+  import artwork1 from '@/assets/img/artist.png'
 import artwork2 from '@/assets/img/commission-art1.jpg'
 import artwork3 from '@/assets/img/commission-art.png'
 import { useGetCourses } from "@/composables/modules/courses/useGetCourses"

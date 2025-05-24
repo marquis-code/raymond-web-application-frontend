@@ -38,7 +38,7 @@
               <div class="relative">
                 <div class="absolute inset-0 bg-amber-100 rounded-lg transform rotate-6"></div>
                 <img 
-                  src="@/assets/img/artist.avif" 
+                  src="@/assets/img/artist.png" 
                   alt="Artist Portrait" 
                   class="relative z-10 rounded-lg shadow-xl w-full h-auto transform -rotate-6 transition-transform duration-500 hover:rotate-0"
                   @error="handleImageError"

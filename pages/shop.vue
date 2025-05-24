@@ -359,17 +359,17 @@
   
   <script setup lang="ts">
   import { ref, reactive } from 'vue'
-  import featured1 from "@/assets/img/featured1.avif";
+  import featured1 from "@/assets/img/featured1.png";
 import featured2 from "@/assets/img/featured2.jpg";
 import featured3 from "@/assets/img/featured3.jpg";
-import featured4 from "@/assets/img/featured4.avif";
-import featured5 from "@/assets/img/featured5.avif";
-import featured6 from "@/assets/img/featured6.avif";
-import featured7 from "@/assets/img/featured7.avif";
-import featured8 from "@/assets/img/featured8.avif";
-import featured9 from "@/assets/img/featured9.avif";
-import featured10 from "@/assets/img/featured10.avif";
-import featured11 from "@/assets/img/featured11.avif";
+import featured4 from "@/assets/img/featured4.png";
+import featured5 from "@/assets/img/featured5.png";
+import featured6 from "@/assets/img/featured6.png";
+import featured7 from "@/assets/img/featured7.png";
+import featured8 from "@/assets/img/featured8.png";
+import featured9 from "@/assets/img/featured9.png";
+import featured10 from "@/assets/img/featured10.png";
+import featured11 from "@/assets/img/featured11.png";
 import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
 const { products, loading } = useFetchProducts()
 

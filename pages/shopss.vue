@@ -439,7 +439,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import artwork1 from '@/assets/img/artist.avif'
+import artwork1 from '@/assets/img/artist.png'
 import artwork2 from '@/assets/img/commission-art1.jpg'
 import artwork3 from '@/assets/img/commission-art.png'
 

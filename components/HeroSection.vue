@@ -106,7 +106,7 @@ import { directive as motion } from '@vueuse/motion'
 // Import images
 import image1 from '@/assets/img/no-love.jpg'
 import image2 from '@/assets/img/commission-art1.jpg'
-import image3 from '@/assets/img/artist.avif'
+import image3 from '@/assets/img/artist.png'
 
 interface Artwork {
   id: number

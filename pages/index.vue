@@ -108,7 +108,7 @@
         @click="navigateTo('/commission')"
       >
         <img
-          src="@/assets/img/potrait.avif"
+          src="@/assets/img/potrait.png"
           alt="Portrait display"
           class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
         />
@@ -255,17 +255,6 @@ import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
 import { useRouter } from "vue-router";
 import hero1 from "@/assets/img/commission-art1.jpg";
 import hero2 from "@/assets/img/snap.jpg";
-// import featured1 from "@/assets/img/featured1.avif";
-// import featured2 from "@/assets/img/featured2.jpg";
-// import featured3 from "@/assets/img/featured3.jpg";
-// import featured4 from "@/assets/img/featured4.avif";
-// import featured5 from "@/assets/img/featured5.avif";
-// import featured6 from "@/assets/img/featured6.avif";
-// import featured7 from "@/assets/img/featured7.avif";
-// import featured8 from "@/assets/img/featured8.avif";
-// import featured9 from "@/assets/img/featured9.avif";
-// import featured10 from "@/assets/img/featured10.avif";
-// import featured11 from "@/assets/img/featured11.avif";
 import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
 
 const { products, loading } = useFetchProducts()

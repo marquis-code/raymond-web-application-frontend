@@ -431,7 +431,7 @@ import { ref, computed, onMounted, watch, onBeforeUnmount } from 'vue'
 import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
 import { useFetchCategories } from "@/composables/modules/products/useFetchCategories"
 import { useCartStore } from '~/composables/useCartStore'
-import insta1 from '@/assets/img/event-go.webp'
+import insta1 from '@/assets/img/event-go.png'
 import insta2 from '@/assets/img/services9.jpg'
 import insta3 from '@/assets/img/services3.jpg'
 import insta4 from '@/assets/img/services5.jpg'

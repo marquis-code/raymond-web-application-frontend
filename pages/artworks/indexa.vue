@@ -237,7 +237,7 @@
             </div>
             <div class="aspect-[3/4] bg-gray-800 rounded-lg overflow-hidden">
               <img 
-                src="@/assets/img/artist.avif" 
+                src="@/assets/img/artist.png" 
                 alt="Print Sample 2" 
                 class="w-full h-full object-cover"
                 @error="handleImageError"
@@ -252,7 +252,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import artwork1 from '@/assets/img/artist.avif'
+import artwork1 from '@/assets/img/artist.png'
 import artwork2 from '@/assets/img/commission-art1.jpg'
 import artwork3 from '@/assets/img/commission-art.png'
 
