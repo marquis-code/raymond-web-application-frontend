@@ -44,7 +44,7 @@
               </a>
               
               <a 
-                href="https://youtube.com" 
+                href="https://www.youtube.com/@raymondaworo/shorts" 
                 target="_blank"
                 class="inline-flex items-center justify-center px-8 py-3 bg-transparent border border-white text-white font-medium rounded-md hover:bg-white/10 transition-colors"
               >
@@ -390,7 +390,7 @@
             <iframe 
               width="100%" 
               height="100%" 
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" 
+              src="https://www.youtube.com/shorts/9Cum1pxm3bM" 
               title="YouTube video player" 
               frameborder="0" 
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 

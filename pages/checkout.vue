@@ -240,14 +240,14 @@
         <div class="flex items-center justify-between">
           <div 
             class="flex flex-col items-center"
-            :class="{ 'text-black': checkoutStep >= 1, 'text-gray-400': checkoutStep < 1 }"
+            :class="{ 'text-black': currentStep >= 1, 'text-gray-400': currentStep < 1 }"
           >
             <div 
               class="w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all duration-500"
               :class="{ 
-                'bg-black text-white scale-110 shadow-lg': checkoutStep === 1, 
-                'bg-black text-white': checkoutStep > 1, 
-                'bg-gray-200': checkoutStep < 1 
+                'bg-black text-white scale-110 shadow-lg': currentStep === 1, 
+                'bg-black text-white': currentStep > 1, 
+                'bg-gray-200': currentStep < 1 
               }"
             >
               <User class="w-5 h-5" />
@@ -259,20 +259,20 @@
             <div class="absolute inset-0 bg-gray-200"></div>
             <div 
               class="absolute inset-0 bg-black transition-all duration-500 ease-out"
-              :style="{ width: checkoutStep >= 2 ? '100%' : '0%' }"
+              :style="{ width: currentStep >= 2 ? '100%' : '0%' }"
             ></div>
           </div>
           
           <div 
             class="flex flex-col items-center"
-            :class="{ 'text-black': checkoutStep >= 2, 'text-gray-400': checkoutStep < 2 }"
+            :class="{ 'text-black': currentStep >= 2, 'text-gray-400': currentStep < 2 }"
           >
             <div 
               class="w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all duration-500"
               :class="{ 
-                'bg-black text-white scale-110 shadow-lg': checkoutStep === 2, 
-                'bg-black text-white': checkoutStep > 2, 
-                'bg-gray-200': checkoutStep < 2 
+                'bg-black text-white scale-110 shadow-lg': currentStep === 2, 
+                'bg-black text-white': currentStep > 2, 
+                'bg-gray-200': currentStep < 2 
               }"
             >
               <Truck class="w-5 h-5" />
@@ -284,19 +284,20 @@
             <div class="absolute inset-0 bg-gray-200"></div>
             <div 
               class="absolute inset-0 bg-black transition-all duration-500 ease-out"
-              :style="{ width: checkoutStep >= 3 ? '100%' : '0%' }"
+              :style="{ width: currentStep >= 3 ? '100%' : '0%' }"
             ></div>
           </div>
           
           <div 
             class="flex flex-col items-center"
-            :class="{ 'text-black': checkoutStep >= 3, 'text-gray-400': checkoutStep < 3 }"
+            :class="{ 'text-black': currentStep >= 3, 'text-gray-400': currentStep < 3 }"
           >
             <div 
               class="w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all duration-500"
               :class="{ 
-                'bg-black text-white scale-110 shadow-lg': checkoutStep === 3, 
-                'bg-gray-200': checkoutStep < 3 
+                'bg-black text-white scale-110 shadow-lg': currentStep === 3, 
+                'bg-black text-white': currentStep > 3, 
+                'bg-gray-200': currentStep < 3 
               }"
             >
               <CreditCard class="w-5 h-5" />
@@ -311,13 +312,13 @@
         <div class="lg:col-span-2">
           <!-- Step 1: Delivery Details -->
           <Transition name="slide-fade" mode="out-in">
-            <div v-if="checkoutStep === 1" class="bg-white p-8 rounded-xl shadow-md border border-gray-100 animate-fade-in">
+            <div v-if="currentStep === 1" class="bg-white p-8 rounded-xl shadow-md border border-gray-100 animate-fade-in">
               <h2 class="text-xl font-semibold mb-6 flex items-center">
                 <User class="w-5 h-5 mr-2" />
                 Delivery Details
               </h2>
               
-              <form @submit.prevent="nextStep" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form @submit.prevent="handleNextStep" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="form-group">
                   <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
                   <input 
@@ -421,14 +422,16 @@
                     v-model="deliveryDetails.country"
                     required
                     class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
-                    @change="persistDeliveryDetails"
+                    @change="handleCountryChange"
                   >
-                    <option value="Nigeria">Nigeria</option>
-                    <option value="Ghana">Ghana</option>
-                    <option value="Kenya">Kenya</option>
-                    <option value="South Africa">South Africa</option>
-                    <option value="United States">United States</option>
-                    <option value="United Kingdom">United Kingdom</option>
+                    <option value="">Select Country</option>
+                    <option 
+                      v-for="country in availableCountries" 
+                      :key="country.countryCode" 
+                      :value="country.countryCode"
+                    >
+                      {{ country.countryName }}
+                    </option>
                   </select>
                 </div>
                 
@@ -445,7 +448,7 @@
             </div>
             
             <!-- Step 2: Shipping Method -->
-            <div v-else-if="checkoutStep === 2" class="bg-white p-8 rounded-xl shadow-md border border-gray-100 animate-fade-in">
+            <div v-else-if="currentStep === 2" class="bg-white p-8 rounded-xl shadow-md border border-gray-100 animate-fade-in">
               <h2 class="text-xl font-semibold mb-6 flex items-center">
                 <Truck class="w-5 h-5 mr-2" />
                 Shipping Method
@@ -465,7 +468,7 @@
                     <div class="flex-1">
                       <div class="flex justify-between">
                         <span class="font-medium">Standard Delivery</span>
-                        <span class="font-medium">{{ checkoutSummary.subtotal > 100 ? 'Free' : '$10.00' }}</span>
+                        <span class="font-medium">${{ formatPrice(currentShippingFee) }}</span>
                       </div>
                       <p class="text-sm text-gray-600">Delivery within 5-7 business days</p>
                     </div>
@@ -485,7 +488,7 @@
                     <div class="flex-1">
                       <div class="flex justify-between">
                         <span class="font-medium">Express Delivery</span>
-                        <span class="font-medium">$25.00</span>
+                        <span class="font-medium">${{ formatPrice(currentShippingFee * 2.5) }}</span>
                       </div>
                       <p class="text-sm text-gray-600">Delivery within 2-3 business days</p>
                     </div>
@@ -515,14 +518,14 @@
               
               <div class="flex gap-4">
                 <button 
-                  @click="prevStep"
+                  @click="handlePrevStep"
                   class="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 flex items-center justify-center"
                 >
                   <ArrowLeft class="w-4 h-4 mr-2" />
                   Back
                 </button>
                 <button 
-                  @click="nextStep"
+                  @click="handleNextStep"
                   class="flex-1 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
                 >
                   Continue to Payment
@@ -532,7 +535,7 @@
             </div>
             
             <!-- Step 3: Payment -->
-            <div v-else-if="checkoutStep === 3" class="bg-white p-8 rounded-xl shadow-md border border-gray-100 animate-fade-in">
+            <div v-else-if="currentStep === 3" class="bg-white p-8 rounded-xl shadow-md border border-gray-100 animate-fade-in">
               <h2 class="text-xl font-semibold mb-6 flex items-center">
                 <CreditCard class="w-5 h-5 mr-2" />
                 Payment Method
@@ -574,12 +577,15 @@
                       <span class="font-medium">Credit/Debit Card</span>
                       <p class="text-sm text-gray-600">Pay directly with your card</p>
                     </div>
-                    <div class="flex space-x-1">
+                    <div class="flex space-x-3">
                       <div class="w-8 h-6 bg-gray-100 rounded flex items-center justify-center">
-                        <img src="@/assets/icons/card.svg" alt="Visa" class="h-3" @error="handleImageError" />
+                        <img src="@/assets/icons/card1.svg" alt="Visa" class="rounded-lg" @error="handleImageError" />
                       </div>
                       <div class="w-8 h-6 bg-gray-100 rounded flex items-center justify-center">
-                        <img src="@/assets/icons/card.svg" alt="Mastercard" class="h-3" @error="handleImageError" />
+                        <img src="@/assets/icons/card2.svg" alt="Mastercard" class="rounded-lg" @error="handleImageError" />
+                      </div>
+                      <div class="w-8 h-6 bg-gray-100 rounded flex items-center justify-center">
+                        <img src="@/assets/icons/card3.svg" alt="Mastercard" class="rounded-lg" @error="handleImageError" />
                       </div>
                     </div>
                   </div>
@@ -589,7 +595,6 @@
               <!-- Manual Payment Form -->
               <Transition name="fade">
                 <div v-if="paymentMethod === 'manual'" class="border-t border-gray-200 pt-6 mt-6">
-                  <!-- <h3 class="text-lg font-medium mb-4  class="border-t border-gray-200 pt-6 mt-6"> -->
                   <h3 class="text-lg font-medium mb-4">Card Details</h3>
                   <form class="space-y-4">
                     <div class="form-group">
@@ -658,7 +663,7 @@
               
               <div class="flex gap-4 mt-6">
                 <button 
-                  @click="prevStep"
+                  @click="handlePrevStep"
                   class="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 flex items-center justify-center"
                 >
                   <ArrowLeft class="w-4 h-4 mr-2" />
@@ -730,22 +735,24 @@
             <div class="border-t border-gray-200 pt-4 space-y-3">
               <div class="flex justify-between text-sm">
                 <span>Subtotal</span>
-                <span>${{ formatPrice(checkoutSummary.subtotal) }}</span>
+                <span>${{ formatPrice(checkoutSummary?.subtotal || 0) }}</span>
               </div>
+              
               <div class="flex justify-between text-sm">
                 <span>Shipping</span>
-                <span>
-                  <template v-if="deliveryMethod === 'standard'">
-                    {{ checkoutSummary.subtotal > 100 ? 'Free' : '$10.00' }}
-                  </template>
-                  <template v-else-if="deliveryMethod === 'express'">
-                    $25.00
-                  </template>
-                  <template v-else>
-                    Free
-                  </template>
-                </span>
+                <span>${{ formatPrice(getShippingCost()) }}</span>
               </div>
+              
+              <div class="flex justify-between text-sm">
+                <span>Tax ({{ currentTaxRate }}%)</span>
+                <span>${{ formatPrice(getTaxAmount()) }}</span>
+              </div>
+              
+              <div v-if="selectedCountryInfo" class="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+                <p>Shipping to: {{ selectedCountryInfo.countryName }}</p>
+                <p>Tax Rate: {{ currentTaxRate }}%</p>
+              </div>
+              
               <div class="flex justify-between font-bold pt-3 border-t border-gray-200 mt-3">
                 <span>Total</span>
                 <span class="text-lg">${{ formatPrice(calculateTotal()) }}</span>
@@ -759,22 +766,19 @@
               </div>
               <div class="flex gap-2">
                 <div class="w-10 h-6 bg-gray-100 rounded flex items-center justify-center">
-                  <img src="@/assets/icons/card.svg" alt="Visa" class="h-3" @error="handleImageError" />
+                  <img src="@/assets/icons/card1.svg" alt="Visa" class="rounded-lg" @error="handleImageError" />
                 </div>
                 <div class="w-10 h-6 bg-gray-100 rounded flex items-center justify-center">
-                  <img src="@/assets/icons/card.svg" alt="Mastercard" class="h-3" @error="handleImageError" />
+                  <img src="@/assets/icons/card2.svg" alt="Mastercard" class="rounded-lg" @error="handleImageError" />
                 </div>
                 <div class="w-10 h-6 bg-gray-100 rounded flex items-center justify-center">
-                  <img src="@/assets/icons/card.svg" alt="American Express" class="h-3" @error="handleImageError" />
-                </div>
-                <div class="w-10 h-6 bg-gray-100 rounded flex items-center justify-center">
-                  <img src="@/assets/icons/card.svg" alt="PayPal" class="h-3" @error="handleImageError" />
+                  <img src="@/assets/icons/card3.svg" alt="American Express" class="rounded-lg" @error="handleImageError" />
                 </div>
               </div>
             </div>
             
             <!-- Checkout Timer -->
-            <div class="mt-6 pt-4 border-t border-gray-200">
+            <div v-if="checkoutTimer > 0" class="mt-6 pt-4 border-t border-gray-200">
               <div class="bg-rose-50 p-3 rounded-lg flex items-center">
                 <Clock class="w-5 h-5 text-rose-500 mr-2" />
                 <div>
@@ -798,6 +802,11 @@ import { use_auth_login } from '@/composables/auth/login'
 import { useCheckoutStore } from '@/composables/useCheckoutStore'
 import { useUser } from '@/composables/auth/user'
 import { useLocalStorage } from '@/composables/useLocalStorage'
+import { useTaxConfig } from '@/composables/modules/shipping-tax/useTaxConfig'
+import { useShippingConfig } from '@/composables/modules/shipping-tax/useShippingConfig'
+import { useRouter, useRoute } from 'vue-router'
+import { useCustomToast } from '@/composables/core/useCustomToast'
+
 import { 
   ShoppingBag, 
   CheckCircle, 
@@ -816,10 +825,18 @@ import {
   HelpCircle,
   Clock
 } from 'lucide-vue-next'
-import { useRouter } from 'vue-router'
 
-// Router
-const router = useRouter()
+// Toast notifications
+const { showToast } = useCustomToast()
+
+// Import composables
+const { 
+  fetchShippingConfigs
+} = useShippingConfig()
+
+const { 
+  fetchTaxConfigs
+} = useTaxConfig()
 
 // Cart store
 const { cart, removeFromCart, updateCartItemQuantity } = useCartStore()
@@ -834,7 +851,7 @@ const { setItem, getItem, removeItem: removeStorageItem } = useLocalStorage()
 
 // Checkout store
 const { 
-  checkoutStep,
+  checkoutStep: storeCheckoutStep,
   checkoutSummary,
   deliveryDetails,
   deliveryMethod,
@@ -843,14 +860,29 @@ const {
   isProcessing,
   orderComplete,
   orderId,
-  nextStep,
-  prevStep,
+  nextStep: storeNextStep,
+  prevStep: storePrevStep,
   setDeliveryMethod,
   setPaymentMethod,
-  processPayment,
+  processPayment: storeProcessPayment,
   persistDeliveryDetails,
   resetCheckout
 } = useCheckoutStore()
+
+// Router and Route
+const router = useRouter()
+const route = useRoute()
+
+// Shipping and Tax data
+const shippingConfigs = ref([])
+const taxConfigs = ref([])
+const selectedCountryInfo = ref(null)
+const currentShippingFee = ref(0)
+const currentTaxRate = ref(0)
+const isLoadingConfigs = ref(false)
+
+// Current step with query parameter sync
+const currentStep = ref(1)
 
 // Authentication state
 const showAuthModal = ref(false)
@@ -858,9 +890,17 @@ const authModalMode = ref('check') // 'check', 'signin', 'signup'
 const isSigningUp = ref(false)
 const isSigningIn = ref(false)
 
-// Checkout timer
-const checkoutTimer = ref(15 * 60) // 15 minutes in seconds
+// Checkout timer configuration
+const CHECKOUT_TIMER_DURATION = ref(15 * 60) // 15 minutes in seconds
+const checkoutTimer = ref(CHECKOUT_TIMER_DURATION.value)
 let timerInterval = null
+
+// Express delivery multiplier
+const EXPRESS_DELIVERY_MULTIPLIER = ref(2.5)
+
+// Minimum step and maximum step
+const MIN_STEP = ref(1)
+const MAX_STEP = ref(3)
 
 // Signup data
 const signupData = ref({
@@ -878,10 +918,211 @@ const signinData = ref({
   password: ''
 })
 
+// Available countries from shipping configs
+const availableCountries = computed(() => {
+  return shippingConfigs.value.filter(config => config.isActive)
+})
+
+// Load shipping and tax configurations
+const loadConfigurations = async () => {
+  try {
+    isLoadingConfigs.value = true
+    
+    // Fetch shipping and tax configurations
+    const [shippingData, taxData] = await Promise.all([
+      fetchShippingConfigs(),
+      fetchTaxConfigs()
+    ])
+    
+    // Set the configurations
+    shippingConfigs.value = shippingData || []
+    taxConfigs.value = taxData || []
+    
+    // If we already have a country selected, update the shipping and tax rates
+    if (deliveryDetails.country) {
+      handleCountryChange()
+    }
+    
+  } catch (error) {
+    console.error('Failed to load configurations:', error)
+    
+    if (showToast) {
+      showToast({
+        title: "Configuration Error",
+        message: "Failed to load shipping and tax configurations. Please refresh the page or contact support.",
+        toastType: "error",
+        duration: 5000
+      })
+    }
+  } finally {
+    isLoadingConfigs.value = false
+  }
+}
+
+// Handle country change
+const handleCountryChange = () => {
+  const countryCode = deliveryDetails.country
+  
+  // Find shipping config for selected country
+  const shippingConfig = shippingConfigs.value.find(
+    config => config.countryCode === countryCode && config.isActive
+  )
+  
+  // Find tax config for selected country
+  const taxConfig = taxConfigs.value.find(
+    config => config.countryCode === countryCode && config.isActive
+  )
+  
+  if (shippingConfig) {
+    selectedCountryInfo.value = shippingConfig
+    currentShippingFee.value = shippingConfig.shippingRate || 0
+  } else {
+    selectedCountryInfo.value = null
+    currentShippingFee.value = 0
+  }
+  
+  if (taxConfig) {
+    currentTaxRate.value = taxConfig.vatRate || 0
+  } else {
+    currentTaxRate.value = 0
+  }
+  
+  if (persistDeliveryDetails) {
+    persistDeliveryDetails()
+  }
+}
+
+// Get shipping cost based on delivery method
+const getShippingCost = () => {
+  if (deliveryMethod.value === 'pickup') {
+    return 0
+  } else if (deliveryMethod.value === 'express') {
+    return currentShippingFee.value * EXPRESS_DELIVERY_MULTIPLIER.value
+  } else {
+    return currentShippingFee.value
+  }
+}
+
+// Get tax amount
+const getTaxAmount = () => {
+  if (!checkoutSummary.value) return 0
+  const subtotal = checkoutSummary.value.subtotal || 0
+  return (subtotal * currentTaxRate.value) / 100
+}
+
+// Calculate total with shipping and tax
+const calculateTotal = () => {
+  if (!checkoutSummary.value) return 0
+  
+  const subtotal = checkoutSummary.value.subtotal || 0
+  const shipping = getShippingCost()
+  const tax = getTaxAmount()
+  
+  return subtotal + shipping + tax
+}
+
+// Update query parameters
+const updateQueryParams = () => {
+  const query = { ...route.query }
+  if (currentStep.value > MIN_STEP.value) {
+    query.step = currentStep.value.toString()
+  } else {
+    delete query.step
+  }
+  
+  router.replace({ query })
+}
+
+// Handle next step with query parameter update
+const handleNextStep = () => {
+  if (currentStep.value < MAX_STEP.value) {
+    currentStep.value++
+    updateQueryParams()
+  }
+}
+
+// Handle previous step with query parameter update
+const handlePrevStep = () => {
+  if (currentStep.value > MIN_STEP.value) {
+    currentStep.value--
+    updateQueryParams()
+  }
+}
+
+// Initialize step from query parameter
+const initializeStepFromQuery = () => {
+  const stepParam = route.query.step
+  if (stepParam && !isNaN(Number(stepParam))) {
+    const step = Number(stepParam)
+    if (step >= MIN_STEP.value && step <= MAX_STEP.value) {
+      currentStep.value = step
+    }
+  }
+}
+
+// Clear query parameters on order completion
+const clearQueryParams = () => {
+  const query = { ...route.query }
+  delete query.step
+  router.replace({ query })
+}
+
+// Process payment with updated total
+const processPayment = async () => {
+  try {
+    // Update the total amount with shipping and tax
+    if (checkoutSummary.value) {
+      checkoutSummary.value.total = calculateTotal()
+      checkoutSummary.value.shipping = getShippingCost()
+      checkoutSummary.value.tax = getTaxAmount()
+      
+      // Add country info to checkout summary
+      if (selectedCountryInfo.value) {
+        checkoutSummary.value.country = {
+          code: selectedCountryInfo.value.countryCode,
+          name: selectedCountryInfo.value.countryName
+        }
+      }
+    }
+    
+    // Process the payment using the store method
+    if (storeProcessPayment) {
+      await storeProcessPayment()
+    }
+    
+    // Clear query parameters on successful order
+    clearQueryParams()
+    
+    // Show success toast
+    if (showToast) {
+      showToast({
+        title: "Order Placed",
+        message: "Your order has been successfully placed!",
+        toastType: "success",
+        duration: 5000
+      })
+    }
+  } catch (error) {
+    console.error('Payment processing failed:', error)
+    
+    // Show error toast
+    if (showToast) {
+      showToast({
+        title: "Payment Failed",
+        message: "There was an error processing your payment. Please try again.",
+        toastType: "error",
+        duration: 5000
+      })
+    }
+  }
+}
+
 // Proceed as guest
 const proceedAsGuest = () => {
   showAuthModal.value = false
-  setItem('checkout-guest-mode', 'true')
+  if (setItem) {
+    setItem('checkout-guest-mode', 'true')
+  }
 }
 
 // Close auth modal
@@ -895,7 +1136,6 @@ const handleSignup = async () => {
   try {
     isSigningUp.value = true
     
-    // Call signup method from auth composable
     const payloadObj = {
       firstName: signupData.value.firstName,
       lastName: signupData.value.lastName,
@@ -904,23 +1144,49 @@ const handleSignup = async () => {
       phone: signupData.value.phone,
       role: signupData.value.role
     }
-    const response = await signup(payloadObj)
     
-    if (response) {
-      showAuthModal.value = false
+    if (signup) {
+      const response = await signup(payloadObj)
       
-      // Pre-fill delivery details with user info
-      deliveryDetails.firstName = signupData.value.firstName
-      deliveryDetails.lastName = signupData.value.lastName
-      deliveryDetails.email = signupData.value.email
-      deliveryDetails.phone = signupData.value.phone || ''
-      
-      // Persist delivery details
-      persistDeliveryDetails()
+      if (response) {
+        showAuthModal.value = false
+        
+        // Pre-fill delivery details with user info
+        if (deliveryDetails) {
+          deliveryDetails.firstName = signupData.value.firstName
+          deliveryDetails.lastName = signupData.value.lastName
+          deliveryDetails.email = signupData.value.email
+          deliveryDetails.phone = signupData.value.phone || ''
+        }
+        
+        // Persist delivery details
+        if (persistDeliveryDetails) {
+          persistDeliveryDetails()
+        }
+        
+        // Show success toast
+        if (showToast) {
+          showToast({
+            title: "Account Created",
+            message: "Your account has been created successfully!",
+            toastType: "success",
+            duration: 3000
+          })
+        }
+      }
     }
   } catch (error) {
     console.error('Signup failed:', error)
-    // Handle error (could add error state and message)
+    
+    // Show error toast
+    if (showToast) {
+      showToast({
+        title: "Signup Failed",
+        message: "There was an error creating your account. Please try again.",
+        toastType: "error",
+        duration: 5000
+      })
+    }
   } finally {
     isSigningUp.value = false
   }
@@ -931,58 +1197,76 @@ const handleSignin = async () => {
   try {
     isSigningIn.value = true
     
-    // Call signin method from auth composable
     const payloadObj = {
       email: signinData.value.email,
       password: signinData.value.password
     }
-    const response = await login(payloadObj)
     
-    if (response) {
-      showAuthModal.value = false
+    if (login) {
+      const response = await login(payloadObj)
       
-      // Pre-fill delivery details if available from user data
-      const userData = JSON.parse(localStorage.getItem('user-data') || '{}')
-      if (userData) {
-        deliveryDetails.firstName = userData.firstName || ''
-        deliveryDetails.lastName = userData.lastName || ''
-        deliveryDetails.email = userData.email || ''
-        deliveryDetails.phone = userData.phone || ''
+      if (response) {
+        showAuthModal.value = false
         
-        // Persist delivery details
-        persistDeliveryDetails()
+        // Pre-fill delivery details if available from user data
+        try {
+          const userData = JSON.parse(localStorage.getItem('user-data') || '{}')
+          if (userData && deliveryDetails) {
+            deliveryDetails.firstName = userData.firstName || ''
+            deliveryDetails.lastName = userData.lastName || ''
+            deliveryDetails.email = userData.email || ''
+            deliveryDetails.phone = userData.phone || ''
+            
+            // Persist delivery details
+            if (persistDeliveryDetails) {
+              persistDeliveryDetails()
+            }
+          }
+        } catch (parseError) {
+          console.warn('Failed to parse user data from localStorage:', parseError)
+        }
+        
+        // Show success toast
+        if (showToast) {
+          showToast({
+            title: "Signed In",
+            message: "You have been signed in successfully!",
+            toastType: "success",
+            duration: 3000
+          })
+        }
       }
     }
   } catch (error) {
     console.error('Signin failed:', error)
-    // Handle error (could add error state and message)
+    
+    // Show error toast
+    if (showToast) {
+      showToast({
+        title: "Sign In Failed",
+        message: "There was an error signing in. Please check your credentials and try again.",
+        toastType: "error",
+        duration: 5000
+      })
+    }
   } finally {
     isSigningIn.value = false
   }
 }
 
-// Calculate total based on delivery method
-const calculateTotal = () => {
-  if (!checkoutSummary.value) return 0
-  
-  let shipping = 0
-  
-  if (deliveryMethod.value === 'standard') {
-    shipping = checkoutSummary.value.subtotal > 100 ? 0 : 10
-  } else if (deliveryMethod.value === 'express') {
-    shipping = 25
-  }
-  
-  return checkoutSummary.value.subtotal + shipping
-}
-
 // Format price
 const formatPrice = (price: number) => {
+  if (typeof price !== 'number' || isNaN(price)) {
+    return '0.00'
+  }
   return price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
 // Format time for countdown
 const formatTime = (seconds: number) => {
+  if (typeof seconds !== 'number' || isNaN(seconds) || seconds < 0) {
+    return '00:00'
+  }
   const mins = Math.floor(seconds / 60)
   const secs = seconds % 60
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
@@ -990,29 +1274,47 @@ const formatTime = (seconds: number) => {
 
 // Generate random order number
 const generateOrderNumber = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString()
+  const min = 100000
+  const max = 999999
+  return Math.floor(Math.random() * (max - min + 1) + min).toString()
 }
 
 // Update item quantity in cart
 const updateItemQuantity = (id: number, quantity: number) => {
-  updateCartItemQuantity(id, quantity)
+  if (updateCartItemQuantity && typeof id === 'number' && typeof quantity === 'number' && quantity > 0) {
+    updateCartItemQuantity(id, quantity)
+  }
 }
 
 // Remove item from cart
 const removeItem = (id: number) => {
-  removeFromCart(id)
+  if (removeFromCart && typeof id === 'number') {
+    removeFromCart(id)
+    
+    // Show toast notification
+    if (showToast) {
+      showToast({
+        title: "Item Removed",
+        message: "Item has been removed from your cart",
+        toastType: "info",
+        duration: 3000
+      })
+    }
+  }
 }
 
 // Handle image error
 const handleImageError = (event: Event) => {
   const target = event.target as HTMLImageElement
-  target.src = '/placeholder.svg?height=100&width=100'
+  if (target) {
+    target.src = '/placeholder.svg?height=100&width=100'
+  }
 }
 
 // Check if user is logged in on page load
 const checkUserAuth = () => {
   // Only show auth modal if user is not logged in and not in guest mode
-  const isGuestMode = getItem('checkout-guest-mode') === 'true'
+  const isGuestMode = getItem ? getItem('checkout-guest-mode') === 'true' : false
   
   if (!isLoggedIn.value && !isGuestMode) {
     showAuthModal.value = true
@@ -1022,8 +1324,8 @@ const checkUserAuth = () => {
 // Start checkout timer
 const startCheckoutTimer = () => {
   // Restore timer from localStorage if exists
-  const savedTimer = getItem('checkout-timer')
-  if (savedTimer) {
+  const savedTimer = getItem ? getItem('checkout-timer') : null
+  if (savedTimer && !isNaN(parseInt(savedTimer))) {
     checkoutTimer.value = parseInt(savedTimer)
   }
   
@@ -1031,20 +1333,38 @@ const startCheckoutTimer = () => {
     if (checkoutTimer.value > 0) {
       checkoutTimer.value--
       // Save timer to localStorage
-      setItem('checkout-timer', checkoutTimer.value.toString())
+      if (setItem) {
+        setItem('checkout-timer', checkoutTimer.value.toString())
+      }
     } else {
-      clearInterval(timerInterval)
+      if (timerInterval) {
+        clearInterval(timerInterval)
+      }
       // Handle expired timer - redirect to cart
-      router.push('/cart')
+      // router.push('/cart')
+      
+      // Show toast notification
+      if (showToast) {
+        showToast({
+          title: "Session Expired",
+          message: "Your checkout session has expired. Please try again.",
+          toastType: "warning",
+          duration: 5000
+        })
+      }
     }
   }, 1000)
 }
 
 // Watch for cart changes to update checkout summary
 watch(cart, () => {
-  if (checkoutSummary.value) {
+  if (checkoutSummary.value && cart.value) {
     checkoutSummary.value.items = cart.value
-    checkoutSummary.value.subtotal = cart.value.reduce((total, item) => total + (item.price * item.quantity), 0)
+    checkoutSummary.value.subtotal = cart.value.reduce((total, item) => {
+      const itemPrice = item.price || 0
+      const itemQuantity = item.quantity || 0
+      return total + (itemPrice * itemQuantity)
+    }, 0)
   }
 }, { deep: true })
 
@@ -1055,14 +1375,16 @@ watch(isLoggedIn, (newValue) => {
     showAuthModal.value = false
     
     // Pre-fill delivery details with user info if available
-    if (user.value) {
+    if (user.value && deliveryDetails) {
       deliveryDetails.firstName = user.value.firstName || ''
       deliveryDetails.lastName = user.value.lastName || ''
       deliveryDetails.email = user.value.email || ''
       deliveryDetails.phone = user.value.phone || ''
       
       // Persist updated delivery details
-      persistDeliveryDetails()
+      if (persistDeliveryDetails) {
+        persistDeliveryDetails()
+      }
     }
   } else {
     // User is logged out, check if we should show auth modal
@@ -1079,13 +1401,52 @@ watch(orderComplete, (newValue) => {
     }
     
     // Reset checkout timer
-    checkoutTimer.value = 15 * 60
-    removeStorageItem('checkout-timer')
+    checkoutTimer.value = CHECKOUT_TIMER_DURATION.value
+    if (removeStorageItem) {
+      removeStorageItem('checkout-timer')
+    }
+    
+    // Clear query parameters
+    clearQueryParams()
+    
+    // Show success toast
+    if (showToast) {
+      showToast({
+        title: "Order Complete",
+        message: "Thank you for your purchase!",
+        toastType: "success",
+        duration: 5000
+      })
+    }
+  }
+})
+
+// Watch for changes in the current step
+watch(currentStep, (newValue) => {
+  // Update the store's checkout step to keep them in sync
+  if (storeCheckoutStep) {
+    storeCheckoutStep.value = newValue
+  }
+})
+
+// Watch for changes in the store's checkout step
+watch(storeCheckoutStep, (newValue) => {
+  // Update the local current step to keep them in sync
+  if (typeof newValue === 'number' && newValue >= MIN_STEP.value && newValue <= MAX_STEP.value) {
+    currentStep.value = newValue
+    // Update query parameters
+    updateQueryParams()
   }
 })
 
 // Lifecycle hooks
-onMounted(() => {
+onMounted(async () => {
+  // Load shipping and tax configurations
+  await loadConfigurations()
+  
+  // Initialize step from query parameter
+  initializeStepFromQuery()
+  
   // Check if user is logged in
   checkUserAuth()
   
@@ -1093,8 +1454,8 @@ onMounted(() => {
   startCheckoutTimer()
   
   // Check if cart is empty
-  if (!checkoutSummary.value || (checkoutSummary.value.items.length === 0)) {
-    // Redirect to cart page
+  if (!checkoutSummary.value || (checkoutSummary.value.items && checkoutSummary.value.items.length === 0)) {
+    // Redirect to home page
     router.push('/')
   }
 })

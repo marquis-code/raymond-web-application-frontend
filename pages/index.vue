@@ -72,11 +72,11 @@
           NO GREATER LOVE
         </h3>
         <p class="text-2xl md:text-3xl mb-8 fade-in">GET 50% OFF!!!!!</p>
-        <button
+        <NuxtLink to="/prints"
           class="bg-white text-black px-8 py-3 font-medium hover:bg-gray-200 transition-all hover:scale-105 transform"
         >
           Shop Here
-        </button>
+        </NuxtLink>
       </div>
     </section>
 
@@ -85,7 +85,7 @@
       <!-- Gallery Section -->
       <div
         class="relative h-[500px] overflow-hidden section-transition cursor-pointer"
-        @click="navigateTo('/gallery')"
+        @click="navigateTo('/artworks')"
       >
         <img
           src="@/assets/img/snap.jpg"
@@ -175,39 +175,51 @@
             >
               <div class="relative mb-4 overflow-hidden">
                 <img
-                  :src="product.image"
+                  :src="product.images[0]"
                   :alt="product.title"
                   class="w-full h-80 rounded-lg object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div
-                  v-if="product.badge"
+                  v-if="product.isFeatured"
                   class="absolute top-2 rounded-lg left-2 bg-black text-white text-xs px-2 py-1"
                 >
-                  {{ product.badge }}
+                Sale
+                </div>
+                <div
+                  v-if="product.isNew"
+                  class="absolute top-2 rounded-lg left-2 bg-black text-white text-xs px-2 py-1"
+                >
+                  New Arrival
+                </div>
+                <div
+                  v-if="product.isBestseller"
+                  class="absolute top-2 rounded-lg left-2 bg-black text-white text-xs px-2 py-1"
+                >
+                Best Seller
                 </div>
                 <div
                   class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
                 >
                   <button
                     class="bg-white text-black text-sm px-6 py-2 font-medium hover:bg-gray-100 transition quick-view-button"
-                    @click="navigateTo(`/product/${product.id}`)"
+                    @click="navigateTo(`/artworks/${product.id}`)"
                   >
                     Quick View
                   </button>
                 </div>
               </div>
-              <h3 class="text-center text-sm font-medium text-lg mb-1">
-                {{ product.title }}
+              <h3 class="text-center font-medium text-sm text-lg mb-1">
+                {{ product?.name }}
               </h3>
-              <p class="text-center text-sm text-gray-700 mb-1">
+              <p class="text-center font-medium text-sm text-gray-700 mb-1">
                 From ${{ product.price }}
               </p>
-              <p
-                v-if="product.saleText"
-                class="text-center text-gray-500 text-sm"
+              <!-- <p
+                v-if="product?.description"
+                class="text-center font-medium text-gray-500 text-sm"
               >
-                {{ product.saleText }}
-              </p>
+                {{ product?.description }}
+              </p> -->
             </div>
           </div>
 
@@ -243,17 +255,20 @@ import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
 import { useRouter } from "vue-router";
 import hero1 from "@/assets/img/commission-art1.jpg";
 import hero2 from "@/assets/img/snap.jpg";
-import featured1 from "@/assets/img/featured1.avif";
-import featured2 from "@/assets/img/featured2.jpg";
-import featured3 from "@/assets/img/featured3.jpg";
-import featured4 from "@/assets/img/featured4.avif";
-import featured5 from "@/assets/img/featured5.avif";
-import featured6 from "@/assets/img/featured6.avif";
-import featured7 from "@/assets/img/featured7.avif";
-import featured8 from "@/assets/img/featured8.avif";
-import featured9 from "@/assets/img/featured9.avif";
-import featured10 from "@/assets/img/featured10.avif";
-import featured11 from "@/assets/img/featured11.avif";
+// import featured1 from "@/assets/img/featured1.avif";
+// import featured2 from "@/assets/img/featured2.jpg";
+// import featured3 from "@/assets/img/featured3.jpg";
+// import featured4 from "@/assets/img/featured4.avif";
+// import featured5 from "@/assets/img/featured5.avif";
+// import featured6 from "@/assets/img/featured6.avif";
+// import featured7 from "@/assets/img/featured7.avif";
+// import featured8 from "@/assets/img/featured8.avif";
+// import featured9 from "@/assets/img/featured9.avif";
+// import featured10 from "@/assets/img/featured10.avif";
+// import featured11 from "@/assets/img/featured11.avif";
+import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
+
+const { products, loading } = useFetchProducts()
 
 import gsap from "gsap";
 
@@ -280,132 +295,7 @@ const isDragging = ref(false);
 const startX = ref(0);
 const scrollLeft = ref(0);
 
-// Testimonials
-const testimonials = ref([
-  {
-    name: "Sarah Johnson",
-    location: "New York, USA",
-    text: "The portrait Raymond created for me exceeded all my expectations. His attention to detail and ability to capture emotion is truly remarkable. I'll cherish this artwork forever.",
-    rating: 5,
-    avatar: "/images/testimonial-1.jpg."
-  },
-  {
-    name: "Michael Chen",
-    location: "Toronto, Canada",
-    text: "Working with Raymond on my commission was a wonderful experience. He was attentive to my vision and delivered a masterpiece that now takes pride of place in my home.",
-    rating: 5,
-    avatar: "/images/testimonial-2.jpg"
-  },
-  {
-    name: "Olivia Williams",
-    location: "London, UK",
-    text: "I've purchased several prints from Raymond's collection and each one is stunning. The quality is exceptional and they arrive beautifully packaged. Highly recommend!",
-    rating: 5,
-    avatar: "/images/testimonial-3.jpg"
-  }
-])
 
-// Products data
-const products = ref([
-  {
-    id: 1,
-    title: "GUARDIAN ANGEL (PSALM 91:11-12)",
-    price: "175.00",
-    image: featured1,
-    badge: "New Arrival",
-    saleText: "",
-  },
-  {
-    id: 2,
-    title: "HOPE & NEARNESS TO GOD",
-    price: "175.00",
-    image: featured2,
-    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
-    badge: "Sale",
-    saleText: "",
-  },
-  {
-    id: 3,
-    title: "ANGEL AT THE LAST JUDGEMENT",
-    price: "175.00",
-    image: featured3,
-    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
-    badge: "Sale",
-    saleText: "",
-  },
-  {
-    id: 4,
-    title: "FINDING PEACE IN A BROKEN WORLD",
-    price: "175.00",
-    image: featured4,
-    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
-    badge: "Sale",
-    saleText: "",
-  },
-  {
-    id: 5,
-    title: "NO GREATER LOVE",
-    price: "185.00",
-    image: featured5,
-    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
-    badge: "New Arrival",
-    saleText: "Spring Sale!!! (Enjoy 50% off)",
-  },
-  {
-    id: 6,
-    title: "CORPUS CHRISTI",
-    price: "175.00",
-    image: featured6,
-    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
-    badge: "Best Seller",
-    saleText: "",
-  },
-  {
-    id: 7,
-    title: "CORPUS CHRISTI",
-    price: "175.00",
-    image: featured7,
-    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
-    badge: "Best Seller",
-    saleText: "",
-  },
-  {
-    id: 8,
-    title: "CORPUS CHRISTI",
-    price: "175.00",
-    image: featured8,
-    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
-    badge: "Best Seller",
-    saleText: "",
-  },
-  {
-    id: 9,
-    title: "CORPUS CHRISTI",
-    price: "175.00",
-    image: featured9,
-    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
-    badge: "Best Seller",
-    saleText: "",
-  },
-  {
-    id: 10,
-    title: "CORPUS CHRISTI",
-    price: "175.00",
-    image: featured10,
-    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
-    badge: "Best Seller",
-    saleText: "",
-  },
-  {
-    id: 11,
-    title: "CORPUS CHRISTI",
-    price: "175.00",
-    image: featured11,
-    //   image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot%202025-05-18%20at%2019.45.18-wCFF1FLSynFc3i27wezFHHT18sKKcs.png',
-    badge: "Best Seller",
-    saleText: "",
-  },
-]);
 
 // Navigation helper
 const navigateTo = (path: string) => {

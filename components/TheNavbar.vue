@@ -141,26 +141,29 @@
       <!-- Chat Support -->
       <div 
         v-if="isChatOpen"
-        class="fixed bottom-20 right-4 w-80 h-96 bg-white rounded-lg shadow-2xl z-40 overflow-hidden"
+        class="fixed bottom-6 right-4 w-96 h-[600px] bg-white rounded-lg shadow-2xl z-40 overflow-hidden"
         v-motion
         :initial="{ opacity: 0, y: 20 }"
         :enter="{ opacity: 1, y: 0 }"
         :leave="{ opacity: 0, y: 20 }"
       >
-        <ChatSupport @close="isChatOpen = false" />
+        <!-- <ChatSupport @close="isChatOpen = false" /> -->
+         <ChatWidget @close="isChatOpen = false" />
       </div>
   
       <!-- Chat Button -->
       <button 
         v-if="!isChatOpen"
         @click="toggleChat" 
-        class="fixed bottom-4 right-4 bg-black text-white p-4 rounded-full shadow-lg z-40 hover:bg-black-dark transition-all duration-300 hover:scale-110"
+        class="fixed bottom-4 right-4 text-white bg-black p-4 rounded-full shadow-lg z-40 hover:bg-black-dark transition-all duration-300 hover:scale-110"
         v-motion
         :initial="{ opacity: 0, scale: 0.8 }"
         :enter="{ opacity: 1, scale: 1, transition: { delay: 1000 } }"
       >
         <!-- <Icon name="lucide:message-circle" size="24" /> -->
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256"><path d="M132,24A100.11,100.11,0,0,0,32,124v84a16,16,0,0,0,16,16h84a100,100,0,0,0,0-200Zm0,184H48V124a84,84,0,1,1,84,84Zm12-80a12,12,0,1,1-12-12A12,12,0,0,1,144,128Zm-44,0a12,12,0,1,1-12-12A12,12,0,0,1,100,128Zm88,0a12,12,0,1,1-12-12A12,12,0,0,1,188,128Z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#f8f7f7" viewBox="0 0 256 256"><path d="M88,104a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H96A8,8,0,0,1,88,104Zm8,40h64a8,8,0,0,0,0-16H96a8,8,0,0,0,0,16ZM232,56V184a16,16,0,0,1-16,16H155.57l-13.68,23.94a16,16,0,0,1-27.78,0L100.43,200H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V184h65.07a8,8,0,0,1,7,4l16,28,16-28a8,8,0,0,1,7-4H216Z"></path></svg>
+        <!-- <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#f8f7f7" viewBox="0 0 256 256"><path d="M232.07,186.76a80,80,0,0,0-62.5-114.17A80,80,0,1,0,23.93,138.76l-7.27,24.71a16,16,0,0,0,19.87,19.87l24.71-7.27a80.39,80.39,0,0,0,25.18,7.35,80,80,0,0,0,108.34,40.65l24.71,7.27a16,16,0,0,0,19.87-19.86ZM62,159.5a8.28,8.28,0,0,0-2.26.32L32,168l8.17-27.76a8,8,0,0,0-.63-6,64,64,0,1,1,26.26,26.26A8,8,0,0,0,62,159.5Zm153.79,28.73L224,216l-27.76-8.17a8,8,0,0,0-6,.63,64.05,64.05,0,0,1-85.87-24.88A79.93,79.93,0,0,0,174.7,89.71a64,64,0,0,1,41.75,92.48A8,8,0,0,0,215.82,188.23Z"></path></svg> -->
+        <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256"><path d="M132,24A100.11,100.11,0,0,0,32,124v84a16,16,0,0,0,16,16h84a100,100,0,0,0,0-200Zm0,184H48V124a84,84,0,1,1,84,84Zm12-80a12,12,0,1,1-12-12A12,12,0,0,1,144,128Zm-44,0a12,12,0,1,1-12-12A12,12,0,0,1,100,128Zm88,0a12,12,0,1,1-12-12A12,12,0,0,1,188,128Z"></path></svg> -->
       </button>
     </div>
   </template>

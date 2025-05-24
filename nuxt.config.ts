@@ -49,5 +49,9 @@ export default defineNuxtConfig({
         }
       ]
     }
-  }
+  },
+  server: {
+    port: 3030,
+    host: '0.0.0.0' // This makes the server accessible from all network interfaces
+  },
 });

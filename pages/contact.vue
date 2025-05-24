@@ -82,9 +82,10 @@
               <div class="pt-2">
                 <button 
                   type="submit" 
-                  class="w-full py-3 px-6 bg-gray-800 text-white font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-all duration-300 transform hover:scale-[1.02]"
+                  :disabled="loading"
+                  class="w-full py-3 px-6 disabled:cursor-not-allowed disabled:opacity-25 bg-gray-800 text-white font-medium rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-all duration-300 transform hover:scale-[1.02]"
                 >
-                  Submit
+                  Submit {{ loading ? 'Processing' : 'Submit'}}
                 </button>
               </div>
             </form>
@@ -176,6 +177,8 @@
   
   <script setup lang="ts">
   import { ref } from 'vue'
+  import { useCreateEnquires } from "@/composables/modules/enquires/useCreateEnquires"
+  const { createEnquires, loading } = useCreateEnquires()
   
   const contactForm = ref({
     name: '',
@@ -185,14 +188,10 @@
     message: ''
   })
   
-  const submitContactForm = () => {
+  const submitContactForm = async () => {
     // Here you would typically send the form data to your backend
     console.log('Contact form submitted:', contactForm.value)
-    
-    // Show success message
-    alert('Thank you for your message! We will get back to you shortly.')
-    
-    // Reset form
+    await createEnquires(contactForm.value).finally(() => {
     contactForm.value = {
       name: '',
       email: '',
@@ -200,6 +199,7 @@
       subject: '',
       message: ''
     }
+    }) 
   }
   </script>
   

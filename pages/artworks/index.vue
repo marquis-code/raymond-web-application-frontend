@@ -42,66 +42,55 @@
     </section>
   
       <!-- Artwork Gallery -->
-      <div class="container mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div 
-            v-for="(artwork, index) in artworks" 
-            :key="index" 
-            class="relative overflow-hidden rounded-lg cursor-pointer group"
-            @click="openArtworkModal(artwork)"
-          >
-            <!-- Artwork Card with Flip Effect -->
-            <div class="relative w-full h-[400px] perspective-1000">
-              <div 
-                class="absolute w-full h-full transition-all duration-700 transform-style-3d"
-                :class="{'rotate-y-180': artwork.isFlipped}"
-                @mouseenter="artwork.isFlipped = true"
-                @mouseleave="artwork.isFlipped = false"
-              >
-                <!-- Front of Card -->
-                <div class="absolute w-full h-full backface-hidden">
-                  <img 
-                    :src="artwork.image" 
-                    :alt="artwork.title" 
-                    class="w-full h-full object-cover"
-                  />
+      <div class="container mx-auto px-4 py-8 bg-border-4">
+        <!-- {{products}} -->
+       <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div  class="product-card  flex-shrink-0 w-full relative group" v-for="(product, idx) in products" :key="idx">
+          <div class="relative mb-4 overflow-hidden">
+                <img
+                  :src="product.images[0]"
+                  :alt="product.title"
+                  class="w-full h-[400px]  rounded-xl hover:rounded-xl object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div
+                  v-if="product.isFeatured"
+                  class="absolute top-2 left-2 bg-black text-white text-sm px-2 py-1"
+                >
+                Sale
                 </div>
-                
-                <!-- Back of Card (Flipped View) -->
-                <div class="absolute w-full h-full backface-hidden rotate-y-180 bg-gray-900">
-                  <img 
-                    :src="artwork.imageAlt" 
-                    :alt="artwork.title + ' (alternate view)'" 
-                    class="w-full h-full object-cover opacity-80"
-                  />
-                  <div class="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black/80 to-transparent">
-                    <h3 class="text-xl font-bold mb-2">{{ artwork.title }}</h3>
-                    <p class="text-sm mb-3">{{ artwork.shortDescription }}</p>
-                    <p class="text-lg font-semibold">From ${{ artwork.price }}</p>
+                <div
+                  v-if="product.isNew"
+                  class="absolute top-2 left-2 bg-black text-white text-sm px-2 py-1"
+                >
+                  New Arrival
+                </div>
+                <div
+                  v-if="product.isBestseller"
+                  class="absolute top-2 left-2 bg-black text-white text-sm px-2 py-1"
+                >
+                Best Seller
+                </div>
+
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                >
+                  <div class="group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 text-white">
+                    <h3 class="text-xl font-bold mb-2">{{ product.name }}</h3>
+                      <p v-html="product.description" class="text-sm mb-3"></p>
+                      <p class="text-lg font-semibold">From ${{ product.price }}</p>
+                      <NuxtLink :to="`/artworks/${product._id}`" class="bg-white text-center rounded-lg text-black px-4 py-2.5 mt-2 hover:bg-gray-200 transition-all duration-300">
+                View Details
+              </NuxtLink>
                   </div>
                 </div>
-              </div>
-            </div>
-            
-            <!-- Hover Overlay -->
-            <div 
-              class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6"
-              v-if="!artwork.isFlipped"
-            >
-              <h3 class="text-xl font-bold mb-2">{{ artwork.title }}</h3>
-              <p class="text-sm mb-3">{{ artwork.shortDescription }}</p>
-              <p class="text-lg font-semibold">From ${{ artwork.price }}</p>
-              <button class="bg-white rounded-lg text-black px-4 py-2.5 mt-2 hover:bg-gray-200 transition-all duration-300">
-                View Details
-              </button>
-            </div>
-          </div>
+                </div>
+          
         </div>
+       </section>
       </div>
 
       <TestimonialsCarousel />
   
-      <!-- Artwork Preview Modal -->
       <Teleport to="body">
         <div 
           v-if="selectedArtwork" 
@@ -413,6 +402,9 @@ import hero2 from "@/assets/img/snap.jpg";
     import featured9 from "@/assets/img/featured9.avif";
     import featured10 from "@/assets/img/featured10.avif";
     import featured11 from "@/assets/img/featured11.avif";
+    import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
+
+    const { products, loading } = useFetchProducts()
   
   // Types
   interface Size {

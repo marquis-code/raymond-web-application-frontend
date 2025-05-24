@@ -106,7 +106,7 @@
       </button>
       
       <button 
-        @click="$emit('close')"
+        @click="continueToShopping"
         class="w-full py-3 mt-2 text-gray-600 hover:text-gray-900 transition-colors duration-300"
       >
         Continue Shopping
@@ -120,6 +120,7 @@ import { computed } from 'vue'
 import { useCartStore } from '~/composables/useCartStore'
 import { useCheckoutStore } from '~/composables/useCheckoutStore'
 import { navigateTo } from '#app'
+const router = useRouter()
 
 const emit = defineEmits(['close'])
 
@@ -161,6 +162,11 @@ const proceedToCheckout = () => {
 
 const formatPrice = (price: number) => {
   return price.toLocaleString('en-US')
+}
+
+const continueToShopping = () => {
+  emit('close')
+  router.push('/artworks')
 }
 </script>
 

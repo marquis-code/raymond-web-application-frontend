@@ -13,7 +13,7 @@
      </div>
         
         <!-- Decorative elements -->
-        <div class="absolute left-0 top-1/4 -translate-x-1/2 opacity-10 hidden lg:block">
+        <!-- <div class="absolute left-0 top-1/4 -translate-x-1/2 opacity-10 hidden lg:block">
           <svg width="400" height="400" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="2" class="text-amber-800" />
             <circle cx="50" cy="50" r="35" stroke="currentColor" stroke-width="1" class="text-amber-800" />
@@ -27,7 +27,7 @@
             <rect x="25" y="25" width="50" height="50" stroke="currentColor" stroke-width="1" class="text-amber-800" />
             <rect x="40" y="40" width="20" height="20" stroke="currentColor" stroke-width="0.5" class="text-amber-800" />
           </svg>
-        </div>
+        </div> -->
         
         <div class="relative testimonial-slider">
           <!-- Navigation Arrows -->

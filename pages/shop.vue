@@ -103,25 +103,83 @@
           NO GREATER LOVE
         </h3>
         <p class="text-2xl md:text-3xl mb-8 fade-in">GET 50% OFF!!!!!</p>
-        <button
+        <NuxtLink to=""
           class="bg-white text-black px-8 py-3 font-medium hover:bg-gray-200 transition-all hover:scale-105 transform"
         >
           Shop Here
-        </button>
+        </NuxtLink>
       </div>
     </section>
       
       <!-- Prints Gallery Section -->
       <div class="container mx-auto px-4 py-16">
         <h2 class="text-2xl font-bold mb-12 text-center">Our Collection</h2>
-        
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div
+              v-for="(product, index) in products"
+              :key="index"
+              class="product-card  flex-shrink-0 w-full relative group"
+              :ref="
+                (el) => {
+                  if (el) productRefs[index] = el;
+                }
+              "
+            >
+              <div class="relative mb-4 overflow-hidden">
+                <img
+                  :src="product.images[0]"
+                  :alt="product.title"
+                  class="w-full h-[400px]  rounded-lg object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div
+                  v-if="product.isFeatured"
+                  class="absolute top-2 left-2 bg-black text-white text-sm px-2 py-1"
+                >
+                Sale
+                </div>
+                <div
+                  v-if="product.isNew"
+                  class="absolute top-2 left-2 bg-black text-white text-sm px-2 py-1"
+                >
+                  New Arrival
+                </div>
+                <div
+                  v-if="product.isBestseller"
+                  class="absolute top-2 left-2 bg-black text-white text-sm px-2 py-1"
+                >
+                Best Seller
+                </div>
+                <div
+                  class="absolute inset-0 bg-black bg-opacity-80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
+                >
+                  <div class="group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 text-white">
+                    <h3 class="text-xl font-bold mb-2">{{ product.name }}</h3>
+                      <p v-html="product.description" class="text-sm mb-3"></p>
+                      <p class="text-lg font-semibold">From ${{ product.price }}</p>
+                      <NuxtLink 
+                        class="bg-white text-black text-center px-4 py-2 mt-2 hover:bg-gray-200 transition-all duration-300"
+                        :to="`/artworks/${product.id}`"
+                      >
+                        View Details
+                      </NuxtLink>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+
+
+
+
+
+
+
+        <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div 
             v-for="(print, index) in prints" 
             :key="index" 
             class="group rounded-xl relative"
           >
-            <!-- Flip Card Container -->
             <div class="relative w-full rounded-xl h-[400px] perspective-1000 cursor-pointer" @click="openPrintModal(print)">
               <div 
                 class="absolute w-full h-full rounded-xl transition-all duration-700 transform-style-3d"
@@ -129,7 +187,6 @@
                 @mouseenter="print.isFlipped = true"
                 @mouseleave="print.isFlipped = false"
               >
-                <!-- Front of Card -->
                 <div class="absolute w-full h-full backface-hidden">
                   <img 
                     :src="print.image" 
@@ -137,7 +194,6 @@
                     class="w-full h-full object-cover"
                   />
                   
-                  <!-- Best Seller Badge -->
                   <div 
                     v-if="print.isBestSeller" 
                     class="absolute top-2 right-2 bg-black text-white text-xs px-2 py-1"
@@ -146,7 +202,6 @@
                   </div>
                 </div>
                 
-                <!-- Back of Card (Flipped View) -->
                 <div class="absolute w-full h-full backface-hidden rotate-y-180 bg-gray-100">
                   <img 
                     :src="print.imageAlt" 
@@ -162,7 +217,6 @@
               </div>
             </div>
             
-            <!-- Hover Overlay -->
             <div 
               class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 text-white"
               v-if="!print.isFlipped"
@@ -178,7 +232,7 @@
               </button>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <TestimonialsCarousel />
@@ -316,6 +370,8 @@ import featured8 from "@/assets/img/featured8.avif";
 import featured9 from "@/assets/img/featured9.avif";
 import featured10 from "@/assets/img/featured10.avif";
 import featured11 from "@/assets/img/featured11.avif";
+import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
+const { products, loading } = useFetchProducts()
 
   // Parallax effect refs
 const promotionRef = ref<HTMLElement | null>(null);

@@ -307,6 +307,8 @@ export function useCheckoutStore() {
     } catch (error) {
       console.error("Order creation or payment initialization failed", error)
       isProcessing.value = false
+    } finally {
+      isProcessing.value = false
     }
   }
 
