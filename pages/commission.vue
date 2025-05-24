@@ -1,46 +1,6 @@
 <template>
   <div class="min-h-screen mt-20">
-    <!-- Step Navigation -->
-    <!-- <div class="pt-8 px-4 sm:px-6 lg:px-8">
-      <div class="max-w-7xl mx-auto">
-        <div class="flex justify-center mb-8">
-          <div class="flex items-center space-x-2">
-            <button 
-              @click="currentStep = 1" 
-              class="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300"
-              :class="currentStep === 1 ? 'bg-emerald-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'"
-            >
-              1
-            </button>
-            <div class="w-16 h-1" :class="currentStep > 1 ? 'bg-emerald-600' : 'bg-gray-200'"></div>
-            <button 
-              @click="currentStep = 2" 
-              class="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300"
-              :class="currentStep === 2 ? 'bg-emerald-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'"
-            >
-              2
-            </button>
-            <div class="w-16 h-1" :class="currentStep > 2 ? 'bg-emerald-600' : 'bg-gray-200'"></div>
-            <button 
-              @click="currentStep = 3" 
-              class="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300"
-              :class="currentStep === 3 ? 'bg-emerald-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'"
-            >
-              3
-            </button>
-          </div>
-        </div>
-        
-        <div class="text-center mb-8">
-          <h2 class="text-xl font-medium text-gray-700">
-            {{ stepTitles[currentStep - 1] }}
-          </h2>
-        </div>
-      </div>
-    </div> -->
-    
-    
-    <!-- Step 1: Hero Section -->
+        <!-- Step 1: Hero Section -->
     <section v-if="currentStep === 1" class="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8 animate-fade-in">
       <div class="absolute -top-24 -right-24 w-96 h-96 bg-rose-100 rounded-full opacity-30 blur-3xl animate-float-slow"></div>
       <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-amber-100 rounded-full opacity-30 blur-3xl animate-float-reverse"></div>
