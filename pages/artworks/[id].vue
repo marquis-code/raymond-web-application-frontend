@@ -887,8 +887,8 @@ const addRelatedToCart = (relatedProduct: any) => {
   });
 }
 
-const formatPrice = (price: number) => {
-  return price.toFixed(2)
+const formatPrice = (price: number | null | undefined) => {
+  return price?.toFixed(2) ?? '0.00'
 }
 
 const formatDate = (dateString: string) => {

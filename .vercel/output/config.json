@@ -1,14 +1,20 @@
 {
   "version": 3,
   "overrides": {
+    "shop/index.html": {
+      "path": "shop"
+    },
+    "about/index.html": {
+      "path": "about"
+    },
+    "login/index.html": {
+      "path": "login"
+    },
     "terms/index.html": {
       "path": "terms"
     },
     "index1/index.html": {
       "path": "index1"
-    },
-    "login/index.html": {
-      "path": "login"
     },
     "shopss/index.html": {
       "path": "shopss"
@@ -16,50 +22,44 @@
     "contact/index.html": {
       "path": "contact"
     },
-    "signup/index.html": {
-      "path": "signup"
-    },
     "checkout/index.html": {
       "path": "checkout"
-    },
-    "shop/index.html": {
-      "path": "shop"
-    },
-    "academy/index.html": {
-      "path": "academy"
-    },
-    "about/index.html": {
-      "path": "about"
-    },
-    "contact-us/index.html": {
-      "path": "contact-us"
-    },
-    "refund-policy/index.html": {
-      "path": "refund-policy"
-    },
-    "artworks/index.html": {
-      "path": "artworks"
-    },
-    "index.html": {
-      "path": ""
-    },
-    "prints/index.html": {
-      "path": "prints"
     },
     "commission/index.html": {
       "path": "commission"
     },
-    "privacy-policy/index.html": {
-      "path": "privacy-policy"
+    "signup/index.html": {
+      "path": "signup"
+    },
+    "prints/index.html": {
+      "path": "prints"
+    },
+    "academy/index.html": {
+      "path": "academy"
+    },
+    "order-success/index.html": {
+      "path": "order-success"
+    },
+    "contact-us/index.html": {
+      "path": "contact-us"
+    },
+    "artworks/index.html": {
+      "path": "artworks"
+    },
+    "refund-policy/index.html": {
+      "path": "refund-policy"
     },
     "artworks/indexa/index.html": {
       "path": "artworks/indexa"
     },
+    "privacy-policy/index.html": {
+      "path": "privacy-policy"
+    },
     "shipping-policy/index.html": {
       "path": "shipping-policy"
     },
-    "order-success/index.html": {
-      "path": "order-success"
+    "index.html": {
+      "path": ""
     }
   },
   "routes": [
