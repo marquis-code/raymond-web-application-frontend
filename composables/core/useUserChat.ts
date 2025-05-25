@@ -41,7 +41,7 @@ export const useUserChat = () => {
 
     state.value.connectionStatus = "connecting"
 
-    socket.value = io("http://localhost:3000/chat", {
+    socket.value = io('https://raymond-arts-api.onrender.com/chat', {
       transports: ["websocket"],
       autoConnect: true,
     })

@@ -90,7 +90,7 @@
             v-model="newMessage"
             type="text"
             placeholder="Type your message..."
-            class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:ring-2 focus:ring-black focus:border-black transition-colors duration-300"
+            class="flex-1 px-4 py-3 border border-gray-300 outline-none rounded-full focus:ring-2 focus:ring-black focus:border-black transition-colors duration-300"
             :disabled="!chatState.isConnected || chatState.isTyping"
             @input="handleTyping"
             @blur="stopTyping"

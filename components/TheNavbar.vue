@@ -19,7 +19,7 @@
           <div class="flex items-center justify-between">
             <!-- Logo -->
             <NuxtLink to="/" class="text-2xl font-bold relative overflow-hidden group">
-              <img src="@/assets/img/raymond-logo.png" class="h-16" />
+              <img src="@/assets/img/raymond-logo.png" class="h-10" />
               <!-- <span class="inline-block transition-transform duration-500 group-hover:-translate-y-full">Raymond</span> -->
               <!-- <span class="inline-block text-primary transition-transform duration-500 absolute top-0 left-0 translate-y-full group-hover:translate-y-0">Aworo Art</span> -->
             </NuxtLink>
@@ -139,17 +139,46 @@
       </div>
   
       <!-- Chat Support -->
-      <div 
+      <!-- class="fixed inset-0 bottom-6 right-2 w-full h-full z-[9999] bg-white shadow-2xl overflow-hidden" -->
+      <!-- <div 
         v-if="isChatOpen"
-        class="fixed bottom-6 right-4 w-96 h-[600px] bg-white rounded-lg shadow-2xl z-40 overflow-hidden"
+        class="fixed inset-0 md:inset-auto bottom-6 right-3 md:w-[400px] w-full h-full md:h-[600px] bg-white rounded-none md:rounded-lg shadow-2xl md:z-40 overflow-hidden"
+
         v-motion
         :initial="{ opacity: 0, y: 20 }"
         :enter="{ opacity: 1, y: 0 }"
         :leave="{ opacity: 0, y: 20 }"
       >
-        <!-- <ChatSupport @close="isChatOpen = false" /> -->
          <ChatWidget @close="isChatOpen = false" />
-      </div>
+      </div> -->
+      <!-- <div 
+  v-if="isChatOpen"
+  class="fixed inset-0 bottom-6 right-3 md:inset-auto md:bottom-6 md:right-3 md:w-[400px] w-full h-full md:h-[600px] bg-white rounded-none md:rounded-lg shadow-2xl md:z-40 overflow-hidden"
+
+  v-motion
+  :initial="{ opacity: 0, y: 20 }"
+  :enter="{ opacity: 1, y: 0 }"
+  :leave="{ opacity: 0, y: 20 }"
+>
+  <ChatWidget @close="isChatOpen = false" />
+</div> -->
+
+        <div 
+          v-if="isChatOpen"
+          class="fixed z-[9999] md:z-40 bg-white shadow-2xl overflow-hidden
+                w-full h-full inset-0 
+                md:inset-auto md:bottom-6 md:right-3 md:w-[400px] md:h-[600px]
+                rounded-none md:rounded-lg"
+          
+          v-motion
+          :initial="{ opacity: 0, y: 20 }"
+          :enter="{ opacity: 1, y: 0 }"
+          :leave="{ opacity: 0, y: 20 }"
+        >
+          <ChatWidget @close="isChatOpen = false" />
+        </div>
+
+
   
       <!-- Chat Button -->
       <button 

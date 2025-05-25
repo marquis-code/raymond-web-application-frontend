@@ -250,17 +250,14 @@
           <div class="animate-slide-up" style="animation-delay: 0.8s;">
             <label for="drawingType" class="block text-sm font-medium text-gray-700 mb-1">What kind of drawing would you like? *</label>
             <select 
+              v-if="!fetchingTypes"
               id="drawingType" 
               v-model="form.drawingType" 
               required
               class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
             >
               <option value="" disabled selected>Select drawing type</option>
-              <option value="portrait">Portrait</option>
-              <option value="landscape">Landscape</option>
-              <option value="pet">Pet Portrait</option>
-              <option value="family">Family Portrait</option>
-              <option value="other">Other</option>
+              <option v-for="(item, idx) in drawingTypes" :key="idx" :value="item._id">{{item?.name}}</option>
             </select>
           </div>
           
@@ -395,6 +392,14 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useCreateCommission } from "@/composables/modules/commission/useCreateCommission"
+import { useSingleUploadFile } from '@/composables/core/useSingleUpload'
+import { useBatchUploadFile } from '@/composables/core/useBatchUploads'
+import { useFetchDrawingTypes } from "@/composables/modules/commission/useFetchDrawingTypes"
+const { createCommission, loading } = useCreateCommission()
+const { singleUploadFile, loading: uploadingSingle, uploadResponse: singleUploadResponse } = useSingleUploadFile()
+const { batchUploadFile, loading: uploadingBatch, uploadResponse: batchUploadResponse } = useBatchUploadFile()
+const { loading: fetchingTypes, drawingTypes} =  useFetchDrawingTypes()
 
 // Step navigation
 const currentStep = ref(1)
@@ -438,13 +443,22 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const isDragging = ref(false)
 const previewImage = ref('')
 
-const handleFileUpload = (event: Event) => {
+const handleFileUpload = async (event: Event) => {
   const target = event.target as HTMLInputElement
   if (target.files && target.files.length > 0) {
-    form.value.mainPhoto = target.files[0]
+    await singleUploadFile(target.files[0])
+    // form.value.mainPhoto = target.files[0]
     createPreview()
   }
 }
+
+// Watch for upload responses
+watch(() => singleUploadResponse.value, (newValue) => {
+  if (newValue && newValue.url) {
+    form.value.mainPhoto = newValue.url
+    // uploadedImageUrls.value.push(newValue.url)
+  }
+})
 
 const onDrop = (event: DragEvent) => {
   isDragging.value = false
@@ -471,11 +485,11 @@ const removeFile = () => {
 // Success modal
 const showSuccessModal = ref(false)
 
-const submitForm = () => {
+const submitForm = async () => {
   // Here you would typically send the form data to your backend
   console.log('Form submitted:', form.value)
-  
-  // Show success modal
+  await createCommission(form.value).then(() => {
+      // Show success modal
   showSuccessModal.value = true
   
   // Reset form
@@ -493,6 +507,7 @@ const submitForm = () => {
   
   // Clear preview
   previewImage.value = ''
+  })
 }
 
 const closeSuccessModal = () => {

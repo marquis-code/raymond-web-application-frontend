@@ -124,7 +124,7 @@
     </section>
 
     <!-- Product Gallery with advanced scroll and hover effects -->
-    <section ref="productGalleryRef" class="py-16 overflow-hidden">
+    <section ref="productGalleryRef" class="pt-16 overflow-hidden">
       <div class="mx-auto px-4">
         <h2 class="text-2xl font-bold text-center mb-12 slide-up">
           Featured Artworks
@@ -214,12 +214,6 @@
               <p class="text-center font-medium text-sm text-gray-700 mb-1">
                 From ${{ product.price }}
               </p>
-              <!-- <p
-                v-if="product?.description"
-                class="text-center font-medium text-gray-500 text-sm"
-              >
-                {{ product?.description }}
-              </p> -->
             </div>
           </div>
 
