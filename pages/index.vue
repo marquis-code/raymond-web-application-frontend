@@ -1,7 +1,8 @@
 <template>
   <div>
+    <PromoSaleCTA :promosale="promosale" />
     <!-- Hero Section with animated image carousel and typewriter effect -->
-    <section class="relative pt-20">
+    <section class="relative">
       <div class="grid grid-cols-1 md:grid-cols-2">
         <!-- Left side with artist image carousel -->
         <div class="relative h-screen overflow-hidden">
@@ -33,50 +34,49 @@
             RAYMOND AWORO ART
           </h1>
           <p
-            ref="taglineRef"
             class="text-lg md:text-xl text-zinc-300 italic mb-8 overflow-hidden"
           >
-            <span class="typewriter-text"
-              >Creating Art: Exploring Life at the Intersection of Faith and
-              Creativity</span
-            >
+            Creating Art; Exploring Life at the Intersection of Faith and
+            Creativity
           </p>
+          <div class="mt-6 md:hidden flex justify-center gap-x-10">
+            <a
+              href="https://web.facebook.com/people/raymondaworo/100067199633701/?mibextid=LQQJ4d"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">Facebook</span>
+              <img class="h-5 w-5" src="@/assets/icons/facebook.svg" />
+            </a>
+            <a
+              href="https://www.instagram.com/raymondaworo/?igshid=OGQ5ZDc2ODk2ZA%3D%3D"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">Instagram</span>
+              <img class="h-5 w-5" src="@/assets/icons/instagram.svg" />
+            </a>
+            <a
+              href="https://x.com/raymondaworo/status/1546911697776115714?s=46&t=wja9T8NIysGx2Vtni1WECQ"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">X</span>
+              <img class="h-5 w-5" src="@/assets/icons/logo-black.png" />
+            </a>
+            <a
+              href="https://www.tiktok.com/@raymondaworo?_t=8fvTbrYZSA1&_r=1"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">Tiktok</span>
+              <img class="h-5 w-5" src="@/assets/icons/tiktok.svg" />
+            </a>
+            <a
+              href="https://www.youtube.com/@raymondaworo"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">YouTube</span>
+              <img class="h-5 w-5" src="@/assets/icons/youtube.svg" />
+            </a>
+          </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Promotion Banner with parallax effect -->
-    <section
-      ref="promotionRef"
-      class="relative text-white py-60 overflow-hidden"
-    >
-      <!-- Background Image -->
-      <div class="absolute inset-0 z-0">
-        <img
-          src="@/assets/img/no-love.jpg"
-          alt="Artwork background"
-          class="w-full h-full object-cover"
-          ref="parallaxBgRef"
-        />
-      </div>
-
-      <!-- Dark Overlay -->
-      <div class="absolute inset-0 bg-black opacity-60 z-10"></div>
-
-      <!-- Content -->
-      <div class="container mx-auto px-4 relative z-20 text-center">
-        <h2 class="text-lg md:text-xl uppercase tracking-wider mb-4 fade-in">
-          NEW PRINTS EDITION!!!
-        </h2>
-        <h3 class="text-4xl md:text-6xl font-bold mb-6 slide-up">
-          NO GREATER LOVE
-        </h3>
-        <p class="text-2xl md:text-3xl mb-8 fade-in">GET 50% OFF!!!!!</p>
-        <NuxtLink to="/prints"
-          class="bg-white text-black px-8 py-3 font-medium hover:bg-gray-200 transition-all hover:scale-105 transform"
-        >
-          Shop Here
-        </NuxtLink>
       </div>
     </section>
 
@@ -130,7 +130,21 @@
           Featured Artworks
         </h2>
 
-        <div class="relative product-slider">
+        <div v-if="loading" class="flex justify-center items-center py-20">
+          <div class="relative">
+            <div
+              class="animate-spin rounded-full h-20 w-20 border-4 border-gray-200"
+            ></div>
+            <div
+              class="animate-spin rounded-full h-20 w-20 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"
+            ></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-8 h-8 bg-gray-900 rounded-full animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="relative product-slider">
           <!-- Navigation Arrows -->
           <button
             class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-md hover:bg-gray-100 transition-colors"
@@ -183,7 +197,7 @@
                   v-if="product.isFeatured"
                   class="absolute top-2 rounded-lg left-2 bg-black text-white text-xs px-2 py-1"
                 >
-                Sale
+                  Sale
                 </div>
                 <div
                   v-if="product.isNew"
@@ -195,7 +209,7 @@
                   v-if="product.isBestseller"
                   class="absolute top-2 rounded-lg left-2 bg-black text-white text-xs px-2 py-1"
                 >
-                Best Seller
+                  Best Seller
                 </div>
                 <div
                   class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
@@ -249,11 +263,14 @@ import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
 import { useRouter } from "vue-router";
 import hero1 from "@/assets/img/commission-art1.jpg";
 import hero2 from "@/assets/img/snap.jpg";
-import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
+import { useFetchProducts } from "@/composables/modules/products/useFetchProducts";
+import { useFetchPromosale } from "@/composables/modules/promosale/useFetchPromosale";
 
-const { products, loading } = useFetchProducts()
+const { products, loading } = useFetchProducts();
+const { promosale, loading: fetchingPromoSale } = useFetchPromosale();
 
 import gsap from "gsap";
+import PromoSaleCTA from "../components/PromoSaleCTA.vue";
 
 const router = useRouter();
 
@@ -277,8 +294,6 @@ const productRefs = reactive<HTMLElement[]>([]);
 const isDragging = ref(false);
 const startX = ref(0);
 const scrollLeft = ref(0);
-
-
 
 // Navigation helper
 const navigateTo = (path: string) => {

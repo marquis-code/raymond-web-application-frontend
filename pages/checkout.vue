@@ -1,427 +1,244 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
-    <!-- Animated Background Elements -->
-    <div class="fixed w-full h-full pointer-events-none overflow-hidden">
-      <div class="absolute top-20 left-10 w-32 h-32 bg-rose-500/10 rounded-full mix-blend-screen blur-xl animate-float-slow"></div>
-      <div class="absolute bottom-40 right-20 w-40 h-40 bg-amber-500/10 rounded-full mix-blend-screen blur-xl animate-float-medium"></div>
-      <div class="absolute top-1/3 right-1/4 w-24 h-24 bg-emerald-500/10 rounded-full mix-blend-screen blur-xl animate-float-fast"></div>
+  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <!-- Background Pattern -->
+    <div class="fixed inset-0 opacity-5 pointer-events-none">
+      <div class="absolute inset-0" style="background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0); background-size: 20px 20px;"></div>
     </div>
-    
+
     <!-- Empty Cart State -->
-    <div v-if="!checkoutSummary" class="container mx-auto px-4 py-16 text-center">
-      <div class="max-w-md mx-auto bg-white rounded-xl shadow-lg p-8 border border-gray-100 transform transition-all duration-700 hover:shadow-xl">
-        <div class="mb-6 text-gray-300">
-          <div class="mx-auto w-24 h-24 rounded-full bg-gray-50 flex items-center justify-center animate-pulse-slow">
-            <ShoppingBag class="w-12 h-12" />
-          </div>
+    <div v-if="!cartItems || cartItems.length === 0" class="container mx-auto px-4 py-16 min-h-screen flex items-center justify-center">
+      <div class="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8 border border-slate-200 text-center">
+        <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center">
+          <ShoppingBag class="w-12 h-12 text-slate-400" />
         </div>
-        <h2 class="text-2xl font-bold mb-4 animate-fade-in">Your cart is empty</h2>
-        <p class="text-gray-600 mb-6 animate-fade-in delay-100">Please add some items to your cart before proceeding to checkout.</p>
-        <NuxtLink to="/" class="inline-block px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 animate-fade-in delay-200">
-          <span class="flex items-center">
-            <ArrowLeft class="w-4 h-4 mr-2" />
-            Browse Artwork
-          </span>
+        <h2 class="text-2xl font-bold text-slate-800 mb-4">Your cart is empty</h2>
+        <p class="text-slate-600 mb-8">Add some amazing artwork to your cart to continue with checkout.</p>
+        <NuxtLink 
+          to="/artworks" 
+          class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+        >
+          <ArrowLeft class="w-4 h-4 mr-2" />
+          Browse Artwork
         </NuxtLink>
       </div>
     </div>
-    
+
     <!-- Order Complete State -->
-    <div v-else-if="orderComplete" class="container mx-auto px-4 py-16">
-      <div class="max-w-md mx-auto bg-white rounded-xl shadow-lg p-8 border border-gray-100 animate-scale-in">
-        <div class="mb-6 text-green-500 flex justify-center">
-          <div class="w-20 h-20 rounded-full bg-green-50 flex items-center justify-center animate-bounce-once">
-            <CheckCircle class="w-10 h-10" />
+    <div v-else-if="orderComplete" class="container mx-auto px-4 py-16 min-h-screen flex items-center justify-center">
+      <div class="max-w-lg mx-auto bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
+        <div class="text-center mb-8">
+          <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center">
+            <CheckCircle class="w-10 h-10 text-emerald-600" />
+          </div>
+          <h2 class="text-3xl font-bold text-slate-800 mb-4">Order Confirmed!</h2>
+          <p class="text-slate-600 mb-2">Thank you for your purchase</p>
+          <p class="text-slate-500 text-sm">We've sent a confirmation email with your order details</p>
+        </div>
+        
+        <div class="bg-slate-50 rounded-xl p-6 mb-8">
+          <div class="flex justify-between items-center mb-3">
+            <span class="text-slate-600 font-medium">Order Number</span>
+            <span class="font-bold text-slate-800">#{{ orderId || generateOrderNumber() }}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-600 font-medium">Total Amount</span>
+            <span class="font-bold text-xl text-slate-800">${{ formatPrice(calculateTotal()) }}</span>
           </div>
         </div>
-        <h2 class="text-2xl font-bold mb-4 text-center animate-fade-in delay-300">Thank you for your order!</h2>
-        <p class="text-gray-600 mb-2 text-center animate-fade-in delay-400">Your order has been successfully placed.</p>
-        <p class="text-gray-600 mb-6 text-center animate-fade-in delay-500">We've sent a confirmation email with your order details.</p>
-        <div class="flex flex-col space-y-4 animate-fade-in delay-600">
-          <div class="p-4 bg-gray-50 rounded-lg border border-gray-100">
-            <div class="flex justify-between mb-2">
-              <span class="text-gray-600">Order Number:</span>
-              <span class="font-medium">#{{ orderId || generateOrderNumber() }}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-600">Total Amount:</span>
-              <span class="font-medium">${{ formatPrice(calculateTotal()) }}</span>
-            </div>
-          </div>
-          <NuxtLink to="/" class="block w-full px-6 py-3 bg-black text-white rounded-lg text-center hover:bg-gray-800 transition-all duration-300 transform hover:scale-105">
-            Continue Shopping
-          </NuxtLink>
-        </div>
+        
+        <NuxtLink 
+          to="/" 
+          class="w-full py-4 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium flex items-center justify-center"
+        >
+          Continue Shopping
+        </NuxtLink>
       </div>
     </div>
-    
-    <!-- Checkout Flow -->
-    <div v-else class="container mx-auto px-4 py-8">
-      <h1 class="text-2xl font-bold mb-8 text-center md:text-left animate-fade-in">Checkout</h1>
-      
-      <!-- Authentication Modal -->
-      <Transition name="fade">
-        <div v-if="showAuthModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-          <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-scale-in">
-            <div v-if="authModalMode === 'check'">
-              <h2 class="text-2xl font-bold mb-4">Create an Account?</h2>
-              <p class="text-gray-600 mb-6">Creating an account helps you track your orders and get updates on your purchases.</p>
-              <div class="flex flex-col gap-4">
-                <button 
-                  @click="authModalMode = 'signin'"
-                  class="flex-1 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105"
-                >
-                  Sign In
-                </button>
-                <button 
-                  @click="authModalMode = 'signup'"
-                  class="flex-1 px-6 py-3 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition-all duration-300 transform hover:scale-105"
-                >
-                  Create Account
-                </button>
-                <button 
-                  @click="proceedAsGuest"
-                  class="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-all duration-300"
-                >
-                  Continue as Guest
-                </button>
-              </div>
+
+    <!-- Main Checkout Flow -->
+    <div v-else class="container mx-auto px-4 py-8 lg:py-12">
+      <!-- Header -->
+      <div class="text-center mt-20 mb-12">
+        <h1 class="text-3xl font-bold text-slate-800 mb-4">Secure Checkout</h1>
+        <p class="text-slate-600 max-w-2xl mx-auto">Complete your purchase securely. Your information is protected with industry-standard encryption.</p>
+      </div>
+
+      <!-- Progress Steps -->
+      <div class="max-w-2xl mx-auto mb-12">
+        <div class="flex items-center justify-between relative">
+          <!-- Progress Line -->
+          <div class="absolute top-4 left-0 right-0 h-0.5 bg-slate-200">
+            <div 
+              class="h-full bg-gradient-to-r from-slate-800 to-slate-900 transition-all duration-500 ease-out"
+              :style="{ width: `${((currentStep - 1) / 2) * 100}%` }"
+            ></div>
+          </div>
+          
+          <!-- Step 1: Details -->
+          <div class="relative flex flex-col items-center">
+            <div 
+              class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 z-10"
+              :class="currentStep >= 1 ? 'bg-slate-800 text-white shadow-lg' : 'bg-white border-2 border-slate-200 text-slate-400'"
+            >
+              <User class="w-4 h-4" />
             </div>
-            
-            <div v-else-if="authModalMode === 'signin'">
-              <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Sign In</h2>
-                <button @click="closeAuthModal" class="text-gray-500 hover:text-gray-700">
-                  <X class="w-5 h-5" />
-                </button>
+            <span class="text-xs font-medium mt-2 text-slate-600">Details</span>
+          </div>
+          
+          <!-- Step 2: Shipping -->
+          <div class="relative flex flex-col items-center">
+            <div 
+              class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 z-10"
+              :class="currentStep >= 2 ? 'bg-slate-800 text-white shadow-lg' : 'bg-white border-2 border-slate-200 text-slate-400'"
+            >
+              <Truck class="w-4 h-4" />
+            </div>
+            <span class="text-xs font-medium mt-2 text-slate-600">Shipping</span>
+          </div>
+          
+          <!-- Step 3: Payment -->
+          <div class="relative flex flex-col items-center">
+            <div 
+              class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 z-10"
+              :class="currentStep >= 3 ? 'bg-slate-800 text-white shadow-lg' : 'bg-white border-2 border-slate-200 text-slate-400'"
+            >
+              <CreditCard class="w-4 h-4" />
+            </div>
+            <span class="text-xs font-medium mt-2 text-slate-600">Payment</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="grid lg:grid-cols-5 gap-8 max-w-7xl mx-auto">
+        <!-- Checkout Steps (Left Side) -->
+        <div class="lg:col-span-3">
+          <!-- Step 1: Customer Details -->
+          <Transition name="slide-fade" mode="out-in">
+            <div v-if="currentStep === 1" class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 lg:p-8">
+              <div class="flex items-center mb-6">
+                <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
+                  <User class="w-5 h-5 text-slate-600" />
+                </div>
+                <h2 class="text-xl lg:text-2xl font-bold text-slate-800">Customer Details</h2>
               </div>
               
-              <form @submit.prevent="handleSignin" class="space-y-4">
-                <div class="form-group">
-                  <label for="signinEmail" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input 
-                    id="signinEmail"
-                    v-model="signinData.email"
-                    type="email"
-                    required
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                  />
-                </div>
-                
-                <div class="form-group">
-                  <label for="signinPassword" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                  <input 
-                    id="signinPassword"
-                    v-model="signinData.password"
-                    type="password"
-                    required
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                  />
-                </div>
-                
-                <button 
-                  type="submit"
-                  :disabled="isSigningIn"
-                  class="w-full py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 flex items-center justify-center"
-                >
-                  <Loader v-if="isSigningIn" class="w-5 h-5 mr-2 animate-spin" />
-                  {{ isSigningIn ? 'Signing In...' : 'Sign In' }}
-                </button>
-                
-                <div class="text-center mt-4">
-                  <p class="text-gray-600">
-                    Don't have an account? 
-                    <button 
-                      @click="authModalMode = 'signup'" 
-                      class="text-rose-600 hover:text-rose-700 font-medium"
-                    >
-                      Sign Up
-                    </button>
-                  </p>
-                </div>
-              </form>
-            </div>
-            
-            <div v-else-if="authModalMode === 'signup'">
-              <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Create Account</h2>
-                <button @click="closeAuthModal" class="text-gray-500 hover:text-gray-700">
-                  <X class="w-5 h-5" />
-                </button>
-              </div>
-              
-              <form @submit.prevent="handleSignup" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                  <div class="form-group">
-                    <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+              <form @submit.prevent="handleNextStep" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="space-y-2">
+                    <label for="firstName" class="block text-sm font-semibold text-slate-700">First Name</label>
                     <input 
                       id="firstName"
-                      v-model="signupData.firstName"
+                      v-model="deliveryDetails.firstName"
                       type="text"
                       required
-                      class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
+                      placeholder="Enter your first name"
+                      @input="persistDeliveryDetails"
                     />
                   </div>
                   
-                  <div class="form-group">
-                    <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                  <div class="space-y-2">
+                    <label for="lastName" class="block text-sm font-semibold text-slate-700">Last Name</label>
                     <input 
                       id="lastName"
-                      v-model="signupData.lastName"
+                      v-model="deliveryDetails.lastName"
                       type="text"
                       required
-                      class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                      class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
+                      placeholder="Enter your last name"
+                      @input="persistDeliveryDetails"
                     />
                   </div>
                 </div>
                 
-                <div class="form-group">
-                  <label for="signupEmail" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                  <input 
-                    id="signupEmail"
-                    v-model="signupData.email"
-                    type="email"
-                    required
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                  />
-                </div>
-                
-                <div class="form-group">
-                  <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                  <input 
-                    id="password"
-                    v-model="signupData.password"
-                    type="password"
-                    required
-                    minlength="6"
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                  />
-                  <p class="text-xs text-gray-500 mt-1">Password must be at least 6 characters</p>
-                </div>
-                
-                <div class="form-group">
-                  <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone (Optional)</label>
-                  <input 
-                    id="phone"
-                    v-model="signupData.phone"
-                    type="tel"
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-                  />
-                </div>
-                
-                <button 
-                  type="submit"
-                  :disabled="isSigningUp"
-                  class="w-full py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 flex items-center justify-center"
-                >
-                  <Loader v-if="isSigningUp" class="w-5 h-5 mr-2 animate-spin" />
-                  {{ isSigningUp ? 'Creating Account...' : 'Create Account' }}
-                </button>
-                
-                <div class="text-center mt-4">
-                  <p class="text-gray-600">
-                    Already have an account? 
-                    <button 
-                      @click="authModalMode = 'signin'" 
-                      class="text-rose-600 hover:text-rose-700 font-medium"
-                    >
-                      Sign In
-                    </button>
-                  </p>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </Transition>
-      
-      <!-- Checkout Steps Progress -->
-      <div class="max-w-4xl mx-auto mb-12 animate-fade-in">
-        <div class="flex items-center justify-between">
-          <div 
-            class="flex flex-col items-center"
-            :class="{ 'text-black': currentStep >= 1, 'text-gray-400': currentStep < 1 }"
-          >
-            <div 
-              class="w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all duration-500"
-              :class="{ 
-                'bg-black text-white scale-110 shadow-lg': currentStep === 1, 
-                'bg-black text-white': currentStep > 1, 
-                'bg-gray-200': currentStep < 1 
-              }"
-            >
-              <User class="w-5 h-5" />
-            </div>
-            <span class="text-sm font-medium">Delivery</span>
-          </div>
-          
-          <div class="flex-1 h-1 mx-4 relative">
-            <div class="absolute inset-0 bg-gray-200"></div>
-            <div 
-              class="absolute inset-0 bg-black transition-all duration-500 ease-out"
-              :style="{ width: currentStep >= 2 ? '100%' : '0%' }"
-            ></div>
-          </div>
-          
-          <div 
-            class="flex flex-col items-center"
-            :class="{ 'text-black': currentStep >= 2, 'text-gray-400': currentStep < 2 }"
-          >
-            <div 
-              class="w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all duration-500"
-              :class="{ 
-                'bg-black text-white scale-110 shadow-lg': currentStep === 2, 
-                'bg-black text-white': currentStep > 2, 
-                'bg-gray-200': currentStep < 2 
-              }"
-            >
-              <Truck class="w-5 h-5" />
-            </div>
-            <span class="text-sm font-medium">Shipping</span>
-          </div>
-          
-          <div class="flex-1 h-1 mx-4 relative">
-            <div class="absolute inset-0 bg-gray-200"></div>
-            <div 
-              class="absolute inset-0 bg-black transition-all duration-500 ease-out"
-              :style="{ width: currentStep >= 3 ? '100%' : '0%' }"
-            ></div>
-          </div>
-          
-          <div 
-            class="flex flex-col items-center"
-            :class="{ 'text-black': currentStep >= 3, 'text-gray-400': currentStep < 3 }"
-          >
-            <div 
-              class="w-12 h-12 rounded-full flex items-center justify-center mb-2 transition-all duration-500"
-              :class="{ 
-                'bg-black text-white scale-110 shadow-lg': currentStep === 3, 
-                'bg-black text-white': currentStep > 3, 
-                'bg-gray-200': currentStep < 3 
-              }"
-            >
-              <CreditCard class="w-5 h-5" />
-            </div>
-            <span class="text-sm font-medium">Payment</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="grid lg:grid-cols-3 gap-8">
-        <!-- Checkout Steps -->
-        <div class="lg:col-span-2">
-          <!-- Step 1: Delivery Details -->
-          <Transition name="slide-fade" mode="out-in">
-            <div v-if="currentStep === 1" class="bg-white p-8 rounded-xl shadow-md border border-gray-100 animate-fade-in">
-              <h2 class="text-xl font-semibold mb-6 flex items-center">
-                <User class="w-5 h-5 mr-2" />
-                Delivery Details
-              </h2>
-              
-              <form @submit.prevent="handleNextStep" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="form-group">
-                  <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                  <input 
-                    id="firstName"
-                    v-model="deliveryDetails.firstName"
-                    type="text"
-                    required
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
-                    @input="persistDeliveryDetails"
-                  />
-                </div>
-                
-                <div class="form-group">
-                  <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                  <input 
-                    id="lastName"
-                    v-model="deliveryDetails.lastName"
-                    type="text"
-                    required
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
-                    @input="persistDeliveryDetails"
-                  />
-                </div>
-                
-                <div class="form-group">
-                  <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <div class="space-y-2">
+                  <label for="email" class="block text-sm font-semibold text-slate-700">Email Address</label>
                   <input 
                     id="email"
                     v-model="deliveryDetails.email"
                     type="email"
                     required
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
+                    placeholder="Enter your email address"
                     @input="persistDeliveryDetails"
                   />
                 </div>
                 
-                <div class="form-group">
-                  <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                <div class="space-y-2">
+                  <label for="phone" class="block text-sm font-semibold text-slate-700">Phone Number</label>
                   <input 
                     id="phone"
                     v-model="deliveryDetails.phone"
                     type="tel"
                     required
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
+                    placeholder="Enter your phone number"
                     @input="persistDeliveryDetails"
                   />
                 </div>
                 
-                <div class="form-group md:col-span-2">
-                  <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <div class="space-y-2">
+                  <label for="address" class="block text-sm font-semibold text-slate-700">Street Address</label>
                   <input 
                     id="address"
                     v-model="deliveryDetails.address"
                     type="text"
                     required
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
+                    placeholder="Enter your street address"
                     @input="persistDeliveryDetails"
                   />
                 </div>
                 
-                <div class="form-group">
-                  <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
-                  <input 
-                    id="city"
-                    v-model="deliveryDetails.city"
-                    type="text"
-                    required
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
-                    @input="persistDeliveryDetails"
-                  />
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div class="space-y-2">
+                    <label for="city" class="block text-sm font-semibold text-slate-700">City</label>
+                    <input 
+                      id="city"
+                      v-model="deliveryDetails.city"
+                      type="text"
+                      required
+                      class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
+                      placeholder="City"
+                      @input="persistDeliveryDetails"
+                    />
+                  </div>
+                  
+                  <div class="space-y-2">
+                    <label for="state" class="block text-sm font-semibold text-slate-700">State</label>
+                    <input 
+                      id="state"
+                      v-model="deliveryDetails.state"
+                      type="text"
+                      required
+                      class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
+                      placeholder="State"
+                      @input="persistDeliveryDetails"
+                    />
+                  </div>
+                  
+                  <div class="space-y-2">
+                    <label for="zipCode" class="block text-sm font-semibold text-slate-700">ZIP Code</label>
+                    <input 
+                      id="zipCode"
+                      v-model="deliveryDetails.zipCode"
+                      type="text"
+                      required
+                      class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
+                      placeholder="ZIP"
+                      @input="persistDeliveryDetails"
+                    />
+                  </div>
                 </div>
                 
-                <div class="form-group">
-                  <label for="state" class="block text-sm font-medium text-gray-700 mb-1">State</label>
-                  <input 
-                    id="state"
-                    v-model="deliveryDetails.state"
-                    type="text"
-                    required
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
-                    @input="persistDeliveryDetails"
-                  />
-                </div>
-                
-                <div class="form-group">
-                  <label for="zipCode" class="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
-                  <input 
-                    id="zipCode"
-                    v-model="deliveryDetails.zipCode"
-                    type="text"
-                    required
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
-                    @input="persistDeliveryDetails"
-                  />
-                </div>
-                
-                <div class="form-group">
-                  <label for="country" class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                <div class="space-y-2">
+                  <label for="country" class="block text-sm font-semibold text-slate-700">Country</label>
                   <select 
                     id="country"
                     v-model="deliveryDetails.country"
                     required
-                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 hover:border-gray-400"
+                    class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
                     @change="handleCountryChange"
                   >
                     <option value="">Select Country</option>
@@ -435,82 +252,82 @@
                   </select>
                 </div>
                 
-                <div class="md:col-span-2 mt-4">
-                  <button 
-                    type="submit"
-                    class="w-full py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
-                  >
-                    Continue to Shipping
-                    <ArrowRight class="w-4 h-4 ml-2" />
-                  </button>
-                </div>
+                <button 
+                  type="submit"
+                  class="w-full py-4 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium flex items-center justify-center"
+                >
+                  Continue to Shipping
+                  <ArrowRight class="w-5 h-5 ml-2" />
+                </button>
               </form>
             </div>
             
             <!-- Step 2: Shipping Method -->
-            <div v-else-if="currentStep === 2" class="bg-white p-8 rounded-xl shadow-md border border-gray-100 animate-fade-in">
-              <h2 class="text-xl font-semibold mb-6 flex items-center">
-                <Truck class="w-5 h-5 mr-2" />
-                Shipping Method
-              </h2>
+            <div v-else-if="currentStep === 2" class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 lg:p-8">
+              <div class="flex items-center mb-6">
+                <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
+                  <Truck class="w-5 h-5 text-slate-600" />
+                </div>
+                <h2 class="text-xl lg:text-2xl font-bold text-slate-800">Shipping Method</h2>
+              </div>
               
               <div class="space-y-4 mb-8">
                 <div 
-                  class="border rounded-lg p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
-                  :class="{ 'border-black bg-gray-50 shadow-sm': deliveryMethod === 'standard', 'border-gray-200': deliveryMethod !== 'standard' }"
-                  @click="setDeliveryMethod('standard')"
+                  class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
+                  :class="deliveryMethod === 'standard' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
+                  @click="handleDeliveryMethodChange('standard')"
                 >
                   <div class="flex items-center">
-                    <div class="w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center transition-all duration-200"
-                         :class="{ 'border-black': deliveryMethod === 'standard', 'border-gray-300': deliveryMethod !== 'standard' }">
-                      <div v-if="deliveryMethod === 'standard'" class="w-3 h-3 rounded-full bg-black animate-scale-in"></div>
+                    <div class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-all duration-200"
+                         :class="deliveryMethod === 'standard' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
+                      <div v-if="deliveryMethod === 'standard'" class="w-3 h-3 rounded-full bg-white"></div>
                     </div>
                     <div class="flex-1">
-                      <div class="flex justify-between">
-                        <span class="font-medium">Standard Delivery</span>
-                        <span class="font-medium">${{ formatPrice(currentShippingFee) }}</span>
+                      <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-slate-800">Standard Shipping</span>
+                        <span class="font-bold text-slate-800">${{ formatPrice(currentShippingFee) }}</span>
                       </div>
-                      <p class="text-sm text-gray-600">Delivery within 5-7 business days</p>
+                      <p class="text-sm text-slate-600">Delivery within 5-7 business days</p>
                     </div>
                   </div>
                 </div>
                 
                 <div 
-                  class="border rounded-lg p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
-                  :class="{ 'border-black bg-gray-50 shadow-sm': deliveryMethod === 'express', 'border-gray-200': deliveryMethod !== 'express' }"
-                  @click="setDeliveryMethod('express')"
+                  class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
+                  :class="deliveryMethod === 'express' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
+                  @click="handleDeliveryMethodChange('express')"
                 >
                   <div class="flex items-center">
-                    <div class="w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center transition-all duration-200"
-                         :class="{ 'border-black': deliveryMethod === 'express', 'border-gray-300': deliveryMethod !== 'express' }">
-                      <div v-if="deliveryMethod === 'express'" class="w-3 h-3 rounded-full bg-black animate-scale-in"></div>
+                    <div class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-all duration-200"
+                         :class="deliveryMethod === 'express' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
+                      <div v-if="deliveryMethod === 'express'" class="w-3 h-3 rounded-full bg-white"></div>
                     </div>
                     <div class="flex-1">
-                      <div class="flex justify-between">
-                        <span class="font-medium">Express Delivery</span>
-                        <span class="font-medium">${{ formatPrice(currentShippingFee * 2.5) }}</span>
+                      <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-slate-800">Express Shipping</span>
+                        <span class="font-bold text-slate-800">${{ formatPrice(currentShippingFee * 2.5) }}</span>
                       </div>
-                      <p class="text-sm text-gray-600">Delivery within 2-3 business days</p>
+                      <p class="text-sm text-slate-600">Delivery within 2-3 business days</p>
                     </div>
                   </div>
                 </div>
                 
                 <div 
-                  class="border rounded-lg p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
-                  :class="{ 'border-black bg-gray-50 shadow-sm': deliveryMethod === 'pickup', 'border-gray-200': deliveryMethod !== 'pickup' }"
-                  @click="setDeliveryMethod('pickup')"
+                  class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
+                  :class="deliveryMethod === 'pickup' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
+                  @click="handleDeliveryMethodChange('pickup')"
                 >
                   <div class="flex items-center">
-                    <div class="w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center transition-all duration-200"
-                         :class="{ 'border-black': deliveryMethod === 'pickup', 'border-gray-300': deliveryMethod !== 'pickup' }">
-                      <div v-if="deliveryMethod === 'pickup'" class="w-3 h-3 rounded-full bg-black animate-scale-in"></div>
+                    <div class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-all duration-200"
+                         :class="deliveryMethod === 'pickup' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
+                      <div v-if="deliveryMethod === 'pickup'" class="w-3 h-3 rounded-full bg-white"></div>
                     </div>
                     <div class="flex-1">
-                      <div class="flex justify-between">
-                        <span class="font-medium">Store Pickup</span>
-                        <span class="font-medium">Free</span>
+                      <div class="flex justify-between items-center mb-1">
+                        <span class="font-semibold text-slate-800">Store Pickup</span>
+                        <span class="font-bold text-slate-800">Free</span>
                       </div>
-                      <p class="text-sm text-gray-600">Pickup at our gallery location</p>
+                      <p class="text-sm text-slate-600">Pickup at our gallery location</p>
                     </div>
                   </div>
                 </div>
@@ -519,14 +336,14 @@
               <div class="flex gap-4">
                 <button 
                   @click="handlePrevStep"
-                  class="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 flex items-center justify-center"
+                  class="flex-1 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-all duration-300 font-medium flex items-center justify-center"
                 >
                   <ArrowLeft class="w-4 h-4 mr-2" />
                   Back
                 </button>
                 <button 
                   @click="handleNextStep"
-                  class="flex-1 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
+                  class="flex-1 py-3 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium flex items-center justify-center"
                 >
                   Continue to Payment
                   <ArrowRight class="w-4 h-4 ml-2" />
@@ -535,70 +352,68 @@
             </div>
             
             <!-- Step 3: Payment -->
-            <div v-else-if="currentStep === 3" class="bg-white p-8 rounded-xl shadow-md border border-gray-100 animate-fade-in">
-              <h2 class="text-xl font-semibold mb-6 flex items-center">
-                <CreditCard class="w-5 h-5 mr-2" />
-                Payment Method
-              </h2>
+            <div v-else-if="currentStep === 3" class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 lg:p-8">
+              <div class="flex items-center mb-6">
+                <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
+                  <CreditCard class="w-5 h-5 text-slate-600" />
+                </div>
+                <h2 class="text-xl lg:text-2xl font-bold text-slate-800">Payment Method</h2>
+              </div>
               
-              <!-- Payment Method Selection -->
               <div class="space-y-4 mb-8">
                 <div 
-                  class="border rounded-lg p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
-                  :class="{ 'border-black bg-gray-50 shadow-sm': paymentMethod === 'flutterwave', 'border-gray-200': paymentMethod !== 'flutterwave' }"
-                  @click="setPaymentMethod('flutterwave')"
+                  class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
+                  :class="paymentMethod === 'flutterwave' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
+                  @click="handlePaymentMethodChange('flutterwave')"
                 >
                   <div class="flex items-center">
-                    <div class="w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center transition-all duration-200"
-                         :class="{ 'border-black': paymentMethod === 'flutterwave', 'border-gray-300': paymentMethod !== 'flutterwave' }">
-                      <div v-if="paymentMethod === 'flutterwave'" class="w-3 h-3 rounded-full bg-black animate-scale-in"></div>
+                    <div class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-all duration-200"
+                         :class="paymentMethod === 'flutterwave' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
+                      <div v-if="paymentMethod === 'flutterwave'" class="w-3 h-3 rounded-full bg-white"></div>
                     </div>
                     <div class="flex-1">
-                      <span class="font-medium">Pay with Flutterwave</span>
-                      <p class="text-sm text-gray-600">Secure payment via Flutterwave</p>
+                      <span class="font-semibold text-slate-800">Pay with Flutterwave</span>
+                      <p class="text-sm text-slate-600">Secure payment via Flutterwave</p>
                     </div>
-                    <div class="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center">
-                      <img src="@/assets/icons/flutterwave.svg" alt="Flutterwave" class="w-6 h-6" @error="handleImageError" />
+                    <div class="w-10 h-10 bg-slate-100 rounded-md flex items-center justify-center">
+                      <CreditCard class="w-6 h-6 text-slate-600" />
                     </div>
                   </div>
                 </div>
                 
                 <div 
-                  class="border rounded-lg p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
-                  :class="{ 'border-black bg-gray-50 shadow-sm': paymentMethod === 'manual', 'border-gray-200': paymentMethod !== 'manual' }"
-                  @click="setPaymentMethod('manual')"
+                  class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
+                  :class="paymentMethod === 'manual' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
+                  @click="handlePaymentMethodChange('manual')"
                 >
                   <div class="flex items-center">
-                    <div class="w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center transition-all duration-200"
-                         :class="{ 'border-black': paymentMethod === 'manual', 'border-gray-300': paymentMethod !== 'manual' }">
-                      <div v-if="paymentMethod === 'manual'" class="w-3 h-3 rounded-full bg-black animate-scale-in"></div>
+                    <div class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-all duration-200"
+                         :class="paymentMethod === 'manual' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
+                      <div v-if="paymentMethod === 'manual'" class="w-3 h-3 rounded-full bg-white"></div>
                     </div>
                     <div class="flex-1">
-                      <span class="font-medium">Credit/Debit Card</span>
-                      <p class="text-sm text-gray-600">Pay directly with your card</p>
+                      <span class="font-semibold text-slate-800">Credit/Debit Card</span>
+                      <p class="text-sm text-slate-600">Pay directly with your card</p>
                     </div>
                     <div class="flex space-x-3">
-                      <div class="w-8 h-6 bg-gray-100 rounded flex items-center justify-center">
-                        <img src="@/assets/icons/card1.svg" alt="Visa" class="rounded-lg" @error="handleImageError" />
+                      <div class="w-8 h-6 bg-slate-100 rounded flex items-center justify-center">
+                        <span class="text-xs font-bold text-slate-600">VISA</span>
                       </div>
-                      <div class="w-8 h-6 bg-gray-100 rounded flex items-center justify-center">
-                        <img src="@/assets/icons/card2.svg" alt="Mastercard" class="rounded-lg" @error="handleImageError" />
-                      </div>
-                      <div class="w-8 h-6 bg-gray-100 rounded flex items-center justify-center">
-                        <img src="@/assets/icons/card3.svg" alt="Mastercard" class="rounded-lg" @error="handleImageError" />
+                      <div class="w-8 h-6 bg-slate-100 rounded flex items-center justify-center">
+                        <span class="text-xs font-bold text-slate-600">MC</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               
-              <!-- Manual Payment Form -->
+              <!-- Card Details Form -->
               <Transition name="fade">
-                <div v-if="paymentMethod === 'manual'" class="border-t border-gray-200 pt-6 mt-6">
-                  <h3 class="text-lg font-medium mb-4">Card Details</h3>
-                  <form class="space-y-4">
-                    <div class="form-group">
-                      <label for="cardNumber" class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+                <div v-if="paymentMethod === 'manual'" class="border-t border-slate-200 pt-6 mb-8">
+                  <h3 class="text-lg font-semibold text-slate-800 mb-4">Card Details</h3>
+                  <div class="space-y-4">
+                    <div class="space-y-2">
+                      <label for="cardNumber" class="block text-sm font-semibold text-slate-700">Card Number</label>
                       <div class="relative">
                         <input 
                           id="cardNumber"
@@ -606,39 +421,41 @@
                           type="text"
                           placeholder="1234 5678 9012 3456"
                           required
-                          class="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
+                          class="w-full px-4 py-3 pl-12 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
+                          @input="formatCardNumber"
                         />
-                        <CreditCard class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                        <CreditCard class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
                       </div>
                     </div>
                     
-                    <div class="form-group">
-                      <label for="cardName" class="block text-sm font-medium text-gray-700 mb-1">Cardholder Name</label>
+                    <div class="space-y-2">
+                      <label for="cardName" class="block text-sm font-semibold text-slate-700">Cardholder Name</label>
                       <input 
                         id="cardName"
                         v-model="cardDetails.cardName"
                         type="text"
                         placeholder="John Doe"
                         required
-                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
+                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
                       />
                     </div>
                     
                     <div class="grid grid-cols-2 gap-4">
-                      <div class="form-group">
-                        <label for="expiryDate" class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                      <div class="space-y-2">
+                        <label for="expiryDate" class="block text-sm font-semibold text-slate-700">Expiry Date</label>
                         <input 
                           id="expiryDate"
                           v-model="cardDetails.expiryDate"
                           type="text"
                           placeholder="MM/YY"
                           required
-                          class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
+                          class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
+                          @input="formatExpiryDate"
                         />
                       </div>
                       
-                      <div class="form-group">
-                        <label for="cvv" class="block text-sm font-medium text-gray-700 mb-1">CVV</label>
+                      <div class="space-y-2">
+                        <label for="cvv" class="block text-sm font-semibold text-slate-700">CVV</label>
                         <div class="relative">
                           <input 
                             id="cvv"
@@ -646,25 +463,21 @@
                             type="text"
                             placeholder="123"
                             required
-                            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200"
+                            maxlength="4"
+                            class="w-full px-4 py-3 pr-12 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
                           />
-                          <div class="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-help group">
-                            <HelpCircle class="w-4 h-4 text-gray-400" />
-                            <div class="absolute bottom-full right-0 mb-2 w-48 p-2 bg-black text-white text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                              The 3-digit security code on the back of your card
-                            </div>
-                          </div>
+                          <HelpCircle class="w-5 h-5 text-slate-400 absolute right-4 top-1/2 transform -translate-y-1/2 cursor-help" title="3-digit security code on the back of your card" />
                         </div>
                       </div>
                     </div>
-                  </form>
+                  </div>
                 </div>
               </Transition>
               
-              <div class="flex gap-4 mt-6">
+              <div class="flex gap-4">
                 <button 
                   @click="handlePrevStep"
-                  class="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 flex items-center justify-center"
+                  class="flex-1 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-all duration-300 font-medium flex items-center justify-center"
                 >
                   <ArrowLeft class="w-4 h-4 mr-2" />
                   Back
@@ -672,118 +485,119 @@
                 <button 
                   @click="processPayment"
                   :disabled="isProcessing"
-                  class="flex-1 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
+                  class="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   <Loader v-if="isProcessing" class="w-5 h-5 mr-2 animate-spin" />
-                  {{ isProcessing ? 'Processing...' : 'Complete Order' }}
+                  {{ isProcessing ? 'Processing...' : `Complete Order - $${formatPrice(calculateTotal())}` }}
                 </button>
               </div>
             </div>
           </Transition>
         </div>
         
-        <!-- Order Summary -->
-        <div class="lg:col-span-1">
-          <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 sticky top-6 animate-fade-in">
-            <h2 class="text-xl font-semibold mb-4 flex items-center">
-              <ShoppingCart class="w-5 h-5 mr-2" />
-              Order Summary
-            </h2>
+        <!-- Order Summary (Right Side) -->
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 sticky top-6">
+            <div class="flex items-center mb-6">
+              <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
+                <ShoppingCart class="w-5 h-5 text-slate-600" />
+              </div>
+              <h2 class="text-xl font-bold text-slate-800">Order Summary</h2>
+            </div>
             
-            <div v-if="checkoutSummary && checkoutSummary.items.length > 0" class="space-y-4 mb-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+            <!-- Cart Items -->
+            <div v-if="cartItems && cartItems.length > 0" class="space-y-4 mb-6 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
               <div 
-                v-for="item in checkoutSummary.items" 
+                v-for="item in cartItems" 
                 :key="item.id" 
-                class="flex gap-4 p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-all duration-200 group"
+                class="flex gap-4 p-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-all duration-200 group"
               >
-                <div class="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
-                  <img :src="item.image" :alt="item.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                <div class="w-16 h-16 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
+                  <img 
+                    :src="item.image || '/placeholder.svg?height=64&width=64'" 
+                    :alt="item.title" 
+                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" 
+                    @error="handleImageError"
+                  />
                 </div>
-                <div class="flex-1">
-                  <h4 class="font-medium text-sm">{{ item.title }}</h4>
-                  <p class="text-sm text-gray-600">${{ formatPrice(item.price) }}</p>
+                <div class="flex-1 min-w-0">
+                  <h4 class="font-semibold text-slate-800 text-sm truncate">{{ item.title }}</h4>
+                  <p class="text-sm text-slate-600">${{ formatPrice(item.price) }}</p>
+                  <p v-if="item.size" class="text-xs text-slate-500">Size: {{ item.size }}</p>
                   
                   <div class="flex items-center mt-2">
                     <button 
                       @click="updateItemQuantity(item.id, Math.max(1, item.quantity - 1))"
-                      class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                      class="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition-colors"
+                      :disabled="item.quantity <= 1"
                     >
                       <Minus class="w-3 h-3" />
                     </button>
-                    <span class="mx-2 text-sm font-medium">{{ item.quantity }}</span>
+                    <span class="mx-3 text-sm font-semibold min-w-[2rem] text-center">{{ item.quantity }}</span>
                     <button 
                       @click="updateItemQuantity(item.id, item.quantity + 1)"
-                      class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                      class="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition-colors"
                     >
                       <Plus class="w-3 h-3" />
                     </button>
                     
                     <button 
                       @click="removeItem(item.id)"
-                      class="ml-auto text-gray-400 hover:text-red-500 transition-colors duration-200"
+                      class="ml-auto w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
                     >
-                      <Trash2 class="w-4 h-4" />
+                      <Trash2 class="w-3 h-3" />
                     </button>
                   </div>
                 </div>
                 <div class="text-right">
-                  <span class="font-medium">${{ formatPrice(item.price * item.quantity) }}</span>
+                  <span class="font-semibold text-slate-800">${{ formatPrice(item.price * item.quantity) }}</span>
                 </div>
               </div>
             </div>
             
-            <div class="border-t border-gray-200 pt-4 space-y-3">
+            <!-- Order Totals -->
+            <div class="border-t border-slate-200 pt-4 space-y-3">
               <div class="flex justify-between text-sm">
-                <span>Subtotal</span>
-                <span>${{ formatPrice(checkoutSummary?.subtotal || 0) }}</span>
+                <span class="text-slate-600">Subtotal</span>
+                <span class="font-semibold text-slate-800">${{ formatPrice(subtotalAmount) }}</span>
               </div>
               
               <div class="flex justify-between text-sm">
-                <span>Shipping</span>
-                <span>${{ formatPrice(getShippingCost()) }}</span>
+                <span class="text-slate-600">Shipping</span>
+                <span class="font-semibold text-slate-800">{{ getShippingCost() === 0 ? 'Free' : `$${formatPrice(getShippingCost())}` }}</span>
               </div>
               
               <div class="flex justify-between text-sm">
-                <span>Tax ({{ currentTaxRate }}%)</span>
-                <span>${{ formatPrice(getTaxAmount()) }}</span>
+                <span class="text-slate-600">Tax ({{ currentTaxRate }}%)</span>
+                <span class="font-semibold text-slate-800">${{ formatPrice(getTaxAmount()) }}</span>
               </div>
               
-              <div v-if="selectedCountryInfo" class="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+              <div v-if="selectedCountryInfo" class="text-xs text-slate-500 bg-slate-50 p-3 rounded-lg">
                 <p>Shipping to: {{ selectedCountryInfo.countryName }}</p>
                 <p>Tax Rate: {{ currentTaxRate }}%</p>
               </div>
               
-              <div class="flex justify-between font-bold pt-3 border-t border-gray-200 mt-3">
-                <span>Total</span>
-                <span class="text-lg">${{ formatPrice(calculateTotal()) }}</span>
+              <div class="flex justify-between font-bold text-lg pt-3 border-t border-slate-200">
+                <span class="text-slate-800">Total</span>
+                <span class="text-slate-800">${{ formatPrice(calculateTotal()) }}</span>
               </div>
             </div>
             
-            <div class="mt-6 pt-4 border-t border-gray-200">
-              <div class="flex items-center text-sm text-gray-600 mb-4">
+            <!-- Security Badge -->
+            <div class="mt-6 pt-4 border-t border-slate-200">
+              <div class="flex items-center text-sm text-slate-600 mb-3">
                 <LockIcon class="w-4 h-4 mr-2" />
-                Secure checkout
+                <span>Secure 256-bit SSL encryption</span>
               </div>
               <div class="flex gap-2">
-                <div class="w-10 h-6 bg-gray-100 rounded flex items-center justify-center">
-                  <img src="@/assets/icons/card1.svg" alt="Visa" class="rounded-lg" @error="handleImageError" />
+                <div class="w-10 h-6 bg-slate-100 rounded flex items-center justify-center">
+                  <span class="text-xs font-bold text-slate-600">VISA</span>
                 </div>
-                <div class="w-10 h-6 bg-gray-100 rounded flex items-center justify-center">
-                  <img src="@/assets/icons/card2.svg" alt="Mastercard" class="rounded-lg" @error="handleImageError" />
+                <div class="w-10 h-6 bg-slate-100 rounded flex items-center justify-center">
+                  <span class="text-xs font-bold text-slate-600">MC</span>
                 </div>
-                <div class="w-10 h-6 bg-gray-100 rounded flex items-center justify-center">
-                  <img src="@/assets/icons/card3.svg" alt="American Express" class="rounded-lg" @error="handleImageError" />
-                </div>
-              </div>
-            </div>
-            
-            <!-- Checkout Timer -->
-            <div v-if="checkoutTimer > 0" class="mt-6 pt-4 border-t border-gray-200">
-              <div class="bg-rose-50 p-3 rounded-lg flex items-center">
-                <Clock class="w-5 h-5 text-rose-500 mr-2" />
-                <div>
-                  <p class="text-sm font-medium text-rose-700">Your cart is reserved for:</p>
-                  <p class="text-lg font-bold text-rose-600">{{ formatTime(checkoutTimer) }}</p>
+                <div class="w-10 h-6 bg-slate-100 rounded flex items-center justify-center">
+                  <span class="text-xs font-bold text-slate-600">AMEX</span>
                 </div>
               </div>
             </div>
@@ -791,22 +605,186 @@
         </div>
       </div>
     </div>
+
+    <!-- Authentication Modal -->
+    <Transition name="modal">
+      <div v-if="showAuthModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
+          <button 
+            @click="closeAuthModal"
+            class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors"
+          >
+            <X class="w-4 h-4" />
+          </button>
+          
+          <div v-if="authModalMode === 'check'">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4">Welcome!</h2>
+            <p class="text-slate-600 mb-6">Sign in to track your orders and save your preferences, or continue as a guest.</p>
+            <div class="space-y-3">
+              <button 
+                @click="authModalMode = 'signin'"
+                class="w-full py-3 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 font-medium"
+              >
+                Sign In
+              </button>
+              <button 
+                @click="authModalMode = 'signup'"
+                class="w-full py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-all duration-300 font-medium"
+              >
+                Create Account
+              </button>
+              <button 
+                @click="proceedAsGuest"
+                class="w-full py-3 text-slate-600 hover:text-slate-800 transition-colors font-medium"
+              >
+                Continue as Guest
+              </button>
+            </div>
+          </div>
+          
+          <div v-else-if="authModalMode === 'signin'">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6">Sign In</h2>
+            <form @submit.prevent="handleSignin" class="space-y-4">
+              <div class="space-y-2">
+                <label for="signinEmail" class="block text-sm font-semibold text-slate-700">Email</label>
+                <input 
+                  id="signinEmail"
+                  v-model="signinData.email"
+                  type="email"
+                  required
+                  class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Enter your email"
+                />
+              </div>
+              
+              <div class="space-y-2">
+                <label for="signinPassword" class="block text-sm font-semibold text-slate-700">Password</label>
+                <input 
+                  id="signinPassword"
+                  v-model="signinData.password"
+                  type="password"
+                  required
+                  class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Enter your password"
+                />
+              </div>
+              
+              <button 
+                type="submit"
+                :disabled="isSigningIn"
+                class="w-full py-3 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 font-medium flex items-center justify-center disabled:opacity-50"
+              >
+                <Loader v-if="isSigningIn" class="w-5 h-5 mr-2 animate-spin" />
+                {{ isSigningIn ? 'Signing In...' : 'Sign In' }}
+              </button>
+              
+              <div class="text-center">
+                <button 
+                  type="button"
+                  @click="authModalMode = 'signup'" 
+                  class="text-slate-600 hover:text-slate-800 font-medium"
+                >
+                  Don't have an account? Sign up
+                </button>
+              </div>
+            </form>
+          </div>
+          
+          <div v-else-if="authModalMode === 'signup'">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6">Create Account</h2>
+            <form @submit.prevent="handleSignup" class="space-y-4">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-2">
+                  <label for="firstName" class="block text-sm font-semibold text-slate-700">First Name</label>
+                  <input 
+                    id="firstName"
+                    v-model="signupData.firstName"
+                    type="text"
+                    required
+                    class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200"
+                    placeholder="First name"
+                  />
+                </div>
+                
+                <div class="space-y-2">
+                  <label for="lastName" class="block text-sm font-semibold text-slate-700">Last Name</label>
+                  <input 
+                    id="lastName"
+                    v-model="signupData.lastName"
+                    type="text"
+                    required
+                    class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200"
+                    placeholder="Last name"
+                  />
+                </div>
+              </div>
+              
+              <div class="space-y-2">
+                <label for="signupEmail" class="block text-sm font-semibold text-slate-700">Email</label>
+                <input 
+                  id="signupEmail"
+                  v-model="signupData.email"
+                  type="email"
+                  required
+                  class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Enter your email"
+                />
+              </div>
+              
+              <div class="space-y-2">
+                <label for="signupPassword" class="block text-sm font-semibold text-slate-700">Password</label>
+                <input 
+                  id="signupPassword"
+                  v-model="signupData.password"
+                  type="password"
+                  required
+                  minlength="6"
+                  class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Create a password"
+                />
+                <p class="text-xs text-slate-500">Password must be at least 6 characters</p>
+              </div>
+              
+              <div class="space-y-2">
+                <label for="phone" class="block text-sm font-semibold text-slate-700">Phone (Optional)</label>
+                <input 
+                  id="phone"
+                  v-model="signupData.phone"
+                  type="tel"
+                  class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Enter your phone number"
+                />
+              </div>
+              
+              <button 
+                type="submit"
+                :disabled="isSigningUp"
+                class="w-full py-3 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 font-medium flex items-center justify-center disabled:opacity-50"
+              >
+                <Loader v-if="isSigningUp" class="w-5 h-5 mr-2 animate-spin" />
+                {{ isSigningUp ? 'Creating Account...' : 'Create Account' }}
+              </button>
+              
+              <div class="text-center">
+                <button 
+                  type="button"
+                  @click="authModalMode = 'signin'" 
+                  class="text-slate-600 hover:text-slate-800 font-medium"
+                >
+                  Already have an account? Sign in
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, onBeforeUnmount } from 'vue'
-import { useCartStore } from '@/composables/useCartStore'
-import { use_auth_signup } from '@/composables/auth/register'
-import { use_auth_login } from '@/composables/auth/login'
-import { useCheckoutStore } from '@/composables/useCheckoutStore'
-import { useUser } from '@/composables/auth/user'
-import { useLocalStorage } from '@/composables/useLocalStorage'
-import { useTaxConfig } from '@/composables/modules/shipping-tax/useTaxConfig'
-import { useShippingConfig } from '@/composables/modules/shipping-tax/useShippingConfig'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useCustomToast } from '@/composables/core/useCustomToast'
-
 import { 
   ShoppingBag, 
   CheckCircle, 
@@ -822,21 +800,27 @@ import {
   X, 
   Loader,
   LockIcon,
-  HelpCircle,
-  Clock
+  HelpCircle
 } from 'lucide-vue-next'
+
+// Import composables
+import { useCartStore } from '@/composables/useCartStore'
+import { use_auth_signup } from '@/composables/auth/register'
+import { use_auth_login } from '@/composables/auth/login'
+import { useCheckoutStore } from '@/composables/useCheckoutStore'
+import { useUser } from '@/composables/auth/user'
+import { useLocalStorage } from '@/composables/useLocalStorage'
+import { useTaxConfig } from '@/composables/modules/shipping-tax/useTaxConfig'
+import { useShippingConfig } from '@/composables/modules/shipping-tax/useShippingConfig'
+import { useCustomToast } from '@/composables/core/useCustomToast'
+
+// Router
+const router = useRouter()
+const route = useRoute()
+const showAuthModal = ref(false)
 
 // Toast notifications
 const { showToast } = useCustomToast()
-
-// Import composables
-const { 
-  fetchShippingConfigs
-} = useShippingConfig()
-
-const { 
-  fetchTaxConfigs
-} = useTaxConfig()
 
 // Cart store
 const { cart, removeFromCart, updateCartItemQuantity } = useCartStore()
@@ -869,11 +853,10 @@ const {
   resetCheckout
 } = useCheckoutStore()
 
-// Router and Route
-const router = useRouter()
-const route = useRoute()
-
 // Shipping and Tax data
+const { fetchShippingConfigs } = useShippingConfig()
+const { fetchTaxConfigs } = useTaxConfig()
+
 const shippingConfigs = ref([])
 const taxConfigs = ref([])
 const selectedCountryInfo = ref(null)
@@ -885,22 +868,19 @@ const isLoadingConfigs = ref(false)
 const currentStep = ref(1)
 
 // Authentication state
-const showAuthModal = ref(false)
 const authModalMode = ref('check') // 'check', 'signin', 'signup'
 const isSigningUp = ref(false)
 const isSigningIn = ref(false)
 
-// Checkout timer configuration
-const CHECKOUT_TIMER_DURATION = ref(15 * 60) // 15 minutes in seconds
-const checkoutTimer = ref(CHECKOUT_TIMER_DURATION.value)
-let timerInterval = null
-
 // Express delivery multiplier
-const EXPRESS_DELIVERY_MULTIPLIER = ref(2.5)
+const EXPRESS_DELIVERY_MULTIPLIER = 2.5
 
 // Minimum step and maximum step
-const MIN_STEP = ref(1)
-const MAX_STEP = ref(3)
+const MIN_STEP = 1
+const MAX_STEP = 3
+
+// Cart items - reactive reference that loads from localStorage
+const cartItems = ref([])
 
 // Signup data
 const signupData = ref({
@@ -916,6 +896,153 @@ const signupData = ref({
 const signinData = ref({
   email: '',
   password: ''
+})
+
+// Enhanced persistence keys
+const PERSISTENCE_KEYS = {
+  CART: 'art-gallery-cart',
+  CHECKOUT_STEP: 'checkout-step',
+  DELIVERY_DETAILS: 'checkout-delivery-details',
+  DELIVERY_METHOD: 'checkout-delivery-method',
+  PAYMENT_METHOD: 'checkout-payment-method',
+  SELECTED_COUNTRY: 'checkout-selected-country',
+  SHIPPING_CONFIG: 'checkout-shipping-config',
+  TAX_CONFIG: 'checkout-tax-config',
+  GUEST_MODE: 'checkout-guest-mode'
+}
+
+// Load cart from localStorage
+const loadCartFromStorage = () => {
+  try {
+    if (process.client && localStorage) {
+      const savedCart = localStorage.getItem(PERSISTENCE_KEYS.CART)
+      if (savedCart) {
+        const parsedCart = JSON.parse(savedCart)
+        if (Array.isArray(parsedCart)) {
+          cartItems.value = parsedCart
+          return parsedCart
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load cart from localStorage:', error)
+  }
+  return []
+}
+
+// Save cart to localStorage
+const saveCartToStorage = () => {
+  try {
+    if (process.client && localStorage) {
+      localStorage.setItem(PERSISTENCE_KEYS.CART, JSON.stringify(cartItems.value))
+    }
+  } catch (error) {
+    console.error('Failed to save cart to localStorage:', error)
+  }
+}
+
+// Enhanced persistence functions
+const persistCheckoutData = () => {
+  try {
+    if (process.client && localStorage) {
+      // Persist all checkout-related data
+      setItem(PERSISTENCE_KEYS.CHECKOUT_STEP, currentStep.value.toString())
+      setItem(PERSISTENCE_KEYS.DELIVERY_METHOD, deliveryMethod.value)
+      setItem(PERSISTENCE_KEYS.PAYMENT_METHOD, paymentMethod.value)
+      
+      if (selectedCountryInfo.value) {
+        setItem(PERSISTENCE_KEYS.SELECTED_COUNTRY, JSON.stringify({
+          countryInfo: selectedCountryInfo.value,
+          shippingFee: currentShippingFee.value,
+          taxRate: currentTaxRate.value
+        }))
+      }
+      
+      // Persist delivery details
+      persistDeliveryDetails()
+    }
+  } catch (error) {
+    console.error('Failed to persist checkout data:', error)
+  }
+}
+
+// Load persisted checkout data
+const loadPersistedCheckoutData = () => {
+  try {
+    if (process.client && localStorage) {
+      // Load checkout step
+      const savedStep = getItem(PERSISTENCE_KEYS.CHECKOUT_STEP)
+      if (savedStep && !isNaN(Number(savedStep))) {
+        const step = Number(savedStep)
+        if (step >= MIN_STEP && step <= MAX_STEP) {
+          currentStep.value = step
+        }
+      }
+      
+      // Load delivery method
+      const savedDeliveryMethod = getItem(PERSISTENCE_KEYS.DELIVERY_METHOD)
+      if (savedDeliveryMethod && ['standard', 'express', 'pickup'].includes(savedDeliveryMethod)) {
+        setDeliveryMethod(savedDeliveryMethod)
+      }
+      
+      // Load payment method
+      const savedPaymentMethod = getItem(PERSISTENCE_KEYS.PAYMENT_METHOD)
+      if (savedPaymentMethod && ['flutterwave', 'interswitch', 'manual'].includes(savedPaymentMethod)) {
+        setPaymentMethod(savedPaymentMethod)
+      }
+      
+      // Load delivery details
+      const savedDeliveryDetails = getItem(PERSISTENCE_KEYS.DELIVERY_DETAILS)
+      if (savedDeliveryDetails) {
+        try {
+          const parsedDetails = JSON.parse(savedDeliveryDetails)
+          Object.assign(deliveryDetails, parsedDetails)
+        } catch (e) {
+          console.error('Failed to parse saved delivery details', e)
+        }
+      }
+      
+      // Load country and shipping/tax info
+      const savedCountryData = getItem(PERSISTENCE_KEYS.SELECTED_COUNTRY)
+      if (savedCountryData) {
+        try {
+          const parsedCountryData = JSON.parse(savedCountryData)
+          selectedCountryInfo.value = parsedCountryData.countryInfo
+          currentShippingFee.value = parsedCountryData.shippingFee || 0
+          currentTaxRate.value = parsedCountryData.taxRate || 0
+        } catch (e) {
+          console.error('Failed to parse saved country data', e)
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load persisted checkout data:', error)
+  }
+}
+
+// Clear all persisted checkout data
+const clearPersistedCheckoutData = () => {
+  try {
+    if (process.client && localStorage) {
+      Object.values(PERSISTENCE_KEYS).forEach(key => {
+        if (key !== PERSISTENCE_KEYS.CART) { // Don't clear cart unless explicitly requested
+          removeStorageItem(key)
+        }
+      })
+    }
+  } catch (error) {
+    console.error('Failed to clear persisted checkout data:', error)
+  }
+}
+
+// Computed properties for reactive totals
+const subtotalAmount = computed(() => {
+  if (!cartItems.value || cartItems.value.length === 0) return 0
+  return cartItems.value.reduce((total, item) => {
+    const itemPrice = item.price || 0
+    const itemQuantity = item.quantity || 0
+    return total + (itemPrice * itemQuantity)
+  }, 0)
 })
 
 // Available countries from shipping configs
@@ -938,18 +1065,24 @@ const loadConfigurations = async () => {
     shippingConfigs.value = shippingData || []
     taxConfigs.value = taxData || []
     
-    // If we already have a country selected, update the shipping and tax rates
-    if (deliveryDetails.country) {
+    // After loading configs, restore country selection if it exists
+    await nextTick()
+    
+    // If we have persisted country data, restore it
+    if (deliveryDetails.country && shippingConfigs.value.length > 0) {
       handleCountryChange()
     }
     
   } catch (error) {
     console.error('Failed to load configurations:', error)
     
+    // Extract error message from the error object
+    const errorMessage = extractErrorMessage(error)
+    
     if (showToast) {
       showToast({
         title: "Configuration Error",
-        message: "Failed to load shipping and tax configurations. Please refresh the page or contact support.",
+        message: errorMessage || "Failed to load shipping and tax configurations. Please refresh the page or contact support.",
         toastType: "error",
         duration: 5000
       })
@@ -959,9 +1092,16 @@ const loadConfigurations = async () => {
   }
 }
 
-// Handle country change
+// Enhanced country change handler
 const handleCountryChange = () => {
   const countryCode = deliveryDetails.country
+  
+  if (!countryCode) {
+    selectedCountryInfo.value = null
+    currentShippingFee.value = 0
+    currentTaxRate.value = 0
+    return
+  }
   
   // Find shipping config for selected country
   const shippingConfig = shippingConfigs.value.find(
@@ -987,9 +1127,20 @@ const handleCountryChange = () => {
     currentTaxRate.value = 0
   }
   
-  if (persistDeliveryDetails) {
-    persistDeliveryDetails()
-  }
+  // Persist the updated data
+  persistCheckoutData()
+}
+
+// Enhanced delivery method change handler
+const handleDeliveryMethodChange = (method) => {
+  setDeliveryMethod(method)
+  persistCheckoutData()
+}
+
+// Enhanced payment method change handler
+const handlePaymentMethodChange = (method) => {
+  setPaymentMethod(method)
+  persistCheckoutData()
 }
 
 // Get shipping cost based on delivery method
@@ -997,7 +1148,7 @@ const getShippingCost = () => {
   if (deliveryMethod.value === 'pickup') {
     return 0
   } else if (deliveryMethod.value === 'express') {
-    return currentShippingFee.value * EXPRESS_DELIVERY_MULTIPLIER.value
+    return currentShippingFee.value * EXPRESS_DELIVERY_MULTIPLIER
   } else {
     return currentShippingFee.value
   }
@@ -1005,16 +1156,13 @@ const getShippingCost = () => {
 
 // Get tax amount
 const getTaxAmount = () => {
-  if (!checkoutSummary.value) return 0
-  const subtotal = checkoutSummary.value.subtotal || 0
+  const subtotal = subtotalAmount.value
   return (subtotal * currentTaxRate.value) / 100
 }
 
 // Calculate total with shipping and tax
 const calculateTotal = () => {
-  if (!checkoutSummary.value) return 0
-  
-  const subtotal = checkoutSummary.value.subtotal || 0
+  const subtotal = subtotalAmount.value
   const shipping = getShippingCost()
   const tax = getTaxAmount()
   
@@ -1024,7 +1172,7 @@ const calculateTotal = () => {
 // Update query parameters
 const updateQueryParams = () => {
   const query = { ...route.query }
-  if (currentStep.value > MIN_STEP.value) {
+  if (currentStep.value > MIN_STEP) {
     query.step = currentStep.value.toString()
   } else {
     delete query.step
@@ -1033,18 +1181,20 @@ const updateQueryParams = () => {
   router.replace({ query })
 }
 
-// Handle next step with query parameter update
+// Handle next step with enhanced persistence
 const handleNextStep = () => {
-  if (currentStep.value < MAX_STEP.value) {
+  if (currentStep.value < MAX_STEP) {
     currentStep.value++
+    persistCheckoutData()
     updateQueryParams()
   }
 }
 
-// Handle previous step with query parameter update
+// Handle previous step with enhanced persistence
 const handlePrevStep = () => {
-  if (currentStep.value > MIN_STEP.value) {
+  if (currentStep.value > MIN_STEP) {
     currentStep.value--
+    persistCheckoutData()
     updateQueryParams()
   }
 }
@@ -1054,7 +1204,7 @@ const initializeStepFromQuery = () => {
   const stepParam = route.query.step
   if (stepParam && !isNaN(Number(stepParam))) {
     const step = Number(stepParam)
-    if (step >= MIN_STEP.value && step <= MAX_STEP.value) {
+    if (step >= MIN_STEP && step <= MAX_STEP) {
       currentStep.value = step
     }
   }
@@ -1067,18 +1217,59 @@ const clearQueryParams = () => {
   router.replace({ query })
 }
 
+// Helper function to extract error message from various error formats
+const extractErrorMessage = (error: any): string => {
+  if (!error) return "An unknown error occurred";
+  
+  // Check for common error object structures
+  if (typeof error === 'string') return error;
+  
+  if (error.response) {
+    // Axios or similar HTTP client error
+    const { data, statusText } = error.response;
+    
+    // Check for structured error response
+    if (data) {
+      if (typeof data === 'string') return data;
+      if (data.message) return data.message;
+      if (data.error) return typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
+      if (data.errors && Array.isArray(data.errors)) return data.errors.join(', ');
+    }
+    
+    return statusText || `Error ${error.response.status}`;
+  }
+  
+  // Check for error message property
+  if (error.message) return error.message;
+  
+  // Check for error details in nested error object
+  if (error.error) {
+    if (typeof error.error === 'string') return error.error;
+    if (error.error.message) return error.error.message;
+  }
+  
+  // Last resort: stringify the error
+  try {
+    return JSON.stringify(error);
+  } catch (e) {
+    return "An unexpected error occurred";
+  }
+}
+
 // Process payment with updated total
 const processPayment = async () => {
   try {
-    // Update the total amount with shipping and tax
-    if (checkoutSummary.value) {
-      checkoutSummary.value.total = calculateTotal()
-      checkoutSummary.value.shipping = getShippingCost()
-      checkoutSummary.value.tax = getTaxAmount()
+    // Update the checkout summary with current cart data
+    if (checkoutSummary) {
+      checkoutSummary.items = cartItems.value
+      checkoutSummary.subtotal = subtotalAmount.value
+      checkoutSummary.total = calculateTotal()
+      checkoutSummary.shipping = getShippingCost()
+      checkoutSummary.tax = getTaxAmount()
       
       // Add country info to checkout summary
       if (selectedCountryInfo.value) {
-        checkoutSummary.value.country = {
+        checkoutSummary.country = {
           code: selectedCountryInfo.value.countryCode,
           name: selectedCountryInfo.value.countryName
         }
@@ -1087,33 +1278,38 @@ const processPayment = async () => {
     
     // Process the payment using the store method
     if (storeProcessPayment) {
-      await storeProcessPayment()
-    }
-    
-    // Clear query parameters on successful order
-    clearQueryParams()
-    
-    // Show success toast
-    if (showToast) {
-      showToast({
-        title: "Order Placed",
-        message: "Your order has been successfully placed!",
-        toastType: "success",
-        duration: 5000
-      })
+      const response = await storeProcessPayment()
+      
+      // Check if the response indicates success
+      if (response && response.success) {
+        // Only clear cart from localStorage on successful order
+        if (process.client && localStorage) {
+          localStorage.removeItem(PERSISTENCE_KEYS.CART)
+          cartItems.value = []
+        }
+        
+        // Clear all persisted checkout data on successful order
+        clearPersistedCheckoutData()
+        
+        // Clear query parameters on successful order
+        clearQueryParams()
+        
+        // Note: Success toast is already shown by the store
+        return response
+      } else {
+        // Payment failed - do NOT clear the cart or checkout data
+        console.error('Payment failed:', response)
+        
+        // Note: Error toast is already shown by the store
+        throw new Error(response?.message || "Payment processing failed")
+      }
     }
   } catch (error) {
     console.error('Payment processing failed:', error)
     
-    // Show error toast
-    if (showToast) {
-      showToast({
-        title: "Payment Failed",
-        message: "There was an error processing your payment. Please try again.",
-        toastType: "error",
-        duration: 5000
-      })
-    }
+    // Do NOT clear the cart or checkout data on error
+    // The error toast is already handled by the store
+    throw error
   }
 }
 
@@ -1121,7 +1317,7 @@ const processPayment = async () => {
 const proceedAsGuest = () => {
   showAuthModal.value = false
   if (setItem) {
-    setItem('checkout-guest-mode', 'true')
+    setItem(PERSISTENCE_KEYS.GUEST_MODE, 'true')
   }
 }
 
@@ -1148,9 +1344,7 @@ const handleSignup = async () => {
     if (signup) {
       const response = await signup(payloadObj)
       
-      if (response) {
-        showAuthModal.value = false
-        
+      if (response && response.success) {
         // Pre-fill delivery details with user info
         if (deliveryDetails) {
           deliveryDetails.firstName = signupData.value.firstName
@@ -1160,29 +1354,47 @@ const handleSignup = async () => {
         }
         
         // Persist delivery details
-        if (persistDeliveryDetails) {
-          persistDeliveryDetails()
-        }
+        persistCheckoutData()
         
-        // Show success toast
+        // Show success toast with message from the response if available
         if (showToast) {
           showToast({
-            title: "Account Created",
-            message: "Your account has been created successfully!",
+            title: response.title || "Account Created",
+            message: response.message || "Your account has been created successfully!",
             toastType: "success",
             duration: 3000
           })
         }
+        
+        // Close modal on successful signup
+        showAuthModal.value = false
+      } else {
+        // Handle explicit failure response
+        if (response && !response.success) {
+          if (showToast) {
+            showToast({
+              title: response.title || "Signup Failed",
+              message: response.message || "There was an error creating your account. Please try again.",
+              toastType: "error",
+              duration: 5000
+            })
+          }
+        }
+        // Don't close modal if signup failed
+        return
       }
     }
   } catch (error) {
     console.error('Signup failed:', error)
     
-    // Show error toast
+    // Extract error message from the error object
+    const errorMessage = extractErrorMessage(error)
+    
+    // Show error toast with the extracted message
     if (showToast) {
       showToast({
         title: "Signup Failed",
-        message: "There was an error creating your account. Please try again.",
+        message: errorMessage || "There was an error creating your account. Please try again.",
         toastType: "error",
         duration: 5000
       })
@@ -1205,9 +1417,7 @@ const handleSignin = async () => {
     if (login) {
       const response = await login(payloadObj)
       
-      if (response) {
-        showAuthModal.value = false
-        
+      if (response && response.success) {
         // Pre-fill delivery details if available from user data
         try {
           const userData = JSON.parse(localStorage.getItem('user-data') || '{}')
@@ -1218,33 +1428,51 @@ const handleSignin = async () => {
             deliveryDetails.phone = userData.phone || ''
             
             // Persist delivery details
-            if (persistDeliveryDetails) {
-              persistDeliveryDetails()
-            }
+            persistCheckoutData()
           }
         } catch (parseError) {
           console.warn('Failed to parse user data from localStorage:', parseError)
         }
         
-        // Show success toast
+        // Show success toast with message from the response if available
         if (showToast) {
           showToast({
-            title: "Signed In",
-            message: "You have been signed in successfully!",
+            title: response.title || "Signed In",
+            message: response.message || "You have been signed in successfully!",
             toastType: "success",
             duration: 3000
           })
         }
+        
+        // Close modal on successful login
+        showAuthModal.value = false
+      } else {
+        // Handle explicit failure response
+        if (response && !response.success) {
+          if (showToast) {
+            showToast({
+              title: response.title || "Sign In Failed",
+              message: response.message || "There was an error signing in. Please check your credentials and try again.",
+              toastType: "error",
+              duration: 5000
+            })
+          }
+        }
+        // Don't close modal if login failed
+        return
       }
     }
   } catch (error) {
     console.error('Signin failed:', error)
     
-    // Show error toast
+    // Extract error message from the error object
+    const errorMessage = extractErrorMessage(error)
+    
+    // Show error toast with the extracted message
     if (showToast) {
       showToast({
         title: "Sign In Failed",
-        message: "There was an error signing in. Please check your credentials and try again.",
+        message: errorMessage || "There was an error signing in. Please check your credentials and try again.",
         toastType: "error",
         duration: 5000
       })
@@ -1262,16 +1490,6 @@ const formatPrice = (price: number) => {
   return price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
-// Format time for countdown
-const formatTime = (seconds: number) => {
-  if (typeof seconds !== 'number' || isNaN(seconds) || seconds < 0) {
-    return '00:00'
-  }
-  const mins = Math.floor(seconds / 60)
-  const secs = seconds % 60
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-}
-
 // Generate random order number
 const generateOrderNumber = () => {
   const min = 100000
@@ -1279,26 +1497,142 @@ const generateOrderNumber = () => {
   return Math.floor(Math.random() * (max - min + 1) + min).toString()
 }
 
+// Format card number with spaces
+const formatCardNumber = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  let value = target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '')
+  const formattedValue = value.match(/.{1,4}/g)?.join(' ') || value
+  cardDetails.cardNumber = formattedValue
+}
+
+// Format expiry date with slash
+const formatExpiryDate = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  let value = target.value.replace(/\D/g, '')
+  if (value.length >= 2) {
+    value = value.substring(0, 2) + '/' + value.substring(2, 4)
+  }
+  cardDetails.expiryDate = value
+}
+
 // Update item quantity in cart
-const updateItemQuantity = (id: number, quantity: number) => {
-  if (updateCartItemQuantity && typeof id === 'number' && typeof quantity === 'number' && quantity > 0) {
-    updateCartItemQuantity(id, quantity)
+const updateItemQuantity = async (id: string, quantity: number) => {
+  if (typeof id === 'string' && typeof quantity === 'number' && quantity > 0) {
+    try {
+      // Update cart store if available
+      if (updateCartItemQuantity) {
+        const response = await updateCartItemQuantity(id, quantity)
+        
+        // Check if the response contains success information
+        if (response && response.success) {
+          // Update local cart state
+          const itemIndex = cartItems.value.findIndex(item => item.id === id)
+          if (itemIndex !== -1) {
+            cartItems.value[itemIndex].quantity = quantity
+            saveCartToStorage()
+          }
+          
+          // Show success toast with message from the response if available
+          if (showToast) {
+            showToast({
+              title: response.title || "Cart Updated",
+              message: response.message || "Item quantity has been updated",
+              toastType: "info",
+              duration: 2000
+            })
+          }
+        } else if (response && !response.success) {
+          // Handle explicit failure response
+          if (showToast) {
+            showToast({
+              title: response.title || "Update Failed",
+              message: response.message || "Failed to update item quantity. Please try again.",
+              toastType: "error",
+              duration: 3000
+            })
+          }
+        }
+      } else {
+        // Fallback to local update if store method is not available
+        const itemIndex = cartItems.value.findIndex(item => item.id === id)
+        if (itemIndex !== -1) {
+          cartItems.value[itemIndex].quantity = quantity
+          saveCartToStorage()
+        }
+      }
+    } catch (error) {
+      console.error('Failed to update item quantity:', error)
+      
+      // Extract error message from the error object
+      const errorMessage = extractErrorMessage(error)
+      
+      // Show error toast with the extracted message
+      if (showToast) {
+        showToast({
+          title: "Update Failed",
+          message: errorMessage || "Failed to update item quantity. Please try again.",
+          toastType: "error",
+          duration: 3000
+        })
+      }
+    }
   }
 }
 
 // Remove item from cart
-const removeItem = (id: number) => {
-  if (removeFromCart && typeof id === 'number') {
-    removeFromCart(id)
-    
-    // Show toast notification
-    if (showToast) {
-      showToast({
-        title: "Item Removed",
-        message: "Item has been removed from your cart",
-        toastType: "info",
-        duration: 3000
-      })
+const removeItem = async (id: string) => {
+  if (typeof id === 'string') {
+    try {
+      // Update cart store if available
+      if (removeFromCart) {
+        const response = await removeFromCart(id)
+        
+        // Check if the response contains success information
+        if (response && response.success) {
+          // Update local cart state
+          cartItems.value = cartItems.value.filter(item => item.id !== id)
+          saveCartToStorage()
+          
+          // Show success toast with message from the response if available
+          if (showToast) {
+            showToast({
+              title: response.title || "Item Removed",
+              message: response.message || "Item has been removed from your cart",
+              toastType: "info",
+              duration: 3000
+            })
+          }
+        } else if (response && !response.success) {
+          // Handle explicit failure response
+          if (showToast) {
+            showToast({
+              title: response.title || "Removal Failed",
+              message: response.message || "Failed to remove item from cart. Please try again.",
+              toastType: "error",
+              duration: 3000
+            })
+          }
+        }
+      } else {
+        // Fallback to local removal if store method is not available
+        cartItems.value = cartItems.value.filter(item => item.id !== id)
+        saveCartToStorage()
+      }
+    } catch (error) {
+      console.error('Failed to remove item from cart:', error)
+      
+      // Extract error message from the error object
+      const errorMessage = extractErrorMessage(error)
+      
+      // Show error toast with the extracted message
+      if (showToast) {
+        showToast({
+          title: "Removal Failed",
+          message: errorMessage || "Failed to remove item from cart. Please try again.",
+          toastType: "error",
+          duration: 3000
+        })
+      }
     }
   }
 }
@@ -1314,58 +1648,20 @@ const handleImageError = (event: Event) => {
 // Check if user is logged in on page load
 const checkUserAuth = () => {
   // Only show auth modal if user is not logged in and not in guest mode
-  const isGuestMode = getItem ? getItem('checkout-guest-mode') === 'true' : false
+  const isGuestMode = getItem ? getItem(PERSISTENCE_KEYS.GUEST_MODE) === 'true' : false
   
   if (!isLoggedIn.value && !isGuestMode) {
     showAuthModal.value = true
   }
 }
 
-// Start checkout timer
-const startCheckoutTimer = () => {
-  // Restore timer from localStorage if exists
-  const savedTimer = getItem ? getItem('checkout-timer') : null
-  if (savedTimer && !isNaN(parseInt(savedTimer))) {
-    checkoutTimer.value = parseInt(savedTimer)
-  }
-  
-  timerInterval = setInterval(() => {
-    if (checkoutTimer.value > 0) {
-      checkoutTimer.value--
-      // Save timer to localStorage
-      if (setItem) {
-        setItem('checkout-timer', checkoutTimer.value.toString())
-      }
-    } else {
-      if (timerInterval) {
-        clearInterval(timerInterval)
-      }
-      // Handle expired timer - redirect to cart
-      // router.push('/cart')
-      
-      // Show toast notification
-      if (showToast) {
-        showToast({
-          title: "Session Expired",
-          message: "Your checkout session has expired. Please try again.",
-          toastType: "warning",
-          duration: 5000
-        })
-      }
-    }
-  }, 1000)
-}
-
 // Watch for cart changes to update checkout summary
-watch(cart, () => {
-  if (checkoutSummary.value && cart.value) {
-    checkoutSummary.value.items = cart.value
-    checkoutSummary.value.subtotal = cart.value.reduce((total, item) => {
-      const itemPrice = item.price || 0
-      const itemQuantity = item.quantity || 0
-      return total + (itemPrice * itemQuantity)
-    }, 0)
+watch(cartItems, () => {
+  if (checkoutSummary) {
+    checkoutSummary.items = cartItems.value
+    checkoutSummary.subtotal = subtotalAmount.value
   }
+  saveCartToStorage()
 }, { deep: true })
 
 // Watch for login status changes
@@ -1382,9 +1678,7 @@ watch(isLoggedIn, (newValue) => {
       deliveryDetails.phone = user.value.phone || ''
       
       // Persist updated delivery details
-      if (persistDeliveryDetails) {
-        persistDeliveryDetails()
-      }
+      persistCheckoutData()
     }
   } else {
     // User is logged out, check if we should show auth modal
@@ -1395,29 +1689,9 @@ watch(isLoggedIn, (newValue) => {
 // Watch for order completion
 watch(orderComplete, (newValue) => {
   if (newValue) {
-    // Clear checkout timer on successful order
-    if (timerInterval) {
-      clearInterval(timerInterval)
-    }
-    
-    // Reset checkout timer
-    checkoutTimer.value = CHECKOUT_TIMER_DURATION.value
-    if (removeStorageItem) {
-      removeStorageItem('checkout-timer')
-    }
-    
-    // Clear query parameters
+    // Clear query parameters and all persisted data
     clearQueryParams()
-    
-    // Show success toast
-    if (showToast) {
-      showToast({
-        title: "Order Complete",
-        message: "Thank you for your purchase!",
-        toastType: "success",
-        duration: 5000
-      })
-    }
+    clearPersistedCheckoutData()
   }
 })
 
@@ -1427,59 +1701,87 @@ watch(currentStep, (newValue) => {
   if (storeCheckoutStep) {
     storeCheckoutStep.value = newValue
   }
+  // Persist the step change
+  persistCheckoutData()
 })
 
 // Watch for changes in the store's checkout step
 watch(storeCheckoutStep, (newValue) => {
   // Update the local current step to keep them in sync
-  if (typeof newValue === 'number' && newValue >= MIN_STEP.value && newValue <= MAX_STEP.value) {
+  if (typeof newValue === 'number' && newValue >= MIN_STEP && newValue <= MAX_STEP) {
     currentStep.value = newValue
     // Update query parameters
     updateQueryParams()
   }
 })
 
+// Watch for delivery details changes
+watch(deliveryDetails, () => {
+  persistCheckoutData()
+}, { deep: true })
+
+// Watch for delivery method changes
+watch(deliveryMethod, () => {
+  persistCheckoutData()
+})
+
+// Watch for payment method changes
+watch(paymentMethod, () => {
+  persistCheckoutData()
+})
+
 // Lifecycle hooks
 onMounted(async () => {
+  // Load cart from localStorage first
+  loadCartFromStorage()
+  
+  // Load persisted checkout data
+  loadPersistedCheckoutData()
+  
   // Load shipping and tax configurations
   await loadConfigurations()
   
-  // Initialize step from query parameter
+  // Initialize step from query parameter (this might override persisted step)
   initializeStepFromQuery()
   
-  // Check if user is logged in
-  checkUserAuth()
+  // Check if user is logged in immediately on mount
+  nextTick(() => {
+    checkUserAuth()
+  })
   
-  // Start checkout timer
-  startCheckoutTimer()
+  // Check if cart is empty and redirect if necessary
+  if (!cartItems.value || cartItems.value.length === 0) {
+    // Try to load from cart store as fallback
+    if (cart.value && cart.value.length > 0) {
+      cartItems.value = cart.value
+      saveCartToStorage()
+    } else {
+      // Redirect to artworks page if cart is truly empty
+      router.push('/artworks')
+    }
+  }
   
-  // Check if cart is empty
-  if (!checkoutSummary.value || (checkoutSummary.value.items && checkoutSummary.value.items.length === 0)) {
-    // Redirect to home page
-    router.push('/')
+  // Initialize checkout summary with current cart data
+  if (checkoutSummary && cartItems.value.length > 0) {
+    checkoutSummary.items = cartItems.value
+    checkoutSummary.subtotal = subtotalAmount.value
   }
 })
 
-onBeforeUnmount(() => {
-  // Clear timer interval
-  if (timerInterval) {
-    clearInterval(timerInterval)
-  }
+// Provide a method to cancel checkout (clear all data)
+const cancelCheckout = () => {
+  clearPersistedCheckoutData()
+  clearQueryParams()
+  router.push('/artworks')
+}
+
+// Expose cancel method for potential use
+defineExpose({
+  cancelCheckout
 })
 </script>
 
 <style scoped>
-/* Transitions */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
 .slide-fade-enter-active,
 .slide-fade-leave-active {
   transition: all 0.3s ease;
@@ -1495,127 +1797,25 @@ onBeforeUnmount(() => {
   transform: translateX(-20px);
 }
 
-/* Animations */
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
 }
 
-.animate-scale-in {
-  animation: scaleIn 0.5s ease-out forwards;
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
-.animate-bounce-once {
-  animation: bounceOnce 1s ease-out forwards;
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.3s ease;
 }
 
-.animate-pulse-slow {
-  animation: pulseSlow 3s infinite;
-}
-
-.animate-float-slow {
-  animation: floatSlow 8s ease-in-out infinite;
-}
-
-.animate-float-medium {
-  animation: floatMedium 6s ease-in-out infinite;
-}
-
-.animate-float-fast {
-  animation: floatFast 4s ease-in-out infinite;
-}
-
-.delay-100 {
-  animation-delay: 0.1s;
-}
-
-.delay-200 {
-  animation-delay: 0.2s;
-}
-
-.delay-300 {
-  animation-delay: 0.3s;
-}
-
-.delay-400 {
-  animation-delay: 0.4s;
-}
-
-.delay-500 {
-  animation-delay: 0.5s;
-}
-
-.delay-600 {
-  animation-delay: 0.6s;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes bounceOnce {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulseSlow {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-@keyframes floatSlow {
-  0%, 100% {
-    transform: translateY(0) rotate(0);
-  }
-  50% {
-    transform: translateY(-20px) rotate(5deg);
-  }
-}
-
-@keyframes floatMedium {
-  0%, 100% {
-    transform: translateY(0) rotate(0);
-  }
-  50% {
-    transform: translateY(-15px) rotate(-5deg);
-  }
-}
-
-@keyframes floatFast {
-  0%, 100% {
-    transform: translateY(0) rotate(0);
-  }
-  50% {
-    transform: translateY(-10px) rotate(3deg);
-  }
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
 }
 
 /* Custom scrollbar */

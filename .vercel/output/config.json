@@ -7,14 +7,17 @@
     "about/index.html": {
       "path": "about"
     },
-    "login/index.html": {
-      "path": "login"
-    },
     "terms/index.html": {
       "path": "terms"
     },
+    "login/index.html": {
+      "path": "login"
+    },
     "index1/index.html": {
       "path": "index1"
+    },
+    "signup/index.html": {
+      "path": "signup"
     },
     "shopss/index.html": {
       "path": "shopss"
@@ -28,8 +31,8 @@
     "commission/index.html": {
       "path": "commission"
     },
-    "signup/index.html": {
-      "path": "signup"
+    "contact-us/index.html": {
+      "path": "contact-us"
     },
     "prints/index.html": {
       "path": "prints"
@@ -40,20 +43,17 @@
     "order-success/index.html": {
       "path": "order-success"
     },
-    "contact-us/index.html": {
-      "path": "contact-us"
+    "refund-policy/index.html": {
+      "path": "refund-policy"
     },
     "artworks/index.html": {
       "path": "artworks"
     },
-    "refund-policy/index.html": {
-      "path": "refund-policy"
+    "privacy-policy/index.html": {
+      "path": "privacy-policy"
     },
     "artworks/indexa/index.html": {
       "path": "artworks/indexa"
-    },
-    "privacy-policy/index.html": {
-      "path": "privacy-policy"
     },
     "shipping-policy/index.html": {
       "path": "shipping-policy"

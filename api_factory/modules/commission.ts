@@ -5,6 +5,6 @@ export const commission_api = {
     return GATEWAY_ENDPOINT.post("/commission-requests", data);
   },
   $_fetch_drawing_types() {
-    return GATEWAY_ENDPOINT.get("/drawing-types", data);
+    return GATEWAY_ENDPOINT.get("/drawing-types");
   },
 };

@@ -5,6 +5,7 @@ import { useCreateOrder } from "@/composables/modules/orders/useCreateOrder"
 import { useUpdateOrderStatus } from "@/composables/modules/orders/useUpdateOrderStatus"
 import { useUser } from "@/composables/auth/user"
 import { useLocalStorage } from "@/composables/useLocalStorage"
+import { useCustomToast } from '@/composables/core/useCustomToast'
 
 interface CartItem {
   id: number
@@ -102,6 +103,7 @@ const exchangeRate = ref<number>(1)
 const orderResponse = ref<any>(null)
 const { loading: orderLoading, createOrder } = useCreateOrder()
 const { loading, error, updateOrderStatus } = useUpdateOrderStatus()
+const { showToast } = useCustomToast()
 
 export function useCheckoutStore() {
   const router = useRouter()
@@ -303,6 +305,13 @@ export function useCheckoutStore() {
         if (orderComplete.value) {
           clearPersistedCheckoutData()
         }
+      } else {
+        showToast({
+          title: "Error",
+          message: response?.data?.message,
+          toastType: "warning",
+          duration: 3000
+        });
       }
     } catch (error) {
       console.error("Order creation or payment initialization failed", error)

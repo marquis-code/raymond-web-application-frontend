@@ -1,702 +1,573 @@
 <template>
-    <div class="min-h-screen  text-white mt-20">
-      <!-- Animated CTA Banner -->
-      <!-- <div class="relative py-10 bg-black overflow-hidden">
-        <div class="container mx-auto text-center">
-          <h2 
-            class="text-xl md:text-2xl font-medium mb-4 animate-pulse"
-            v-motion
-            :initial="{ opacity: 0, y: 50 }"
-            :enter="{ opacity: 1, y: 0, transition: { duration: 800 } }"
-          >
-            IF YOU ARE INTERESTED IN COLLECTING AN ORIGINAL PIECE, CLICK BELOW
-          </h2>
-          <NuxtLink to="/contact-us"
-            class="bg-white text-black rounded-sm px-8 py-2 hover:bg-gray-200 transition-all duration-300 transform hover:scale-105"
-            v-motion
-            :initial="{ opacity: 0 }"
-            :enter="{ opacity: 1, transition: { delay: 400, duration: 600 } }"
-            @click="navigateTo('/shop')"
-          >
-            PURCHASE
-          </NuxtLink>
-        </div>
-      </div> -->
-      <section class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900 to-black">
+  <div class="min-h-screen bg-gray-50 text-gray-900">
+    <!-- Hero Section -->
+    <section class="py-20 px-4 sm:px-6 mt-10 lg:px-8 bg-gradient-to-br from-white via-gray-50 to-gray-100">
       <div class="max-w-5xl mx-auto text-center">
-        <h2 class="text-3xl md:text-4xl font-bold mb-6 text-white">
-          Interested in Collecting an Original Piece?
+        <h2 class="text-4xl md:text-5xl font-light mb-6 text-gray-800 tracking-wide">
+          Discover Original Masterpieces
         </h2>
-        
-        <p class="text-xl text-gray-300 mb-10 max-w-3xl mx-auto">
-          Own a one-of-a-kind masterpiece that captures the depth of emotion and technical excellence that defines my work.
+        <p class="text-xl text-gray-600 mb-10 max-w-3xl mx-auto font-light leading-relaxed">
+          Immerse yourself in a curated collection of contemporary art that captures raw emotion and technical excellence.
         </p>
-        
-        <a 
-          href="/contact-us" 
-          class="inline-flex items-center justify-center px-8 py-3 bg-white text-black font-medium rounded-md hover:bg-gray-200 transition-colors"
+        <NuxtLink 
+          to="/contact-us" 
+          class="inline-flex items-center justify-center px-10 py-4 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 transition-all duration-500 hover:scale-105 hover:shadow-xl transform"
         >
-          PURCHASE
-        </a>
+          <span class="mr-2">EXPLORE COLLECTION</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:translate-x-1">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </NuxtLink>
       </div>
     </section>
-  
-      <!-- Artwork Gallery -->
-      <div class="container mx-auto px-4 py-8 bg-border-4">
-        <!-- {{products}} -->
-       <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div  class="product-card  flex-shrink-0 w-full relative group" v-for="(product, idx) in products" :key="idx">
-          <div class="relative mb-4 overflow-hidden">
-                <img
-                  :src="product.images[0]"
-                  :alt="product.title"
-                  class="w-full h-[400px]  rounded-xl hover:rounded-xl object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div
-                  v-if="product.isFeatured"
-                  class="absolute top-2 left-2 bg-black text-white text-sm px-2 py-1"
-                >
-                Sale
-                </div>
-                <div
-                  v-if="product.isNew"
-                  class="absolute top-2 left-2 bg-black text-white text-sm px-2 py-1"
-                >
-                  New Arrival
-                </div>
-                <div
-                  v-if="product.isBestseller"
-                  class="absolute top-2 left-2 bg-black text-white text-sm px-2 py-1"
-                >
-                Best Seller
-                </div>
 
-                <div
-                  class="absolute inset-0 bg-black bg-opacity-80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
-                >
-                  <div class="group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 text-white">
-                    <h3 class="text-xl font-bold mb-2">{{ product.name }}</h3>
-                      <p v-html="product.description" class="text-sm mb-3"></p>
-                      <p class="text-lg font-semibold">From ${{ product.price }}</p>
-                      <NuxtLink :to="`/artworks/${product._id}`" class="bg-white text-center rounded-lg text-black px-4 py-2.5 mt-2 hover:bg-gray-200 transition-all duration-300">
-                View Details
-              </NuxtLink>
-                  </div>
-                </div>
-                </div>
-          
-        </div>
-       </section>
+    <!-- Loading Spinner -->
+    <div v-if="loading" class="flex justify-center items-center py-20">
+      <div class="relative">
+        <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-200"></div>
+        <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"></div>
+      </div>
+    </div>
+
+    <!-- Artwork Gallery -->
+    <div v-else class="container mx-auto px-6 py-20">
+      <div class="text-center mb-16">
+        <h3 class="text-3xl font-light text-gray-800 mb-4">Featured Artworks</h3>
+        <div class="w-24 h-1 bg-gradient-to-r from-gray-400 to-gray-600 mx-auto"></div>
       </div>
 
-      <TestimonialsCarousel />
-  
-      <Teleport to="body">
-        <div 
-          v-if="selectedArtwork" 
-          class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 transition-all duration-500"
-          :class="{'opacity-100': modalOpen, 'opacity-0': !modalOpen}"
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+        <div
+          v-for="(artwork, index) in products"
+          :key="artwork._id"
+          class="artwork-card group cursor-pointer relative"
+          @click="openFullScreenModal(artwork, index)"
+          @mouseenter="hoveredIndex = index"
+          @mouseleave="hoveredIndex = null"
         >
-          <div 
-            class="relative w-full max-w-4xl bg-white p-4 md:p-8 rounded-lg shadow-xl transform transition-all duration-500"
-            :class="{'translate-y-0 scale-100': modalOpen, 'translate-y-8 scale-95': !modalOpen}"
-          >
-            <div class="flex flex-col md:flex-row gap-8">
-              <div class="w-full md:w-1/2">
-                <img 
-                  :src="selectedArtwork.image" 
-                  :alt="selectedArtwork.title" 
-                  class="w-full h-auto object-cover rounded"
-                />
-              </div>
-              <div class="w-full md:w-1/2">
-                <h2 class="text-2xl font-bold mb-4">{{ selectedArtwork.title }}</h2>
-                <p class="text-lg mb-2">From ${{ selectedArtwork.price }}</p>
-                <p class="text-sm text-gray-400 mb-6">{{ selectedArtwork.description }}</p>
-                
-                <div class="mb-4">
-                  <label class="block text-sm font-medium mb-2">Size *</label>
-                  <select 
-                    v-model="selectedSize" 
-                    class="w-full p-2 border border-gray-700 bg-black text-white rounded"
-                  >
-                    <option disabled value="">Select</option>
-                    <option 
-                      v-for="size in selectedArtwork.sizes" 
-                      :key="size.id" 
-                      :value="size.id"
-                    >
-                      {{ size.name }} - ${{ size.price }}
-                    </option>
-                  </select>
-                </div>
-                
-                <div class="mb-6">
-                  <label class="block text-sm font-medium mb-2">Quantity *</label>
-                  <div class="flex items-center">
-                    <button 
-                      @click="quantity > 1 ? quantity-- : null" 
-                      class="px-3 py-1 border border-gray-700 hover:bg-gray-800"
-                    >
-                      -
-                    </button>
-                    <input 
-                      v-model="quantity" 
-                      type="number" 
-                      min="1" 
-                      class="w-16 p-1 text-center border-t border-b border-gray-700 bg-black text-white"
-                    />
-                    <button 
-                      @click="quantity++" 
-                      class="px-3 py-1 border border-gray-700 hover:bg-gray-800"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-                
-                <button 
-                  @click="addToCart" 
-                  class="w-full text-white py-3 font-medium  border rounded-lg bg-black transition-colors duration-300"
-                >
-                  Add to Cart
-                </button>
-                
-                <div class="mt-8 space-y-4">
-                  <div class="border-t border-gray-800 pt-4">
-                    <div class="flex justify-between items-center">
-                      <h3 class="font-medium">PRODUCT INFO</h3>
-                      <button class="text-xl">+</button>
-                    </div>
-                  </div>
-                  <div class="border-t border-gray-800 pt-4">
-                    <div class="flex justify-between items-center">
-                      <h3 class="font-medium">RETURN & REFUND POLICY</h3>
-                      <button class="text-xl">+</button>
-                    </div>
-                  </div>
-                  <div class="border-t border-gray-800 pt-4">
-                    <div class="flex justify-between items-center">
-                      <h3 class="font-medium">SHIPPING INFO</h3>
-                      <button class="text-xl">-</button>
-                    </div>
-                    <div class="mt-2 text-sm">
-                      <p>Free worldwide shipping</p>
-                      <p>Estimated delivery time: 5-8 Business days after placing order.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <!-- Artwork Container -->
+          <div class="relative aspect-[4/5] overflow-hidden rounded-2xl bg-white shadow-lg group-hover:shadow-2xl transition-all duration-700">
+            <!-- Artwork Image -->
+            <img
+              :src="getCurrentImage(artwork, index)"
+              :alt="artwork.name"
+              class="w-full h-full object-cover transition-all duration-700 ease-out"
+              :class="{
+                'scale-110': hoveredIndex === index,
+                'scale-100': hoveredIndex !== index
+              }"
+            />
             
-            <!-- Navigation Buttons -->
-            <div class="absolute top-1/2 -translate-y-1/2 flex justify-between w-full px-4">
-              <button 
-                @click="navigateToPrevArtwork" 
-                class="bg-white/10 hover:bg-white/20 border-4 p-2 rounded-full"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
-              </button>
-              <button 
-                @click="navigateToNextArtwork" 
-                class="bg-white/10 hover:bg-white/20 border-4 p-2 rounded-full"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
-              </button>
-            </div>
-            
-            <!-- Close button - intentionally not included as per requirements -->
-          </div>
-        </div>
-      </Teleport>
-  
-      <!-- Full Screen Modal -->
-      <Teleport to="body">
-        <div 
-          v-if="fullScreenModalOpen" 
-          class="fixed inset-0 z-50 bg-white transition-all duration-500 overflow-y-auto"
-          :class="{'opacity-100': fullScreenModalOpen, 'opacity-0': !fullScreenModalOpen}"
-        >
-          <div class="container mx-auto px-4 py-8">
-            <div class="flex justify-between items-center mb-6">
-              <div class="text-sm breadcrumbs">
-                <ul class="flex space-x-2">
-                  <li><NuxtLink to="/" class="hover:text-gray-300">Home</NuxtLink></li>
-                  <li><span>/</span></li>
-                  <li><NuxtLink to="/shop" class="hover:text-gray-300">Shop</NuxtLink></li>
-                  <li><span>/</span></li>
-                  <li>{{ fullScreenArtwork?.title }}</li>
-                </ul>
-              </div>
-              <div class="flex space-x-4">
-                <button 
-                  @click="navigateToPrevFullScreen" 
-                  class="flex items-center hover:text-gray-300"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
-                  <span>Prev</span>
-                </button>
-                <button 
-                  @click="navigateToNextFullScreen" 
-                  class="flex items-center hover:text-gray-300"
-                >
-                  <span>Next</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
-                </button>
-              </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div>
-                <img 
-                  :src="fullScreenArtwork?.image" 
-                  :alt="fullScreenArtwork?.title" 
-                  class="w-full h-auto object-contain"
-                />
-                <div class="grid grid-cols-5 gap-2 mt-4">
-                  <div 
-                    v-for="(thumb, index) in fullScreenArtwork?.thumbnails" 
-                    :key="index" 
-                    class="cursor-pointer border-2"
-                    :class="{'border-white': selectedThumb === index, 'border-transparent': selectedThumb !== index}"
-                    @click="selectedThumb = index"
-                  >
-                    <img :src="thumb" :alt="`Thumbnail ${index + 1}`" class="w-full h-auto" />
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <h1 class="text-2xl font-bold mb-4">{{ fullScreenArtwork?.title }}</h1>
-                <p class="text-xl mb-2">From ${{ fullScreenArtwork?.price }}</p>
-                <p class="text-sm text-gray-400 mb-4">{{ fullScreenArtwork?.saleInfo }}</p>
-                
-                <div class="mb-4">
-                  <label class="block text-sm font-medium mb-2">Size *</label>
-                  <select 
-                    v-model="selectedFullScreenSize" 
-                    class="w-full p-2 border border-gray-700 bg-black text-white rounded"
-                  >
-                    <option disabled value="">Select</option>
-                    <option 
-                      v-for="size in fullScreenArtwork?.sizes" 
-                      :key="size.id" 
-                      :value="size.id"
-                    >
-                      {{ size.name }} - ${{ size.price }}
-                    </option>
-                  </select>
-                </div>
-                
-                <div class="mb-6">
-                  <label class="block text-sm font-medium mb-2">Quantity *</label>
-                  <div class="flex items-center">
-                    <button 
-                      @click="fullScreenQuantity > 1 ? fullScreenQuantity-- : null" 
-                      class="px-3 py-2.5 border border-gray-700"
-                    >
-                      -
-                    </button>
-                    <input 
-                      v-model="fullScreenQuantity" 
-                      type="number" 
-                      min="1" 
-                      class="w-16 p-1 py-2.5 text-center border-t border-b border-gray-700 bg-black text-white"
-                    />
-                    <button 
-                      @click="fullScreenQuantity++" 
-                      class="px-3 py-2.5 border border-gray-700"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-                
-                <button 
-                  @click="addToCartFromFullScreen" 
-                  class="w-full text-white bg-black py-3 text-sm font-medium rounded-lg  transition-colors duration-300"
-                >
-                  Add to Cart
-                </button>
-                
-                <div class="mt-8 space-y-4">
-                  <div class="border-t border-gray-800 pt-4">
-                    <div 
-                      class="flex justify-between items-center cursor-pointer"
-                      @click="toggleSection('productInfo')"
-                    >
-                      <h3 class="font-medium">PRODUCT INFO</h3>
-                      <button class="text-xl">{{ openSections.productInfo ? '-' : '+' }}</button>
-                    </div>
-                    <div v-if="openSections.productInfo" class="mt-2 text-sm">
-                      <p>{{ fullScreenArtwork?.description }}</p>
-                    </div>
-                  </div>
-                  
-                  <div class="border-t border-gray-800 pt-4">
-                    <div 
-                      class="flex justify-between items-center cursor-pointer"
-                      @click="toggleSection('returnPolicy')"
-                    >
-                      <h3 class="font-medium">RETURN & REFUND POLICY</h3>
-                      <button class="text-xl">{{ openSections.returnPolicy ? '-' : '+' }}</button>
-                    </div>
-                    <div v-if="openSections.returnPolicy" class="mt-2 text-sm">
-                      <p>All sales are final. Due to the custom nature of our artwork, we do not accept returns or exchanges.</p>
-                    </div>
-                  </div>
-                  
-                  <div class="border-t border-gray-800 pt-4">
-                    <div 
-                      class="flex justify-between items-center cursor-pointer"
-                      @click="toggleSection('shippingInfo')"
-                    >
-                      <h3 class="font-medium">SHIPPING INFO</h3>
-                      <button class="text-xl">{{ openSections.shippingInfo ? '-' : '+' }}</button>
-                    </div>
-                    <div v-if="openSections.shippingInfo" class="mt-2 text-sm">
-                      <p>Free worldwide shipping</p>
-                      <p>Estimated delivery time: 5-8 Business days after placing order.</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div class="mt-8">
-                  <h3 class="text-xl font-medium mb-4">Reviews</h3>
-                  <div class="flex items-center mb-2">
-                    <div class="flex">
-                      <span v-for="i in 5" :key="i" class="text-xl">
-                        <span v-if="i <= Math.floor(fullScreenArtwork?.rating || 0)">★</span>
-                        <span v-else-if="i - 0.5 <= fullScreenArtwork?.rating || 0">★</span>
-                        <span v-else>☆</span>
-                      </span>
-                    </div>
-                    <span class="ml-2 text-xl">{{ fullScreenArtwork?.rating }}</span>
-                  </div>
-                  <p class="text-sm text-gray-400 mb-4">Based on {{ fullScreenArtwork?.reviewCount }} reviews</p>
-                  
-                  <button class="border border-white px-6 py-2 hover:bg-white hover:text-black transition-colors duration-300">
-                    Leave a Review
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Teleport>
-    </div>
-  </template>
-  
-  <script setup lang="ts">
-  import { ref, reactive, computed } from 'vue'
-  import hero1 from "@/assets/img/commission-art1.jpg";
-import hero2 from "@/assets/img/snap.jpg";
-  import featured1 from "@/assets/img/featured1.png";
-    import featured2 from "@/assets/img/featured2.jpg";
-    import featured3 from "@/assets/img/featured3.jpg";
-    import featured4 from "@/assets/img/featured4.png";
-    import featured5 from "@/assets/img/featured5.png";
-    import featured6 from "@/assets/img/featured6.png";
-    import featured7 from "@/assets/img/featured7.png";
-    import featured8 from "@/assets/img/featured8.png";
-    import featured9 from "@/assets/img/featured9.png";
-    import featured10 from "@/assets/img/featured10.png";
-    import featured11 from "@/assets/img/featured11.png";
-    import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
+            <!-- Gradient Overlay -->
+            <div 
+              class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent transition-all duration-500"
+              :class="{
+                'opacity-100': hoveredIndex === index,
+                'opacity-0': hoveredIndex !== index
+              }"
+            ></div>
 
-    const { products, loading } = useFetchProducts()
+            <!-- Artwork Title Overlay -->
+            <div 
+              class="absolute inset-0 flex items-center justify-center transition-all duration-500"
+              :class="{
+                'opacity-100': hoveredIndex === index,
+                'opacity-0': hoveredIndex !== index
+              }"
+            >
+              <div class="text-center transform transition-all duration-700">
+                <h3 
+                  class="text-2xl md:text-3xl font-light text-white mb-2 tracking-wider"
+                  :class="{
+                    'translate-y-0 opacity-100': hoveredIndex === index,
+                    'translate-y-8 opacity-0': hoveredIndex !== index
+                  }"
+                >
+                  {{ artwork.name.toUpperCase() }}
+                </h3>
+                <div 
+                  class="w-16 h-0.5 bg-white mx-auto transition-all duration-700 delay-100"
+                  :class="{
+                    'scale-x-100 opacity-100': hoveredIndex === index,
+                    'scale-x-0 opacity-0': hoveredIndex !== index
+                  }"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Product Tags -->
+            <div v-if="getProductTag(artwork)" class="absolute top-4 left-4 z-10">
+              <span class="bg-white/90 backdrop-blur-sm text-gray-900 text-xs px-3 py-1.5 font-medium rounded-full shadow-lg">
+                {{ getProductTag(artwork) }}
+              </span>
+            </div>
+
+            <!-- Image Counter -->
+            <div v-if="artwork.images.length > 1" class="absolute bottom-4 right-4 z-10">
+              <div class="bg-white/90 backdrop-blur-sm text-gray-900 text-xs px-3 py-1.5 rounded-full shadow-lg font-medium">
+                {{ currentImageIndices[index] + 1 }}/{{ artwork.images.length }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Artwork Info -->
+          <div class="mt-6 text-center">
+            <h4 class="text-lg font-medium text-gray-800 mb-1">{{ artwork.name }}</h4>
+            <p class="text-sm text-gray-500 font-light">{{ artwork.category?.name || 'Original Art' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full Screen Modal -->
+    <Teleport to="body">
+      <div 
+        v-if="selectedArtwork" 
+        class="fixed inset-0 z-50 bg-white/95 backdrop-blur-md transition-all duration-700"
+        :class="{'opacity-100': modalOpen, 'opacity-0': !modalOpen}"
+      >
+        <!-- Close Button -->
+        <button 
+          @click="closeFullScreenModal"
+          class="absolute top-8 right-8 z-20 bg-gray-100 hover:bg-gray-200 p-4 rounded-full transition-all duration-300 shadow-lg group"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700 group-hover:rotate-90 transition-transform duration-300">
+            <path d="m18 6-12 12"/>
+            <path d="m6 6 12 12"/>
+          </svg>
+        </button>
+
+        <!-- Navigation Buttons -->
+        <button 
+          @click="navigateToPrevious"
+          class="absolute left-8 top-1/2 -translate-y-1/2 z-20 bg-gray-100 hover:bg-gray-200 p-4 rounded-full transition-all duration-300 shadow-lg group"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700 group-hover:-translate-x-1 transition-transform duration-300">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+        </button>
+
+        <button 
+          @click="navigateToNext"
+          class="absolute right-8 top-1/2 -translate-y-1/2 z-20 bg-gray-100 hover:bg-gray-200 p-4 rounded-full transition-all duration-300 shadow-lg group"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700 group-hover:translate-x-1 transition-transform duration-300">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </button>
+
+        <!-- Modal Content -->
+        <div class="flex flex-col lg:flex-row h-full">
+          <!-- Image Section -->
+          <div class="flex-1 relative flex items-center justify-center p-8 lg:p-12">
+            <div class="relative max-w-full max-h-full">
+              <img 
+                :src="selectedArtwork.images[currentModalImageIndex]" 
+                :alt="selectedArtwork.name" 
+                class="max-w-full max-h-full object-contain rounded-xl shadow-2xl transition-all duration-700 transform"
+                :class="{'scale-105': imageLoaded}"
+                :key="currentModalImageIndex"
+                @load="imageLoaded = true"
+              />
+              
+              <!-- Image Loading Overlay -->
+              <div v-if="!imageLoaded" class="absolute inset-0 bg-gray-100 rounded-xl flex items-center justify-center">
+                <div class="animate-pulse text-gray-400">Loading...</div>
+              </div>
+            </div>
+
+            <!-- Image Navigation for Multiple Images -->
+            <div v-if="selectedArtwork.images.length > 1" class="absolute bottom-8 left-1/2 -translate-x-1/2">
+              <div class="flex items-center space-x-4 bg-white/90 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg">
+                <button 
+                  @click="previousImage"
+                  class="p-2 hover:bg-gray-100 rounded-full transition-all duration-300"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700">
+                    <path d="m15 18-6-6 6-6"/>
+                  </svg>
+                </button>
+                
+                <div class="flex items-center space-x-2">
+                  <button
+                    v-for="(image, index) in selectedArtwork.images"
+                    :key="index"
+                    @click="setModalImage(index)"
+                    class="w-3 h-3 rounded-full transition-all duration-300"
+                    :class="currentModalImageIndex === index ? 'bg-gray-700 scale-125' : 'bg-gray-300 hover:bg-gray-400'"
+                  ></button>
+                </div>
+
+                <button 
+                  @click="nextImage"
+                  class="p-2 hover:bg-gray-100 rounded-full transition-all duration-300"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700">
+                    <path d="m9 18 6-6-6-6"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Details Section -->
+          <div class="lg:w-96 bg-gradient-to-br from-gray-50 to-white border-l border-gray-200 overflow-y-auto">
+            <div class="p-8 lg:p-10 space-y-8">
+              <!-- Title Section -->
+              <div class="animate-slide-in-right">
+                <h1 class="text-4xl font-light mb-3 text-gray-800 tracking-wide">{{ selectedArtwork.name.toUpperCase() }}</h1>
+                <div class="w-16 h-1 bg-gradient-to-r from-gray-400 to-gray-600 rounded-full"></div>
+              </div>
+
+              <!-- Category & Date -->
+              <div class="animate-slide-in-right animation-delay-100">
+                <div class="flex flex-wrap gap-4 text-sm">
+                  <div class="bg-gray-100 px-4 py-2 rounded-full">
+                    <span class="text-gray-600">{{ selectedArtwork.category?.name || 'Original Art' }}</span>
+                  </div>
+                  <div v-if="selectedArtwork.createdAt" class="bg-gray-100 px-4 py-2 rounded-full">
+                    <span class="text-gray-600">{{ formatDate(selectedArtwork.createdAt) }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div v-if="selectedArtwork.description" class="animate-slide-in-right animation-delay-200">
+                <h3 class="text-xl font-medium mb-4 text-gray-800">About This Piece</h3>
+                <div v-html="selectedArtwork.description" class="text-gray-600 leading-relaxed prose prose-gray max-w-none"></div>
+              </div>
+
+              <!-- Expandable Sections -->
+              <div class="space-y-4 animate-slide-in-right animation-delay-300">
+                <!-- Product Info -->
+                <div v-if="selectedArtwork.productInfo" class="border border-gray-200 rounded-xl overflow-hidden">
+                  <button 
+                    @click="toggleSection('productInfo')"
+                    class="flex justify-between items-center w-full text-left p-6 hover:bg-gray-50 transition-all duration-300"
+                  >
+                    <h3 class="font-medium text-gray-800">ARTWORK DETAILS</h3>
+                    <div class="relative w-6 h-6">
+                      <span 
+                        class="absolute inset-0 flex items-center justify-center text-xl transition-all duration-300" 
+                        :class="{'rotate-45': expandedSections.productInfo}"
+                      >+</span>
+                    </div>
+                  </button>
+                  <div 
+                    class="overflow-hidden transition-all duration-500"
+                    :class="expandedSections.productInfo ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'"
+                  >
+                    <div class="p-6 pt-0 text-gray-600 text-sm leading-relaxed prose prose-gray max-w-none" v-html="selectedArtwork.productInfo"></div>
+                  </div>
+                </div>
+
+                <!-- Shipping Info -->
+                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                  <button 
+                    @click="toggleSection('shippingInfo')"
+                    class="flex justify-between items-center w-full text-left p-6 hover:bg-gray-50 transition-all duration-300"
+                  >
+                    <h3 class="font-medium text-gray-800">SHIPPING & DELIVERY</h3>
+                    <div class="relative w-6 h-6">
+                      <span 
+                        class="absolute inset-0 flex items-center justify-center text-xl transition-all duration-300" 
+                        :class="{'rotate-45': expandedSections.shippingInfo}"
+                      >+</span>
+                    </div>
+                  </button>
+                  <div 
+                    class="overflow-hidden transition-all duration-500"
+                    :class="expandedSections.shippingInfo ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'"
+                  >
+                    <div class="p-6 pt-0 text-gray-600 text-sm leading-relaxed">
+                      <p class="mb-2">• Worldwide shipping available</p>
+                      <p class="mb-2">• Professional packaging and handling</p>
+                      <p>• Estimated delivery: 7-14 business days</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Contact Section -->
+              <div class="animate-slide-in-right animation-delay-400">
+                <div class="bg-gradient-to-br from-gray-100 to-gray-50 rounded-xl p-6 border border-gray-200">
+                  <h3 class="font-medium mb-3 text-gray-800">Interested in This Piece?</h3>
+                  <p class="text-gray-600 text-sm mb-6 leading-relaxed">Contact our gallery to discuss availability, pricing, and commission opportunities for this exceptional artwork.</p>
+                  <NuxtLink 
+                    to="/contact-us"
+                    class="block w-full bg-gray-900 text-white text-center py-4 font-medium rounded-xl hover:bg-gray-800 transition-all duration-300 hover:scale-105 transform shadow-lg"
+                  >
+                    INQUIRE NOW
+                  </NuxtLink>
+                </div>
+              </div>
+
+              <!-- Progress Indicator -->
+              <div class="animate-slide-in-right animation-delay-500">
+                <div class="flex items-center justify-center space-x-2 pt-4">
+                  <span class="text-sm text-gray-500">{{ selectedArtworkIndex + 1 }} of {{ products.length }}</span>
+                  <div class="w-24 h-1 bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      class="h-full bg-gray-600 rounded-full transition-all duration-700"
+                      :style="{ width: `${((selectedArtworkIndex + 1) / products.length) * 100}%` }"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
+
+// State
+const hoveredIndex = ref<number | null>(null)
+const selectedArtwork = ref<any>(null)
+const selectedArtworkIndex = ref<number>(0)
+const modalOpen = ref(false)
+const currentModalImageIndex = ref(0)
+const currentImageIndices = reactive<Record<number, number>>({})
+const imageLoaded = ref(false)
+
+// Expandable sections
+const expandedSections = reactive({
+  productInfo: false,
+  shippingInfo: false,
+  returnPolicy: false
+})
+
+const { products, loading } = useFetchProducts()
+
+// Declare imageRotationIntervals
+let imageRotationIntervals: Record<number, number> = {}
+
+// Methods
+const getProductTag = (product: any) => {
+  if (product.isFeatured) return 'Featured'
+  if (product.isNew) return 'New'
+  if (product.isBestseller) return 'Popular'
+  return null
+}
+
+const getCurrentImage = (artwork: any, index: number) => {
+  if (!artwork.images || artwork.images.length === 0) return ''
+  const imageIndex = currentImageIndices[index] || 0
+  return artwork.images[imageIndex] || artwork.images[0]
+}
+
+const openFullScreenModal = (artwork: any, index: number) => {
+  selectedArtwork.value = artwork
+  selectedArtworkIndex.value = index
+  currentModalImageIndex.value = 0
+  imageLoaded.value = false
+  modalOpen.value = true
+  document.body.style.overflow = 'hidden'
   
-  // Types
-  interface Size {
-    id: string;
-    name: string;
-    price: number;
+  // Stop auto-rotation for the selected artwork
+  if (imageRotationIntervals[index]) {
+    clearInterval(imageRotationIntervals[index])
   }
+}
+
+const closeFullScreenModal = () => {
+  modalOpen.value = false
+  document.body.style.overflow = 'auto'
   
-  interface Artwork {
-    id: string;
-    title: string;
-    image: string;
-    imageAlt: string;
-    price: number;
-    description: string;
-    shortDescription: string;
-    sizes: Size[];
-    isFlipped: boolean;
-    thumbnails: string[];
-    rating: number;
-    reviewCount: number;
-    saleInfo: string;
+  // Restart auto-rotation
+  startImageRotation()
+  
+  setTimeout(() => {
+    selectedArtwork.value = null
+  }, 700)
+}
+
+const navigateToPrevious = () => {
+  const currentIndex = selectedArtworkIndex.value
+  const newIndex = currentIndex === 0 ? products.value.length - 1 : currentIndex - 1
+  selectedArtwork.value = products.value[newIndex]
+  selectedArtworkIndex.value = newIndex
+  currentModalImageIndex.value = 0
+  imageLoaded.value = false
+}
+
+const navigateToNext = () => {
+  const currentIndex = selectedArtworkIndex.value
+  const newIndex = currentIndex === products.value.length - 1 ? 0 : currentIndex + 1
+  selectedArtwork.value = products.value[newIndex]
+  selectedArtworkIndex.value = newIndex
+  currentModalImageIndex.value = 0
+  imageLoaded.value = false
+}
+
+const previousImage = () => {
+  if (selectedArtwork.value && selectedArtwork.value.images.length > 1) {
+    currentModalImageIndex.value = currentModalImageIndex.value === 0 
+      ? selectedArtwork.value.images.length - 1 
+      : currentModalImageIndex.value - 1
+    imageLoaded.value = false
   }
-  
-  // Sample data
-  const artworks = reactive<Artwork[]>([
-    {
-      id: '1',
-      title: 'Guardian Angel',
-      image: featured11,
-      imageAlt: featured10,
-      price: 185,
-      shortDescription: 'A powerful depiction of divine protection',
-      description: 'This artwork denotes the suffering of Christ on His way to Calvary and then ponder how Christ exhibits each of the qualities of love in His Passion.',
-      sizes: [
-        { id: 'medium', name: 'Medium (18" x 24")', price: 185 },
-        { id: 'large', name: 'Large (24" x 36")', price: 285 }
-      ],
-      isFlipped: false,
-      thumbnails: [
-        featured1,   featured2,   featured3,   featured4,   featured5,
-      ],
-      rating: 4.7,
-      reviewCount: 3,
-      saleInfo: 'Spring Sale!!! Enjoy 50% off!'
-    },
-    {
-      id: '2',
-      title: 'Avenging Angel',
-      image: hero1,
-      imageAlt: hero1,
-      price: 195,
-      shortDescription: 'A striking image of divine justice',
-      description: 'This powerful artwork represents divine justice and protection, showing the balance between mercy and judgment.',
-      sizes: [
-        { id: 'medium', name: 'Medium (18" x 24")', price: 195 },
-        { id: 'large', name: 'Large (24" x 36")', price: 295 }
-      ],
-      isFlipped: false,
-      thumbnails: [
-      hero1,   featured2,   featured3,   featured4,   featured5,
-      ],
-      rating: 4.9,
-      reviewCount: 7,
-      saleInfo: 'Spring Sale!!! Enjoy 50% off!'
-    },
-    {
-      id: '3',
-      title: 'Cosmic Waterfall',
-      image: featured11,
-      imageAlt: featured10,
-      price: 165,
-      shortDescription: 'A mesmerizing blend of cosmic energy and natural beauty',
-      description: 'This artwork combines the beauty of a waterfall with the mystery of the cosmos, creating a unique visual experience that transcends ordinary reality.',
-      sizes: [
-        { id: 'medium', name: 'Medium (18" x 24")', price: 165 },
-        { id: 'large', name: 'Large (24" x 36")', price: 265 }
-      ],
-      isFlipped: false,
-      thumbnails: [
-      featured1,   featured2,   featured3,   featured4,   featured5,
-      ],
-      rating: 4.8,
-      reviewCount: 5,
-      saleInfo: 'Spring Sale!!! Enjoy 50% off!'
-    },
-    {
-      id: '4',
-      title: 'Sacred Hands',
-      image: featured11,
-      imageAlt: featured10,
-      price: 155,
-      shortDescription: 'A powerful symbol of faith and devotion',
-      description: 'This artwork captures the essence of faith through the simple yet profound imagery of hands in prayer, reminding us of our connection to the divine.',
-      sizes: [
-        { id: 'medium', name: 'Medium (18" x 24")', price: 155 },
-        { id: 'large', name: 'Large (24" x 36")', price: 255 }
-      ],
-      isFlipped: false,
-      thumbnails: [
-      featured1,   featured2,   featured3,   featured4,   featured5,
-      ],
-      rating: 4.6,
-      reviewCount: 4,
-      saleInfo: 'Spring Sale!!! Enjoy 50% off!'
-    },
-    {
-      id: '5',
-      title: 'Sunset Silhouette',
-      image: featured11,
-      imageAlt: featured10,
-      price: 175,
-      shortDescription: 'A dramatic silhouette against a vibrant sunset',
-      description: 'This artwork captures the magic of a sunset, with a silhouette figure creating a powerful contrast against the vibrant colors of the sky.',
-      sizes: [
-        { id: 'medium', name: 'Medium (18" x 24")', price: 175 },
-        { id: 'large', name: 'Large (24" x 36")', price: 275 }
-      ],
-      isFlipped: false,
-      thumbnails: [
-      featured1,   featured2,   featured3,   featured4,   featured5,
-      ],
-      rating: 4.5,
-      reviewCount: 6,
-      saleInfo: 'Spring Sale!!! Enjoy 50% off!'
-    },
-    {
-      id: '6',
-      title: 'Moonlit Lake',
-      image: featured11,
-      imageAlt: featured10,
-      price: 185,
-      shortDescription: 'A serene landscape bathed in moonlight',
-      description: 'This artwork captures the tranquil beauty of a lake at night, with the moon casting its gentle light across the water and surrounding landscape.',
-      sizes: [
-        { id: 'medium', name: 'Medium (18" x 24")', price: 185 },
-        { id: 'large', name: 'Large (24" x 36")', price: 285 }
-      ],
-      isFlipped: false,
-      thumbnails: [
-      featured1,   featured2,   featured3,   featured4,   featured5,
-      ],
-      rating: 4.9,
-      reviewCount: 8,
-      saleInfo: 'Spring Sale!!! Enjoy 50% off!'
+}
+
+const nextImage = () => {
+  if (selectedArtwork.value && selectedArtwork.value.images.length > 1) {
+    currentModalImageIndex.value = (currentModalImageIndex.value + 1) % selectedArtwork.value.images.length
+    imageLoaded.value = false
+  }
+}
+
+const setModalImage = (index: number) => {
+  currentModalImageIndex.value = index
+  imageLoaded.value = false
+}
+
+const toggleSection = (section: keyof typeof expandedSections) => {
+  expandedSections[section] = !expandedSections[section]
+}
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).getFullYear().toString()
+}
+
+// Auto-rotate images for artworks with multiple images
+const startImageRotation = () => {
+  // Clear existing intervals
+  Object.values(imageRotationIntervals).forEach(interval => clearInterval(interval))
+  imageRotationIntervals = {}
+
+  products.value?.forEach((artwork, index) => {
+    if (artwork.images && artwork.images.length > 1) {
+      currentImageIndices[index] = 0
+      
+      imageRotationIntervals[index] = window.setInterval(() => {
+        // Don't rotate if this artwork is currently being viewed in modal
+        if (selectedArtwork.value?._id === artwork._id) return
+        
+        currentImageIndices[index] = (currentImageIndices[index] + 1) % artwork.images.length
+      }, 4000 + (index * 500)) // Stagger the rotations
+    } else {
+      currentImageIndices[index] = 0
     }
-  ]);
-  
-  // Modal state
-  const modalOpen = ref(false);
-  const selectedArtwork = ref<Artwork | null>(null);
-  const selectedSize = ref('');
-  const quantity = ref(1);
-  
-  // Full screen modal state
-  const fullScreenModalOpen = ref(false);
-  const fullScreenArtwork = ref<Artwork | null>(null);
-  const selectedFullScreenSize = ref('');
-  const fullScreenQuantity = ref(1);
-  const selectedThumb = ref(0);
-  
-  // Accordion sections
-  const openSections = reactive({
-    productInfo: false,
-    returnPolicy: false,
-    shippingInfo: true
-  });
-  
-  // Methods
-  const openArtworkModal = (artwork: Artwork) => {
-    selectedArtwork.value = artwork;
-    selectedSize.value = artwork.sizes[0].id;
-    quantity.value = 1;
-    modalOpen.value = true;
-  };
-  
-  const closeArtworkModal = () => {
-    modalOpen.value = false;
-    setTimeout(() => {
-      selectedArtwork.value = null;
-    }, 500);
-  };
-  
-  const openFullScreenModal = (artwork: Artwork) => {
-    fullScreenArtwork.value = artwork;
-    selectedFullScreenSize.value = artwork.sizes[0].id;
-    fullScreenQuantity.value = 1;
-    fullScreenModalOpen.value = true;
-    selectedThumb.value = 0;
-  };
-  
-  const closeFullScreenModal = () => {
-    fullScreenModalOpen.value = false;
-    setTimeout(() => {
-      fullScreenArtwork.value = null;
-    }, 500);
-  };
-  
-  const addToCart = () => {
-    if (!selectedArtwork.value || !selectedSize.value) return;
-    
-    const size = selectedArtwork.value.sizes.find(s => s.id === selectedSize.value);
-    if (!size) return;
-    
-    // Add to cart logic would go here
-    // alert(`Added ${quantity.value} ${selectedArtwork.value.title} (${size.name}) to cart`);
-    
-    // Open full screen modal
-    openFullScreenModal(selectedArtwork.value);
-    closeArtworkModal();
-  };
-  
-  const addToCartFromFullScreen = () => {
-    if (!fullScreenArtwork.value || !selectedFullScreenSize.value) return;
-    
-    const size = fullScreenArtwork.value.sizes.find(s => s.id === selectedFullScreenSize.value);
-    if (!size) return;
-    
-    // Add to cart logic would go here
-    // alert(`Added ${fullScreenQuantity.value} ${fullScreenArtwork.value.title} (${size.name}) to cart`);
-  };
-  
-  const navigateToPrevArtwork = () => {
-    if (!selectedArtwork.value) return;
-    
-    const currentIndex = artworks.findIndex(a => a.id === selectedArtwork.value?.id);
-    const prevIndex = (currentIndex - 1 + artworks.length) % artworks.length;
-    selectedArtwork.value = artworks[prevIndex];
-    selectedSize.value = selectedArtwork.value.sizes[0].id;
-  };
-  
-  const navigateToNextArtwork = () => {
-    if (!selectedArtwork.value) return;
-    
-    const currentIndex = artworks.findIndex(a => a.id === selectedArtwork.value?.id);
-    const nextIndex = (currentIndex + 1) % artworks.length;
-    selectedArtwork.value = artworks[nextIndex];
-    selectedSize.value = selectedArtwork.value.sizes[0].id;
-  };
-  
-  const navigateToPrevFullScreen = () => {
-    if (!fullScreenArtwork.value) return;
-    
-    const currentIndex = artworks.findIndex(a => a.id === fullScreenArtwork.value?.id);
-    const prevIndex = (currentIndex - 1 + artworks.length) % artworks.length;
-    fullScreenArtwork.value = artworks[prevIndex];
-    selectedFullScreenSize.value = fullScreenArtwork.value.sizes[0].id;
-    selectedThumb.value = 0;
-  };
-  
-  const navigateToNextFullScreen = () => {
-    if (!fullScreenArtwork.value) return;
-    
-    const currentIndex = artworks.findIndex(a => a.id === fullScreenArtwork.value?.id);
-    const nextIndex = (currentIndex + 1) % artworks.length;
-    fullScreenArtwork.value = artworks[nextIndex];
-    selectedFullScreenSize.value = fullScreenArtwork.value.sizes[0].id;
-    selectedThumb.value = 0;
-  };
-  
-  const toggleSection = (section: keyof typeof openSections) => {
-    openSections[section] = !openSections[section];
-  };
-  </script>
-  
-  <style scoped>
-  .perspective-1000 {
-    perspective: 1000px;
-  }
-  
-  .transform-style-3d {
-    transform-style: preserve-3d;
-  }
-  
-  .backface-hidden {
-    backface-visibility: hidden;
-  }
-  
-  .rotate-y-180 {
-    transform: rotateY(180deg);
-  }
-  
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.7;
+  })
+}
+
+// Handle escape key
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape' && modalOpen.value) {
+    closeFullScreenModal()
+  } else if (modalOpen.value) {
+    if (e.key === 'ArrowLeft') {
+      navigateToPrevious()
+    } else if (e.key === 'ArrowRight') {
+      navigateToNext()
     }
   }
-  
-  .animate-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+// Watch for products changes
+watch(() => products.value, (newProducts) => {
+  if (newProducts && newProducts.length > 0) {
+    startImageRotation()
   }
-  </style>
+}, { immediate: true })
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeydown)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', handleKeydown)
+  document.body.style.overflow = 'auto'
+  
+  // Clear all intervals
+  Object.values(imageRotationIntervals).forEach(interval => clearInterval(interval))
+})
+</script>
+
+<style scoped>
+.artwork-card {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.artwork-card:hover {
+  transform: translateY(-8px);
+}
+
+/* Custom scrollbar */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Animations */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out forwards;
+}
+
+.animation-delay-100 {
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+
+.animation-delay-200 {
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+.animation-delay-300 {
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+.animation-delay-400 {
+  animation-delay: 0.4s;
+  opacity: 0;
+}
+
+.animation-delay-500 {
+  animation-delay: 0.5s;
+  opacity: 0;
+}
+
+/* Prose styling for descriptions */
+.prose p {
+  margin-bottom: 1rem;
+}
+
+.prose strong {
+  font-weight: 600;
+  color: #374151;
+}
+
+.prose em {
+  font-style: italic;
+}
+</style>

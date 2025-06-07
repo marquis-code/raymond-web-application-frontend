@@ -22,7 +22,6 @@ export const useCreateCommission = () => {
   return {
     loading,
     error,
-    section,
     createCommission,
   }
 }

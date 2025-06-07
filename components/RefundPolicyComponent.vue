@@ -3,7 +3,7 @@
       <div class="max-w-4xl mx-auto">
         <!-- Header section with animation -->
         <div class="text-center mt-20" v-motion-slide-bottom>
-          <h1 class="text-4xl font-bold text-indigo-800 mb-4">Refund & Returns Policy</h1>
+          <h1 class="text-3xl font-bold text-black mb-4">Refund & Returns Policy</h1>
           <p class="text-lg text-gray-600">Welcome to Raymond Aworo Art</p>
         </div>
   
@@ -11,7 +11,7 @@
         <div class="flex justify-center mb-12">
           <div class="w-64 h-64 relative" v-motion-slide-visible>
             <div class="absolute inset-0">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full text-indigo-600">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full text-black">
                 <g>
                   <path d="M128,144v224a8,8,0,0,0,8,8H376a8,8,0,0,0,8-8V144a8,8,0,0,0-8-8H136A8,8,0,0,0,128,144Z" 
                     fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="24" 
@@ -61,7 +61,7 @@
         </div>
   
         <!-- Contact section -->
-        <div class="bg-indigo-700 rounded-xl p-6 text-white text-center relative overflow-hidden" v-motion-slide-visible>
+        <div class="bg-black rounded-xl p-6 text-white text-center relative overflow-hidden" v-motion-slide-visible>
           <!-- Decorative element -->
           <div class="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-indigo-500 rounded-full opacity-20"></div>
           <div class="absolute bottom-0 left-0 -ml-10 -mb-10 w-32 h-32 bg-indigo-500 rounded-full opacity-20"></div>

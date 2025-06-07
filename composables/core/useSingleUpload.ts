@@ -19,6 +19,7 @@ export const useSingleUploadFile = () => {
 
       if (res.type !== 'ERROR') {
         uploadResponse.value = res.data ?? []
+        return res.data
       } else {
         throw new Error('Error in API response')
       }

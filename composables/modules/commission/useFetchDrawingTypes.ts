@@ -12,7 +12,7 @@ export const useFetchDrawingTypes = () => {
     try {
       const response = await commission_api.$_fetch_drawing_types()
       console.log(response, 'drawing types response')
-      drawingTypes.value = response.data.data
+      drawingTypes.value = response.data
     } catch (e: any) {
       error.value = e.response?.data?.message || 'Failed to fetch drawing types'
     } finally {
@@ -21,6 +21,7 @@ export const useFetchDrawingTypes = () => {
   }
 
   onMounted(() => {
+    console.log('fetched')
     fetchDrawingTypes()
   })
 

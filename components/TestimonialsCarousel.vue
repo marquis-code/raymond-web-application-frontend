@@ -137,12 +137,12 @@
       </div>
       
       <!-- View All Testimonials Button with Animation -->
-      <div class="text-center mt-12">
+      <!-- <div class="text-center mt-12">
         <button class="px-8 py-3 border-2 border-amber-800 text-amber-800 font-medium rounded-md hover:bg-amber-800 hover:text-white transition-all duration-300 transform hover:scale-105 relative overflow-hidden group">
           <span class="relative z-10">View All Testimonials</span>
           <span class="absolute inset-0 bg-amber-800 transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
         </button>
-      </div>
+      </div> -->
     </div>
   </section>
 </template>
