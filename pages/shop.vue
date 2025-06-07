@@ -37,10 +37,9 @@
     </div>
 
     <!-- Promotion Banner -->
-    <section ref="promotionRef" class="relative py-32 my-20 overflow-hidden">
+    <!-- <section ref="promotionRef" class="relative py-32 my-20 overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-800/80 to-gray-900/90"></div>
-      
-      <!-- Background Image Container - maintains original aspect ratio -->
+    
       <div class="absolute inset-0 flex items-center justify-center">
         <img 
           src="@/assets/img/no-love.jpg" 
@@ -72,7 +71,14 @@
           </NuxtLink>
         </div>
       </div>
-    </section>
+    </section> -->
+    <div v-if="fetchingPromoSale" class="flex justify-center items-center py-20">
+      <div class="relative">
+        <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-200"></div>
+        <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"></div>
+      </div>
+    </div>
+    <PromoSaleCTA v-else :promosale="promosale" />
       
     <!-- Products Gallery Section -->
     <div class="container mx-auto px-6 py-20">
@@ -380,8 +386,9 @@ import { useFetchProducts } from "@/composables/modules/products/useFetchProduct
 import { useCartStore } from '@/composables/useCartStore'
 import { useCustomToast } from '@/composables/core/useCustomToast'
 const { addToCart: addItemToCart } = useCartStore()
+import { useFetchPromosale } from "@/composables/modules/promosale/useFetchPromosale";
 const { showToast } = useCustomToast();
-
+const { promosale, loading: fetchingPromoSale } = useFetchPromosale();
 // Modal state
 const modalOpen = ref(false)
 const selectedProduct = ref<any>(null)

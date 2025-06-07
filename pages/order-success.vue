@@ -26,9 +26,9 @@
         <p class="text-gray-600 text-center mb-6 animate-fade-in-up delay-400">Your payment has been processed successfully.</p>
         
         <!-- Transaction Details -->
-        <div class="space-y-4 animate-fade-in-up delay-500">
-          <div class="p-4 bg-gray-50 rounded-lg border border-gray-100 hover:shadow-md transition-shadow duration-300">
-            <div class="flex flex-col sm:flex-row sm:justify-between mb-2">
+        <div class="space-y-6 animate-fade-in-up delay-500">
+          <div class="p-4 space-y-6 bg-gray-50 rounded-lg border border-gray-100 hover:shadow-md transition-shadow duration-300">
+            <div class="flex flex-col  mb-2">
               <span class="text-gray-600 mb-1 sm:mb-0">Transaction ID:</span>
               <span class="font-medium break-all">{{ transactionId }}</span>
             </div>
@@ -49,7 +49,7 @@
           
           <!-- Action Buttons -->
           <div class="flex flex-col space-y-3 animate-fade-in-up delay-700">
-            <button 
+            <!-- <button 
               @click="viewDetails"
               class="w-full py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
             >
@@ -57,7 +57,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
               </svg>
-            </button>
+            </button> -->
             
             <button 
               @click="goHome"
@@ -69,7 +69,7 @@
               <span>Return to Home</span>
             </button>
             
-            <button 
+            <!-- <button 
               @click="downloadReceipt"
               class="w-full py-3 border border-emerald-200 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-all duration-300 flex items-center justify-center"
             >
@@ -77,7 +77,7 @@
                 <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
               </svg>
               <span>Download Receipt</span>
-            </button>
+            </button> -->
           </div>
         </div>
         
@@ -94,7 +94,7 @@
         </div>
         
         <!-- Share Success -->
-        <div class="mt-6 pt-6 border-t border-gray-100 animate-fade-in-up delay-900">
+        <!-- <div class="mt-6 pt-6 border-t border-gray-100 animate-fade-in-up delay-900">
           <p class="text-center text-sm text-gray-500 mb-3">Share your success</p>
           <div class="flex justify-center space-x-4">
             <button class="social-button bg-blue-500 hover:bg-blue-600">
@@ -113,7 +113,7 @@
               </svg>
             </button>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     
@@ -188,6 +188,7 @@ const viewDetails = () => {
 };
 
 const goHome = () => {
+  window.location.href =  "/"
   router.push('/');
 };
 

@@ -1,6 +1,12 @@
 <template>
   <div>
-    <PromoSaleCTA :promosale="promosale" />
+    <div v-if="fetchingPromoSale" class="flex justify-center items-center py-20">
+      <div class="relative">
+        <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-200"></div>
+        <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"></div>
+      </div>
+    </div>
+    <PromoSaleCTA v-else :promosale="promosale" />
     <!-- Hero Section with animated image carousel and typewriter effect -->
     <section class="relative">
       <div class="grid grid-cols-1 md:grid-cols-2">
