@@ -15,9 +15,20 @@ export default defineNuxtConfig({
       isCustomElement: tag => tag === 'cursor-fx'
     }
   },
-  plugins: ["~/plugins/aos.client.ts"],
+  plugins: ["~/plugins/aos.client.ts", "~/plugins/firebase.client.ts"],
   css: ["/assets/css/main.css"],
   modules: ['@kevinmarrec/nuxt-pwa', "@nuxtjs/tailwindcss"],
+  runtimeConfig: {
+    public: {
+      firebaseApiKey: process.env.FIREBASE_API_KEY,
+      firebaseAuthDomain: process.env.FIREBASE_AUTH_DOMAIN,
+      firebaseProjectId: process.env.FIREBASE_PROJECT_ID,
+      firebaseStorageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+      firebaseMessagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+      firebaseAppId: process.env.FIREBASE_APP_ID,
+      apiBaseUrl: process.env.VITE_BASE_URL,
+    },
+  },
   pwa: {
     workbox: {
       enabled: true
@@ -134,7 +145,7 @@ export default defineNuxtConfig({
     }
   },
   server: {
-    port: 3030,
+    port: 3000,
     host: '0.0.0.0' // This makes the server accessible from all network interfaces
   },
 });

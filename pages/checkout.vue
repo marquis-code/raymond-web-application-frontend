@@ -606,7 +606,7 @@
       </div>
     </div>
 
-    <!-- Authentication Modal -->
+    <!-- Authentication Modal - FIXED -->
     <Transition name="modal">
       <div v-if="showAuthModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
@@ -618,8 +618,8 @@
           </button>
           
           <div v-if="authModalMode === 'check'">
-            <h2 class="text-2xl font-bold text-slate-800 mb-4">Welcome!</h2>
-            <p class="text-slate-600 mb-6">Sign in to track your orders and save your preferences, or continue as a guest.</p>
+            <h2 class="text-2xl font-bold text-center text-slate-800 mb-4">Welcome!</h2>
+            <p class="text-slate-600 text-center mb-6">Sign in to track your orders and save your preferences, or continue as a guest.</p>
             <div class="space-y-3">
               <button 
                 @click="authModalMode = 'signin'"
@@ -643,7 +643,12 @@
           </div>
           
           <div v-else-if="authModalMode === 'signin'">
-            <h2 class="text-2xl font-bold text-slate-800 mb-6">Sign In</h2>
+            <h2 class="text-2xl font-bold text-center text-slate-800 mb-6">Sign In</h2>
+
+            <div class="mb-4">
+              <SocialLoginButtons @callback="handleCallback" authType="login" />
+            </div>
+
             <form @submit.prevent="handleSignin" class="space-y-4">
               <div class="space-y-2">
                 <label for="signinEmail" class="block text-sm font-semibold text-slate-700">Email</label>
@@ -691,7 +696,10 @@
           </div>
           
           <div v-else-if="authModalMode === 'signup'">
-            <h2 class="text-2xl font-bold text-slate-800 mb-6">Create Account</h2>
+            <h2 class="text-2xl text-center font-bold text-slate-800 mb-6">Create Account</h2>
+            <div class="mb-4">
+              <SocialLoginButtons @callback="handleCallback" authType="signup" />
+            </div>
             <form @submit.prevent="handleSignup" class="space-y-4">
               <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-2">
@@ -817,10 +825,18 @@ import { useCustomToast } from '@/composables/core/useCustomToast'
 // Router
 const router = useRouter()
 const route = useRoute()
+
+// FIXED: Use reactive ref for modal visibility instead of localStorage check
 const showAuthModal = ref(false)
 
 // Toast notifications
 const { showToast } = useCustomToast()
+
+const handleCallback = (data: any) => {
+  if(data.success){
+    showAuthModal.value = false
+  }
+}
 
 // Cart store
 const { cart, removeFromCart, updateCartItemQuantity } = useCartStore()
@@ -850,7 +866,8 @@ const {
   setPaymentMethod,
   processPayment: storeProcessPayment,
   persistDeliveryDetails,
-  resetCheckout
+  resetCheckout,
+  initializeCheckout
 } = useCheckoutStore()
 
 // Shipping and Tax data
@@ -1047,7 +1064,7 @@ const subtotalAmount = computed(() => {
 
 // Available countries from shipping configs
 const availableCountries = computed(() => {
-  return shippingConfigs.value.filter(config => config.isActive)
+  return Array.isArray(shippingConfigs.value) && shippingConfigs?.value?.filter(config => config.isActive)
 })
 
 // Load shipping and tax configurations
@@ -1259,59 +1276,99 @@ const extractErrorMessage = (error: any): string => {
 // Process payment with updated total
 const processPayment = async () => {
   try {
-    // Update the checkout summary with current cart data
-    if (checkoutSummary) {
-      checkoutSummary.items = cartItems.value
-      checkoutSummary.subtotal = subtotalAmount.value
-      checkoutSummary.total = calculateTotal()
-      checkoutSummary.shipping = getShippingCost()
-      checkoutSummary.tax = getTaxAmount()
+    // First, ensure we have cart items
+    if (!cartItems.value || cartItems.value.length === 0) {
+      showToast({
+        title: "Error",
+        message: "Your cart is empty. Please add items before proceeding.",
+        toastType: "error",
+        duration: 3000
+      });
+      return;
+    }
+    
+    // Initialize checkout summary if it doesn't exist
+    if (!checkoutSummary || !checkoutSummary.items) {
+      // Create a new checkout summary with the current cart data
+      const summary = {
+        items: cartItems.value,
+        subtotal: subtotalAmount.value,
+        shipping: getShippingCost(),
+        tax: getTaxAmount(),
+        total: calculateTotal()
+      };
+      
+      // Initialize the checkout store with this data
+      initializeCheckout(summary);
+    } else {
+      // Update the checkout summary with current cart data
+      checkoutSummary.items = cartItems.value;
+      checkoutSummary.subtotal = subtotalAmount.value;
+      checkoutSummary.total = calculateTotal();
+      checkoutSummary.shipping = getShippingCost();
+      checkoutSummary.tax = getTaxAmount();
       
       // Add country info to checkout summary
       if (selectedCountryInfo.value) {
         checkoutSummary.country = {
           code: selectedCountryInfo.value.countryCode,
           name: selectedCountryInfo.value.countryName
-        }
+        };
       }
     }
     
     // Process the payment using the store method
     if (storeProcessPayment) {
-      const response = await storeProcessPayment()
+      const response = await storeProcessPayment();
+      console.log(response, 'store process payment');
       
       // Check if the response indicates success
       if (response && response.success) {
         // Only clear cart from localStorage on successful order
         if (process.client && localStorage) {
-          localStorage.removeItem(PERSISTENCE_KEYS.CART)
-          cartItems.value = []
+          localStorage.removeItem(PERSISTENCE_KEYS.CART);
+          cartItems.value = [];
         }
         
         // Clear all persisted checkout data on successful order
-        clearPersistedCheckoutData()
+        clearPersistedCheckoutData();
         
         // Clear query parameters on successful order
-        clearQueryParams()
+        clearQueryParams();
         
-        // Note: Success toast is already shown by the store
-        return response
+        return response;
       } else {
         // Payment failed - do NOT clear the cart or checkout data
-        console.error('Payment failed:', response)
+        console.error('Payment failed:', response);
         
-        // Note: Error toast is already shown by the store
-        throw new Error(response?.message || "Payment processing failed")
+        throw new Error(response?.message || "Payment processing failed");
       }
+    } else {
+      showToast({
+        title: "Error",
+        message: "Payment system is not available. Please refresh the page and try again.",
+        toastType: "error",
+        duration: 3000
+      });
+      throw new Error("Payment system not available");
     }
   } catch (error) {
-    console.error('Payment processing failed:', error)
+    console.error('Payment processing failed:', error);
     
-    // Do NOT clear the cart or checkout data on error
-    // The error toast is already handled by the store
-    throw error
+    // Extract error message
+    const errorMessage = extractErrorMessage(error);
+    
+    // Show error toast
+    showToast({
+      title: "Payment Failed",
+      message: errorMessage || "There was an error processing your payment. Please try again.",
+      toastType: "error",
+      duration: 5000
+    });
+    
+    throw error;
   }
-}
+};
 
 // Proceed as guest
 const proceedAsGuest = () => {
@@ -1321,7 +1378,7 @@ const proceedAsGuest = () => {
   }
 }
 
-// Close auth modal
+// FIXED: Close auth modal function
 const closeAuthModal = () => {
   showAuthModal.value = false
   authModalMode.value = 'check'
@@ -1645,12 +1702,13 @@ const handleImageError = (event: Event) => {
   }
 }
 
-// Check if user is logged in on page load
+// FIXED: Check if user is logged in on page load
 const checkUserAuth = () => {
   // Only show auth modal if user is not logged in and not in guest mode
   const isGuestMode = getItem ? getItem(PERSISTENCE_KEYS.GUEST_MODE) === 'true' : false
+  const hasToken = process.client && localStorage ? localStorage.getItem('token') : null
   
-  if (!isLoggedIn.value && !isGuestMode) {
+  if (!isLoggedIn.value && !isGuestMode && !hasToken) {
     showAuthModal.value = true
   }
 }
@@ -1762,9 +1820,15 @@ onMounted(async () => {
   }
   
   // Initialize checkout summary with current cart data
-  if (checkoutSummary && cartItems.value.length > 0) {
-    checkoutSummary.items = cartItems.value
-    checkoutSummary.subtotal = subtotalAmount.value
+  if (cartItems.value && cartItems.value.length > 0) {
+    const summary = {
+      items: cartItems.value,
+      subtotal: subtotalAmount.value,
+      shipping: getShippingCost(),
+      tax: getTaxAmount(),
+      total: calculateTotal()
+    };
+    initializeCheckout(summary);
   }
 })
 

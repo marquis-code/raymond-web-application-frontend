@@ -1,3 +1,453 @@
+// import { ref, reactive, computed } from "vue"
+// import { useFlutterwaveSDK } from "@/composables/modules/payment/useFlutterwave"
+// import { useRouter } from "vue-router"
+// import { useCreateOrder } from "@/composables/modules/orders/useCreateOrder"
+// import { useUpdateOrderStatus } from "@/composables/modules/orders/useUpdateOrderStatus"
+// import { useUser } from "@/composables/auth/user"
+// import { useLocalStorage } from "@/composables/useLocalStorage"
+// import { useCustomToast } from '@/composables/core/useCustomToast'
+
+// interface CartItem {
+//   id: number
+//   title: string
+//   image: string
+//   price: number
+//   quantity: number
+// }
+
+// interface CheckoutSummary {
+//   items: CartItem[]
+//   subtotal: number
+//   shipping: number
+//   total: number
+// }
+
+// interface DeliveryDetails {
+//   firstName: string
+//   lastName: string
+//   email: string
+//   phone: string
+//   address: string
+//   city: string
+//   state: string
+//   zipCode: string
+//   country: string
+// }
+
+// interface CardDetails {
+//   cardNumber: string
+//   cardName: string
+//   expiryDate: string
+//   cvv: string
+// }
+
+// // Backend DTO interfaces
+// interface OrderItemDto {
+//   product: string
+//   quantity: number
+// }
+
+// interface AddressDto {
+//   firstName: string
+//   lastName: string
+//   address: string
+//   city: string
+//   state: string
+//   country: string
+//   postalCode: string
+//   phone: string
+//   email: string
+// }
+
+// interface CreateOrderDto {
+//   items: OrderItemDto[]
+//   shippingAddress: AddressDto
+//   billingAddress: AddressDto
+//   notes?: string
+// }
+
+// type DeliveryMethod = "standard" | "express" | "pickup"
+// type PaymentMethod = "flutterwave" | "interswitch" | "manual"
+
+// // Default values
+// const defaultDeliveryDetails: DeliveryDetails = {
+//   firstName: "",
+//   lastName: "",
+//   email: "",
+//   phone: "",
+//   address: "",
+//   city: "",
+//   state: "",
+//   zipCode: "",
+//   country: "United States",
+// }
+
+// const defaultCardDetails: CardDetails = {
+//   cardNumber: "",
+//   cardName: "",
+//   expiryDate: "",
+//   cvv: "",
+// }
+
+// // Create reactive state
+// const checkoutStep = ref<number>(1)
+// const checkoutSummary = ref<CheckoutSummary | null>(null)
+// const deliveryDetails = reactive<DeliveryDetails>({ ...defaultDeliveryDetails })
+// const deliveryMethod = ref<DeliveryMethod>("standard")
+// const paymentMethod = ref<PaymentMethod>("flutterwave")
+// const cardDetails = reactive<CardDetails>({ ...defaultCardDetails })
+// const isProcessing = ref<boolean>(false)
+// const orderComplete = ref<boolean>(false)
+// const orderId = ref<string>("")
+// const exchangeRate = ref<number>(1)
+// const orderResponse = ref<any>(null)
+// const { loading: orderLoading, createOrder } = useCreateOrder()
+// const { loading, error, updateOrderStatus } = useUpdateOrderStatus()
+// const { showToast } = useCustomToast()
+
+// export function useCheckoutStore() {
+//   const router = useRouter()
+//   const { isLoggedIn, user } = useUser()
+//   const { setItem, getItem, removeItem: removeStorageItem } = useLocalStorage()
+
+//   // Initialize the Flutterwave SDK without passing any store data initially
+//   const { handlePayment, paymentForm, loading: paymentLoading, generateTxRef, updateUserData } = useFlutterwaveSDK()
+
+//   // Initialize checkout with cart data
+//   const initializeCheckout = (summary: CheckoutSummary) => {
+//     checkoutSummary.value = summary
+
+//     // Restore checkout step from localStorage if available
+//     const savedStep = getItem("checkout-step")
+//     if (savedStep) {
+//       checkoutStep.value = Number.parseInt(savedStep)
+//     } else {
+//       checkoutStep.value = 1
+//     }
+
+//     orderComplete.value = false
+//     orderResponse.value = null
+
+//     // Restore delivery details from localStorage if available
+//     const savedDeliveryDetails = getItem("checkout-delivery-details")
+//     if (savedDeliveryDetails) {
+//       try {
+//         const parsedDetails = JSON.parse(savedDeliveryDetails)
+//         Object.assign(deliveryDetails, parsedDetails)
+//       } catch (e) {
+//         console.error("Failed to parse saved delivery details", e)
+//       }
+//     } else if (isLoggedIn.value && user.value) {
+//       // Pre-fill with user data if logged in
+//       deliveryDetails.firstName = user.value.firstName || ""
+//       deliveryDetails.lastName = user.value.lastName || ""
+//       deliveryDetails.email = user.value.email || ""
+//       deliveryDetails.phone = user.value.phone || ""
+//     } else {
+//       // Reset form data if no saved data and not logged in
+//       Object.assign(deliveryDetails, defaultDeliveryDetails)
+//     }
+
+//     // Restore delivery method from localStorage if available
+//     const savedDeliveryMethod = getItem("checkout-delivery-method")
+//     if (savedDeliveryMethod && ["standard", "express", "pickup"].includes(savedDeliveryMethod)) {
+//       deliveryMethod.value = savedDeliveryMethod as DeliveryMethod
+//     } else {
+//       deliveryMethod.value = "standard"
+//     }
+
+//     // Restore payment method from localStorage if available
+//     const savedPaymentMethod = getItem("checkout-payment-method")
+//     if (savedPaymentMethod && ["flutterwave", "interswitch", "manual"].includes(savedPaymentMethod)) {
+//       paymentMethod.value = savedPaymentMethod as PaymentMethod
+//     } else {
+//       paymentMethod.value = "flutterwave"
+//     }
+
+//     Object.assign(cardDetails, defaultCardDetails)
+//   }
+
+//   // Move to next step with persistence
+//   const nextStep = () => {
+//     if (checkoutStep.value < 3) {
+//       checkoutStep.value++
+//       persistCheckoutStep()
+//     }
+//   }
+
+//   // Move to previous step with persistence
+//   const prevStep = () => {
+//     if (checkoutStep.value > 1) {
+//       checkoutStep.value--
+//       persistCheckoutStep()
+//     }
+//   }
+
+//   // Set delivery method with persistence
+//   const setDeliveryMethod = (method: DeliveryMethod) => {
+//     deliveryMethod.value = method
+//     setItem("checkout-delivery-method", method)
+//   }
+
+//   // Set payment method with persistence
+//   const setPaymentMethod = (method: PaymentMethod) => {
+//     paymentMethod.value = method
+//     setItem("checkout-payment-method", method)
+//   }
+
+//   // Persist checkout step to localStorage
+//   const persistCheckoutStep = () => {
+//     setItem("checkout-step", checkoutStep.value.toString())
+//   }
+
+//   // Persist delivery details to localStorage
+//   const persistDeliveryDetails = () => {
+//     setItem("checkout-delivery-details", JSON.stringify(deliveryDetails))
+//   }
+
+//   // Clear persisted checkout data
+//   const clearPersistedCheckoutData = () => {
+//     removeStorageItem("checkout-step")
+//     removeStorageItem("checkout-delivery-details")
+//     removeStorageItem("checkout-delivery-method")
+//     removeStorageItem("checkout-payment-method")
+//     removeStorageItem("checkout-guest-mode")
+//   }
+
+//   // Reset checkout state
+//   const resetCheckout = () => {
+//     checkoutStep.value = 1
+//     orderComplete.value = false
+//     orderResponse.value = null
+
+//     // Reset form data
+//     Object.assign(deliveryDetails, defaultDeliveryDetails)
+//     Object.assign(cardDetails, defaultCardDetails)
+//     deliveryMethod.value = "standard"
+//     paymentMethod.value = "flutterwave"
+
+//     // Clear persisted data
+//     clearPersistedCheckoutData()
+//   }
+
+//   // Prepare order data for API call
+//   const prepareOrderData = (): CreateOrderDto => {
+//     if (!checkoutSummary.value) {
+//       throw new Error("Checkout summary is not initialized")
+//     }
+
+//     // Persist delivery details before creating order
+//     persistDeliveryDetails()
+
+//     // Convert cart items to order items format
+//     const orderItems: OrderItemDto[] = checkoutSummary.value.items.map((item) => ({
+//       product: item.id.toString(),
+//       quantity: item.quantity,
+//     }))
+
+//     // Create address DTO from delivery details
+//     const addressDto: AddressDto = {
+//       firstName: deliveryDetails.firstName,
+//       lastName: deliveryDetails.lastName,
+//       address: deliveryDetails.address,
+//       city: deliveryDetails.city,
+//       state: deliveryDetails.state,
+//       country: deliveryDetails.country,
+//       postalCode: deliveryDetails.zipCode,
+//       phone: deliveryDetails.phone,
+//       email: deliveryDetails.email,
+//     }
+
+//     // For this implementation, we're using the same address for shipping and billing
+//     return {
+//       items: orderItems,
+//       shippingAddress: addressDto,
+//       billingAddress: addressDto,
+//       notes: `Delivery Method: ${deliveryMethod.value}, Payment Method: ${paymentMethod.value}`,
+//     }
+//   }
+
+//   // Process payment with Flutterwave
+//   const processFlutterwavePayment = async () => {
+//     if (!checkoutSummary.value) return
+
+//     isProcessing.value = true
+
+//     try {
+//       // First create the order in the backend
+//       const orderData = prepareOrderData()
+//       const res = (await createOrder(orderData)) as any
+//       console.log(res, "create order res")
+
+//       if (res.type !== "ERROR") {
+//         // Store the order response for later use
+//         orderResponse.value = res
+//         orderId.value = res?.data?.id || res?.data?._id || "INTL-ORD-" + Math.floor(Math.random() * 1000000)
+
+//         // Update user data in the Flutterwave SDK
+//         updateUserData({
+//           firstName: deliveryDetails.firstName,
+//           lastName: deliveryDetails.lastName,
+//           email: deliveryDetails.email,
+//           phone: deliveryDetails.phone,
+//         })
+
+//         // Set the payment amount in the Flutterwave form
+//         paymentForm.value.amount = res?.data?.total
+
+//         // Use the created order ID as transaction reference
+//         paymentForm.value.tx_ref = orderId.value
+
+//         // Call the Flutterwave payment handler
+//         await handlePayment(res?.data)
+
+//         // On successful payment, clear persisted checkout data
+//         if (orderComplete.value) {
+//           clearPersistedCheckoutData()
+//         }
+//       } else {
+//         showToast({
+//           title: "Error",
+//           message: response?.data?.message,
+//           toastType: "warning",
+//           duration: 3000
+//         });
+//       }
+//     } catch (error) {
+//       console.error("Order creation or payment initialization failed", error)
+//       isProcessing.value = false
+//     } finally {
+//       isProcessing.value = false
+//     }
+//   }
+
+//   // Process payment with Interswitch
+//   const processInterswitchPayment = async () => {
+//     if (!checkoutSummary.value) return
+
+//     isProcessing.value = true
+
+//     try {
+//       // First create the order in the backend
+//       const orderData = prepareOrderData()
+//       const res = (await createOrder(orderData)) as any
+
+//       if (res.type !== "ERROR") {
+//         // Store the order response for later use
+//         orderResponse.value = res
+//         orderId.value = res.id || res._id || "INTL-ORD-" + Math.floor(Math.random() * 1000000)
+
+//         console.warn("Interswitch payment not configured for international transactions")
+
+//         isProcessing.value = false
+
+//         // On successful payment, clear persisted checkout data
+//         if (orderComplete.value) {
+//           clearPersistedCheckoutData()
+//         }
+
+//         return
+//       }
+//     } catch (error) {
+//       console.error("Order creation or payment failed", error)
+//       isProcessing.value = false
+//     }
+//   }
+
+//   // Process manual payment
+//   const processManualPayment = async () => {
+//     if (!checkoutSummary.value) return
+
+//     isProcessing.value = true
+
+//     try {
+//       // First create the order in the backend
+//       const orderData = prepareOrderData()
+//       const res = (await createOrder(orderData)) as any
+
+//       if (res.type !== "ERROR") {
+//         // Store the order response for later use
+//         orderResponse.value = res
+//         orderId.value = res.id || res._id || "INTL-ORD-" + Math.floor(Math.random() * 1000000)
+
+//         // Simulate payment processing
+//         await new Promise((resolve) => setTimeout(resolve, 2000))
+
+//         orderComplete.value = true
+
+//         // On successful payment, clear persisted checkout data
+//         clearPersistedCheckoutData()
+//       }
+//     } catch (error) {
+//       console.error("Order creation or payment failed", error)
+//     } finally {
+//       isProcessing.value = false
+//     }
+//   }
+
+//   // Process payment based on selected method
+//   const processPayment = async () => {
+//     switch (paymentMethod.value) {
+//       case "flutterwave":
+//         return processFlutterwavePayment()
+//       case "interswitch":
+//         return processInterswitchPayment()
+//       case "manual":
+//         return processManualPayment()
+//     }
+//   }
+
+//   // Check payment status - can be called after redirect from Flutterwave
+//   const checkPaymentStatus = (flw_ref: string) => {
+//     // In a real implementation, you would verify the payment with your backend
+//     // using the order ID (orderId.value) and flw_ref
+//     if (flw_ref && orderResponse.value) {
+//       orderComplete.value = true
+//       isProcessing.value = false
+
+//       // Clear persisted checkout data on successful payment
+//       clearPersistedCheckoutData()
+
+//       return true
+//     }
+//     return false
+//   }
+
+//   // Watch for changes in delivery details to persist them
+//   const watchDeliveryDetails = () => {
+//     // This would be called in a component using this composable
+//     // We can't use watch directly in the composable function
+//     persistDeliveryDetails()
+//   }
+
+//   return {
+//     checkoutStep,
+//     checkoutSummary,
+//     deliveryDetails,
+//     deliveryMethod,
+//     paymentMethod,
+//     cardDetails,
+//     isProcessing,
+//     orderComplete,
+//     orderId,
+//     orderResponse,
+//     loading: computed(() => orderLoading.value || paymentLoading.value),
+//     initializeCheckout,
+//     nextStep,
+//     prevStep,
+//     setDeliveryMethod,
+//     setPaymentMethod,
+//     processPayment,
+//     checkPaymentStatus,
+//     persistDeliveryDetails,
+//     watchDeliveryDetails,
+//     resetCheckout,
+//   }
+// }
+
+
+"use client"
+
 import { ref, reactive, computed } from "vue"
 import { useFlutterwaveSDK } from "@/composables/modules/payment/useFlutterwave"
 import { useRouter } from "vue-router"
@@ -5,7 +455,7 @@ import { useCreateOrder } from "@/composables/modules/orders/useCreateOrder"
 import { useUpdateOrderStatus } from "@/composables/modules/orders/useUpdateOrderStatus"
 import { useUser } from "@/composables/auth/user"
 import { useLocalStorage } from "@/composables/useLocalStorage"
-import { useCustomToast } from '@/composables/core/useCustomToast'
+import { useCustomToast } from "@/composables/core/useCustomToast"
 
 interface CartItem {
   id: number
@@ -20,6 +470,11 @@ interface CheckoutSummary {
   subtotal: number
   shipping: number
   total: number
+  tax?: number
+  country?: {
+    code: string
+    name: string
+  }
 }
 
 interface DeliveryDetails {
@@ -91,7 +546,14 @@ const defaultCardDetails: CardDetails = {
 
 // Create reactive state
 const checkoutStep = ref<number>(1)
-const checkoutSummary = ref<CheckoutSummary | null>(null)
+// Initialize with empty array to prevent undefined errors
+const checkoutSummary = ref<CheckoutSummary>({
+  items: [],
+  subtotal: 0,
+  shipping: 0,
+  total: 0,
+  tax: 0,
+})
 const deliveryDetails = reactive<DeliveryDetails>({ ...defaultDeliveryDetails })
 const deliveryMethod = ref<DeliveryMethod>("standard")
 const paymentMethod = ref<PaymentMethod>("flutterwave")
@@ -105,6 +567,9 @@ const { loading: orderLoading, createOrder } = useCreateOrder()
 const { loading, error, updateOrderStatus } = useUpdateOrderStatus()
 const { showToast } = useCustomToast()
 
+// Flag to track if store has been initialized
+const isInitialized = ref<boolean>(false)
+
 export function useCheckoutStore() {
   const router = useRouter()
   const { isLoggedIn, user } = useUser()
@@ -115,7 +580,10 @@ export function useCheckoutStore() {
 
   // Initialize checkout with cart data
   const initializeCheckout = (summary: CheckoutSummary) => {
-    checkoutSummary.value = summary
+    // Only update if we have valid data
+    if (summary && summary.items && Array.isArray(summary.items)) {
+      checkoutSummary.value = summary
+    }
 
     // Restore checkout step from localStorage if available
     const savedStep = getItem("checkout-step")
@@ -165,6 +633,9 @@ export function useCheckoutStore() {
     }
 
     Object.assign(cardDetails, defaultCardDetails)
+
+    // Mark store as initialized
+    isInitialized.value = true
   }
 
   // Move to next step with persistence
@@ -228,12 +699,15 @@ export function useCheckoutStore() {
 
     // Clear persisted data
     clearPersistedCheckoutData()
+
+    // Reset initialization flag
+    isInitialized.value = false
   }
 
   // Prepare order data for API call
   const prepareOrderData = (): CreateOrderDto => {
-    if (!checkoutSummary.value) {
-      throw new Error("Checkout summary is not initialized")
+    if (!checkoutSummary.value || !checkoutSummary.value.items || !Array.isArray(checkoutSummary.value.items)) {
+      throw new Error("Checkout summary is not properly initialized")
     }
 
     // Persist delivery details before creating order
@@ -269,7 +743,15 @@ export function useCheckoutStore() {
 
   // Process payment with Flutterwave
   const processFlutterwavePayment = async () => {
-    if (!checkoutSummary.value) return
+    if (!checkoutSummary.value || !checkoutSummary.value.items) {
+      showToast({
+        title: "Error",
+        message: "Your cart data could not be loaded. Please try refreshing the page.",
+        toastType: "error",
+        duration: 3000,
+      })
+      return { success: false, message: "Cart data not available" }
+    }
 
     isProcessing.value = true
 
@@ -279,7 +761,7 @@ export function useCheckoutStore() {
       const res = (await createOrder(orderData)) as any
       console.log(res, "create order res")
 
-      if (res.type !== "ERROR") {
+      if (res && res.type !== "ERROR") {
         // Store the order response for later use
         orderResponse.value = res
         orderId.value = res?.data?.id || res?.data?._id || "INTL-ORD-" + Math.floor(Math.random() * 1000000)
@@ -305,17 +787,31 @@ export function useCheckoutStore() {
         if (orderComplete.value) {
           clearPersistedCheckoutData()
         }
+
+        return { success: true }
       } else {
+        const errorMessage = res?.data?.message || "Order creation failed"
         showToast({
           title: "Error",
-          message: response?.data?.message,
+          message: errorMessage,
           toastType: "warning",
-          duration: 3000
-        });
+          duration: 3000,
+        })
+
+        return { success: false, message: errorMessage }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Order creation or payment initialization failed", error)
-      isProcessing.value = false
+
+      const errorMessage = error?.message || "Payment processing failed"
+      showToast({
+        title: "Payment Error",
+        message: errorMessage,
+        toastType: "error",
+        duration: 3000,
+      })
+
+      return { success: false, message: errorMessage }
     } finally {
       isProcessing.value = false
     }
@@ -323,7 +819,15 @@ export function useCheckoutStore() {
 
   // Process payment with Interswitch
   const processInterswitchPayment = async () => {
-    if (!checkoutSummary.value) return
+    if (!checkoutSummary.value || !checkoutSummary.value.items) {
+      showToast({
+        title: "Error",
+        message: "Your cart data could not be loaded. Please try refreshing the page.",
+        toastType: "error",
+        duration: 3000,
+      })
+      return { success: false, message: "Cart data not available" }
+    }
 
     isProcessing.value = true
 
@@ -332,31 +836,60 @@ export function useCheckoutStore() {
       const orderData = prepareOrderData()
       const res = (await createOrder(orderData)) as any
 
-      if (res.type !== "ERROR") {
+      if (res && res.type !== "ERROR") {
         // Store the order response for later use
         orderResponse.value = res
         orderId.value = res.id || res._id || "INTL-ORD-" + Math.floor(Math.random() * 1000000)
 
         console.warn("Interswitch payment not configured for international transactions")
 
-        isProcessing.value = false
+        showToast({
+          title: "Payment Method Unavailable",
+          message: "Interswitch payment is not currently available for international transactions.",
+          toastType: "warning",
+          duration: 3000,
+        })
 
-        // On successful payment, clear persisted checkout data
-        if (orderComplete.value) {
-          clearPersistedCheckoutData()
-        }
+        return { success: false, message: "Payment method unavailable" }
+      } else {
+        const errorMessage = res?.data?.message || "Order creation failed"
+        showToast({
+          title: "Error",
+          message: errorMessage,
+          toastType: "warning",
+          duration: 3000,
+        })
 
-        return
+        return { success: false, message: errorMessage }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Order creation or payment failed", error)
+
+      const errorMessage = error?.message || "Payment processing failed"
+      showToast({
+        title: "Payment Error",
+        message: errorMessage,
+        toastType: "error",
+        duration: 3000,
+      })
+
+      return { success: false, message: errorMessage }
+    } finally {
       isProcessing.value = false
     }
   }
 
   // Process manual payment
   const processManualPayment = async () => {
-    if (!checkoutSummary.value) return
+    if (!checkoutSummary.value || !checkoutSummary.value.items) {
+      showToast({
+        title: "Error",
+        message: "Your cart data could not be loaded. Please try refreshing the page.",
+        toastType: "error",
+        duration: 3000,
+      })
+      return { success: false, message: "Cart data not available" }
+    }
 
     isProcessing.value = true
 
@@ -365,7 +898,7 @@ export function useCheckoutStore() {
       const orderData = prepareOrderData()
       const res = (await createOrder(orderData)) as any
 
-      if (res.type !== "ERROR") {
+      if (res && res.type !== "ERROR") {
         // Store the order response for later use
         orderResponse.value = res
         orderId.value = res.id || res._id || "INTL-ORD-" + Math.floor(Math.random() * 1000000)
@@ -377,9 +910,38 @@ export function useCheckoutStore() {
 
         // On successful payment, clear persisted checkout data
         clearPersistedCheckoutData()
+
+        showToast({
+          title: "Payment Successful",
+          message: "Your order has been placed successfully!",
+          toastType: "success",
+          duration: 3000,
+        })
+
+        return { success: true }
+      } else {
+        const errorMessage = res?.data?.message || "Order creation failed"
+        showToast({
+          title: "Error",
+          message: errorMessage,
+          toastType: "warning",
+          duration: 3000,
+        })
+
+        return { success: false, message: errorMessage }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Order creation or payment failed", error)
+
+      const errorMessage = error?.message || "Payment processing failed"
+      showToast({
+        title: "Payment Error",
+        message: errorMessage,
+        toastType: "error",
+        duration: 3000,
+      })
+
+      return { success: false, message: errorMessage }
     } finally {
       isProcessing.value = false
     }
@@ -387,6 +949,17 @@ export function useCheckoutStore() {
 
   // Process payment based on selected method
   const processPayment = async () => {
+    // Check if store is initialized
+    if (!isInitialized.value) {
+      showToast({
+        title: "Error",
+        message: "Checkout data is not properly initialized. Please refresh the page and try again.",
+        toastType: "error",
+        duration: 3000,
+      })
+      return { success: false, message: "Checkout not initialized" }
+    }
+
     switch (paymentMethod.value) {
       case "flutterwave":
         return processFlutterwavePayment()
@@ -394,6 +967,14 @@ export function useCheckoutStore() {
         return processInterswitchPayment()
       case "manual":
         return processManualPayment()
+      default:
+        showToast({
+          title: "Error",
+          message: "Invalid payment method selected",
+          toastType: "error",
+          duration: 3000,
+        })
+        return { success: false, message: "Invalid payment method" }
     }
   }
 
@@ -431,6 +1012,7 @@ export function useCheckoutStore() {
     orderComplete,
     orderId,
     orderResponse,
+    isInitialized,
     loading: computed(() => orderLoading.value || paymentLoading.value),
     initializeCheckout,
     nextStep,

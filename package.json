@@ -5,11 +5,11 @@
     "url": ""
   },
   "scripts": {
-    "dev": "nuxt dev --port 3030",
+    "dev": "nuxt dev --port 3000",
     "build": "nuxt build",
     "start": "node .output/server/index.mjs",
     "generate": "nuxt generate",
-    "preview": "nuxt preview --port 3030",
+    "preview": "nuxt preview --port 3000",
     "postbuild": "echo 'Build completed successfully'"
   },
   "devDependencies": {
@@ -26,10 +26,12 @@
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/tailwindcss": "^6.12.2",
     "@vueuse/core": "^12.2.0",
+    "@vueuse/firebase": "^13.3.0",
     "@vueuse/motion": "^3.0.3",
     "aos": "^3.0.0-beta.6",
     "axios": "^1.7.9",
     "click-outside-vue3": "^4.0.1",
+    "firebase": "^11.9.0",
     "flutterwave-vue3": "^0.0.2",
     "gsap": "^3.13.0",
     "lucide-vue-next": "^0.503.0",

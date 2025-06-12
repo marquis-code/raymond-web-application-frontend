@@ -119,11 +119,11 @@
             <span>Subtotal</span>
             <span>${{ formatPrice(subtotal) }}</span>
           </div>
-          <div class="flex justify-between text-gray-600">
+          <!-- <div class="flex justify-between text-gray-600">
             <span>Shipping</span>
             <span v-if="subtotal > 100" class="text-green-600 font-medium">Free</span>
             <span v-else>${{ formatPrice(10) }}</span>
-          </div>
+          </div> -->
           <div class="flex justify-between font-bold text-gray-900 pt-3 border-t border-gray-100">
             <span>Total</span>
             <span>${{ formatPrice(total) }}</span>

@@ -133,6 +133,7 @@
 import { ref, computed, onMounted, reactive } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 // import { definePageMeta, defineNuxtConfig } from '#app'
+import { useUser } from "@/composables/auth/user"
 
 const router = useRouter();
 const route = useRoute();
@@ -140,8 +141,9 @@ const route = useRoute();
 // Extract transaction details from URL query parameters
 const transactionId = ref(route.query.tranxId as string || '');
 const amount = ref(parseFloat(route.query.amount as string || '0'));
+const { user } = useUser()
 const date = ref(new Date());
-const email = ref('user@example.com');
+const email = ref(user.value.email);
 
 // Format date
 const formattedDate = computed(() => {
