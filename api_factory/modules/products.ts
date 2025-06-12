@@ -11,7 +11,7 @@ interface PaginationDTO {
 export const product_api = {
   $_fetch_products() {
     // return GATEWAY_ENDPOINT.get(`/products?page=${metadata.page}&limit=${metadata.limit}&sort=${metadata.sort}&order=${metadata.order}&search=${metadata.search}`);
-    return GATEWAY_ENDPOINT.get('/products');
+    return GATEWAY_ENDPOINT.get(`/products?page=1&limit=100000000`);
   },
   $_fetch_featured_products(metadata: { limit: number }) {
     return GATEWAY_ENDPOINT.get(`/products/featured?limit=${metadata.limit}`);

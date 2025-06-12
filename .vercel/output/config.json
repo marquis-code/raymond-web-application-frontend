@@ -1,29 +1,29 @@
 {
   "version": 3,
   "overrides": {
-    "login/index.html": {
-      "path": "login"
+    "about/index.html": {
+      "path": "about"
+    },
+    "shop/index.html": {
+      "path": "shop"
     },
     "terms/index.html": {
       "path": "terms"
     },
-    "about/index.html": {
-      "path": "about"
-    },
-    "signup/index.html": {
-      "path": "signup"
-    },
-    "shopss/index.html": {
-      "path": "shopss"
-    },
-    "contact/index.html": {
-      "path": "contact"
+    "login/index.html": {
+      "path": "login"
     },
     "index1/index.html": {
       "path": "index1"
     },
-    "prints/index.html": {
-      "path": "prints"
+    "shopss/index.html": {
+      "path": "shopss"
+    },
+    "signup/index.html": {
+      "path": "signup"
+    },
+    "contact/index.html": {
+      "path": "contact"
     },
     "callback/index.html": {
       "path": "callback"
@@ -31,38 +31,38 @@
     "checkout/index.html": {
       "path": "checkout"
     },
-    "shop/index.html": {
-      "path": "shop"
-    },
-    "academy/index.html": {
-      "path": "academy"
-    },
-    "refund-policy/index.html": {
-      "path": "refund-policy"
-    },
-    "order-success/index.html": {
-      "path": "order-success"
-    },
-    "artworks/indexa/index.html": {
-      "path": "artworks/indexa"
-    },
-    "artworks/index.html": {
-      "path": "artworks"
-    },
-    "privacy-policy/index.html": {
-      "path": "privacy-policy"
-    },
     "commission/index.html": {
       "path": "commission"
     },
     "contact-us/index.html": {
       "path": "contact-us"
     },
-    "index.html": {
-      "path": ""
+    "academy/index.html": {
+      "path": "academy"
+    },
+    "order-success/index.html": {
+      "path": "order-success"
+    },
+    "artworks/index.html": {
+      "path": "artworks"
+    },
+    "prints/index.html": {
+      "path": "prints"
+    },
+    "refund-policy/index.html": {
+      "path": "refund-policy"
+    },
+    "privacy-policy/index.html": {
+      "path": "privacy-policy"
     },
     "shipping-policy/index.html": {
       "path": "shipping-policy"
+    },
+    "artworks/indexa/index.html": {
+      "path": "artworks/indexa"
+    },
+    "index.html": {
+      "path": ""
     }
   },
   "routes": [
