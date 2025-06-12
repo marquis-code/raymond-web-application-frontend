@@ -1,12 +1,31 @@
 <template>
   <div>
-    <div v-if="fetchingPromoSale" class="flex justify-center items-center py-20">
+    <!-- <div v-if="fetchingPromoSale" class="flex justify-center items-center py-20">
       <div class="relative">
         <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-200"></div>
         <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"></div>
       </div>
-    </div>
-    <PromoSaleCTA v-else :promosale="promosale" />
+    </div> -->
+    <div v-if="fetchingPromoSale" class="flex items-center justify-center lg:py-44">
+        <div class="relative">
+          <!-- Main Loader -->
+          <div class="w-16 h-16 border-4 border-gray-200 border-t-pink-500 rounded-full animate-spin"></div>
+          
+          <!-- Orbiting Dots -->
+          <div class="absolute inset-0 animate-orbit-loader">
+            <div class="absolute top-0 left-1/2 w-3 h-3 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full transform -translate-x-1/2 animate-pulse"></div>
+          </div>
+          <div class="absolute inset-0 animate-orbit-loader-reverse">
+            <div class="absolute bottom-0 left-1/2 w-2 h-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transform -translate-x-1/2 animate-pulse"></div>
+          </div>
+          
+          <!-- Loading Text -->
+          <!-- <div class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-gray-500 text-sm font-medium animate-pulse">
+            Loading amazing offers...
+          </div> -->
+        </div>
+      </div>
+    <PromoSaleCTA class="mt-16" v-else :promosale="promosale" :loading="fetchingPromoSale" />
     <!-- Hero Section with animated image carousel and typewriter effect -->
     <section class="relative">
       <div class="grid grid-cols-1 md:grid-cols-2">

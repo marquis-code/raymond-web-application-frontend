@@ -10,7 +10,7 @@
           Immerse yourself in a curated collection of contemporary art that captures raw emotion and technical excellence.
         </p>
         <NuxtLink 
-          to="/contact-us" 
+          to="/contact" 
           class="inline-flex items-center justify-center px-10 py-4 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 transition-all duration-500 hover:scale-105 hover:shadow-xl transform"
         >
           <span class="mr-2">EXPLORE COLLECTION</span>
