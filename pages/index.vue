@@ -269,7 +269,7 @@
 import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
 import { useRouter } from "vue-router";
 import hero1 from "@/assets/img/commission-art1.jpg";
-import hero2 from "@/assets/img/snap.jpg";
+import hero2 from "@/assets/img/raymond-hero.png";
 import { useFetchProducts } from "@/composables/modules/products/useFetchProducts";
 import { useFetchPromosale } from "@/composables/modules/promosale/useFetchPromosale";
 
@@ -282,7 +282,7 @@ import PromoSaleCTA from "../components/PromoSaleCTA.vue";
 const router = useRouter();
 
 // Hero section image carousel
-const heroImages = [hero1, hero2];
+const heroImages = [hero2, hero1];
 const currentImageIndex = ref(0);
 let imageInterval: number | null = null;
 

@@ -312,7 +312,7 @@
                   </div>
                 </div>
                 
-                <div 
+                <!-- <div 
                   class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
                   :class="deliveryMethod === 'pickup' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
                   @click="handleDeliveryMethodChange('pickup')"
@@ -330,20 +330,20 @@
                       <p class="text-sm text-slate-600">Pickup at our gallery location</p>
                     </div>
                   </div>
-                </div>
+                </div> -->
               </div>
               
-              <div class="flex gap-4">
+              <div class="flex gap-2">
                 <button 
                   @click="handlePrevStep"
-                  class="flex-1 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-all duration-300 font-medium flex items-center justify-center"
+                  class="flex-1 py-3 border-2 text-sm border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-all duration-300 font-medium flex items-center justify-center"
                 >
                   <ArrowLeft class="w-4 h-4 mr-2" />
                   Back
                 </button>
                 <button 
                   @click="handleNextStep"
-                  class="flex-1 py-3 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium flex items-center justify-center"
+                  class="flex-1 py-3 px-3 text-sm bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium flex items-center justify-center"
                 >
                   Continue to Payment
                   <ArrowRight class="w-4 h-4 ml-2" />
@@ -381,7 +381,7 @@
                   </div>
                 </div>
                 
-                <div 
+                <!-- <div 
                   class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
                   :class="paymentMethod === 'manual' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
                   @click="handlePaymentMethodChange('manual')"
@@ -404,7 +404,7 @@
                       </div>
                     </div>
                   </div>
-                </div>
+                </div> -->
               </div>
               
               <!-- Card Details Form -->

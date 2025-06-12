@@ -46,7 +46,7 @@
           </div>
         </div>
         
-        <div 
+        <!-- <div 
           class="border rounded-lg p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
           :class="{ 'border-black bg-gray-50 shadow-sm': localDeliveryMethod === 'pickup', 'border-gray-200': localDeliveryMethod !== 'pickup' }"
           @click="setMethod('pickup')"
@@ -64,20 +64,20 @@
               <p class="text-sm text-gray-600">Pickup at our gallery location</p>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
       
       <div class="flex gap-4">
         <button 
           @click="$emit('prev')"
-          class="flex-1 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 flex items-center justify-center"
+          class="flex-1 py-3 text-sm border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 flex items-center justify-center"
         >
           <ArrowLeft class="w-4 h-4 mr-2" />
           Back
         </button>
         <button 
           @click="$emit('next')"
-          class="flex-1 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
+          class="flex-1 py-3 px-3 text-sm bg-black text-white rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 flex items-center justify-center"
         >
           Continue to Payment
           <ArrowRight class="w-4 h-4 ml-2" />

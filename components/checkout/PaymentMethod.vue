@@ -27,7 +27,7 @@
           </div>
         </div>
         
-        <div 
+        <!-- <div 
           class="border rounded-lg p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
           :class="{ 'border-black bg-gray-50 shadow-sm': localPaymentMethod === 'manual', 'border-gray-200': localPaymentMethod !== 'manual' }"
           @click="setPaymentMethod('manual')"
@@ -50,7 +50,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
       
       <!-- Manual Payment Form -->
