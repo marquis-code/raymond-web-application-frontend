@@ -12,13 +12,13 @@
           <ShoppingBag class="w-12 h-12 text-slate-400" />
         </div>
         <h2 class="text-2xl font-bold text-slate-800 mb-4">Your cart is empty</h2>
-        <p class="text-slate-600 mb-8">Add some amazing artwork to your cart to continue with checkout.</p>
+        <p class="text-slate-600 mb-8">Add some amazing products to your cart to continue with checkout.</p>
         <NuxtLink 
           to="/artworks" 
           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
         >
           <ArrowLeft class="w-4 h-4 mr-2" />
-          Browse Artwork
+          Browse Products
         </NuxtLink>
       </div>
     </div>
@@ -40,8 +40,16 @@
             <span class="text-slate-600 font-medium">Order Number</span>
             <span class="font-bold text-slate-800">#{{ orderId || generateOrderNumber() }}</span>
           </div>
+          <div class="flex justify-between items-center mb-3">
+            <span class="text-slate-600 font-medium">Payment Type</span>
+            <span class="font-bold text-slate-800">{{ selectedPaymentType === 'installment' ? 'Installment Plan' : 'Full Payment' }}</span>
+          </div>
+          <div v-if="selectedPaymentType === 'installment'" class="flex justify-between items-center mb-3">
+            <span class="text-slate-600 font-medium">Down Payment</span>
+            <span class="font-bold text-emerald-600">${{ formatPrice(installmentSummary.downPayment) }}</span>
+          </div>
           <div class="flex justify-between items-center">
-            <span class="text-slate-600 font-medium">Total Amount</span>
+            <span class="text-slate-600 font-medium">{{ selectedPaymentType === 'installment' ? 'Total Order Value' : 'Total Amount' }}</span>
             <span class="font-bold text-xl text-slate-800">${{ formatPrice(calculateTotal()) }}</span>
           </div>
         </div>
@@ -311,26 +319,6 @@
                     </div>
                   </div>
                 </div>
-                
-                <!-- <div 
-                  class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
-                  :class="deliveryMethod === 'pickup' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
-                  @click="handleDeliveryMethodChange('pickup')"
-                >
-                  <div class="flex items-center">
-                    <div class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-all duration-200"
-                         :class="deliveryMethod === 'pickup' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
-                      <div v-if="deliveryMethod === 'pickup'" class="w-3 h-3 rounded-full bg-white"></div>
-                    </div>
-                    <div class="flex-1">
-                      <div class="flex justify-between items-center mb-1">
-                        <span class="font-semibold text-slate-800">Store Pickup</span>
-                        <span class="font-bold text-slate-800">Free</span>
-                      </div>
-                      <p class="text-sm text-slate-600">Pickup at our gallery location</p>
-                    </div>
-                  </div>
-                </div> -->
               </div>
               
               <div class="flex gap-2">
@@ -357,122 +345,278 @@
                 <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
                   <CreditCard class="w-5 h-5 text-slate-600" />
                 </div>
-                <h2 class="text-xl lg:text-2xl font-bold text-slate-800">Payment Method</h2>
+                <h2 class="text-xl lg:text-2xl font-bold text-slate-800">Payment Options</h2>
               </div>
-              
-              <div class="space-y-4 mb-8">
-                <div 
-                  class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
-                  :class="paymentMethod === 'flutterwave' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
-                  @click="handlePaymentMethodChange('flutterwave')"
-                >
-                  <div class="flex items-center">
-                    <div class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-all duration-200"
-                         :class="paymentMethod === 'flutterwave' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
-                      <div v-if="paymentMethod === 'flutterwave'" class="w-3 h-3 rounded-full bg-white"></div>
+
+              <!-- Payment Type Selection -->
+              <div class="mb-8">
+                <h3 class="text-lg font-semibold text-slate-800 mb-4">Choose Payment Type</h3>
+                <div class="space-y-4">
+                  <!-- Full Payment Option -->
+                  <div 
+                    class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
+                    :class="selectedPaymentType === 'full' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
+                    @click="handlePaymentTypeChange('full')"
+                  >
+                    <div class="flex items-center">
+                      <div class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-all duration-200"
+                           :class="selectedPaymentType === 'full' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
+                        <div v-if="selectedPaymentType === 'full'" class="w-3 h-3 rounded-full bg-white"></div>
+                      </div>
+                      <div class="flex-1">
+                        <div class="flex justify-between items-center mb-1">
+                          <span class="font-semibold text-slate-800">Pay Full Amount</span>
+                          <span class="font-bold text-emerald-600">${{ formatPrice(calculateTotal()) }}</span>
+                        </div>
+                        <p class="text-sm text-slate-600">Complete payment now with no additional fees</p>
+                      </div>
+                      <div class="w-10 h-10 bg-emerald-100 rounded-md flex items-center justify-center ml-4">
+                        <CreditCard class="w-6 h-6 text-emerald-600" />
+                      </div>
                     </div>
-                    <div class="flex-1">
-                      <span class="font-semibold text-slate-800">Pay with Flutterwave</span>
-                      <p class="text-sm text-slate-600">Secure payment via Flutterwave</p>
+                  </div>
+
+                  <!-- Installment Payment Option -->
+                  <div 
+                    v-if="hasInstallmentOptions"
+                    class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
+                    :class="selectedPaymentType === 'installment' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
+                    @click="handlePaymentTypeChange('installment')"
+                  >
+                    <div class="flex items-center">
+                      <div class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-all duration-200"
+                           :class="selectedPaymentType === 'installment' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
+                        <div v-if="selectedPaymentType === 'installment'" class="w-3 h-3 rounded-full bg-white"></div>
+                      </div>
+                      <div class="flex-1">
+                        <div class="flex justify-between items-center mb-1">
+                          <span class="font-semibold text-slate-800">Installment Plan</span>
+                          <span class="font-bold text-blue-600">From ${{ formatPrice(getMinimumInstallmentAmount()) }}/month</span>
+                        </div>
+                        <p class="text-sm text-slate-600">Split your payment into manageable installments</p>
+                      </div>
+                      <div class="w-10 h-10 bg-blue-100 rounded-md flex items-center justify-center ml-4">
+                        <Calendar class="w-6 h-6 text-blue-600" />
+                      </div>
                     </div>
-                    <div class="w-10 h-10 bg-slate-100 rounded-md flex items-center justify-center">
-                      <CreditCard class="w-6 h-6 text-slate-600" />
+                  </div>
+
+                  <!-- Debug Info for Installment Options -->
+                  <div v-if="!hasInstallmentOptions" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <div class="flex items-center">
+                      <HelpCircle class="w-5 h-5 text-yellow-600 mr-2" />
+                      <span class="text-sm text-yellow-800">No installment options available for current cart items</span>
+                    </div>
+                    <div class="mt-2 text-xs text-yellow-700">
+                      <p>Cart items with installment options: {{ cartItemsWithInstallments.length }}</p>
+                      <p>Total cart items: {{ cartItems.length }}</p>
                     </div>
                   </div>
                 </div>
-                
-                <!-- <div 
-                  class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
-                  :class="paymentMethod === 'manual' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
-                  @click="handlePaymentMethodChange('manual')"
-                >
-                  <div class="flex items-center">
-                    <div class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-all duration-200"
-                         :class="paymentMethod === 'manual' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
-                      <div v-if="paymentMethod === 'manual'" class="w-3 h-3 rounded-full bg-white"></div>
-                    </div>
-                    <div class="flex-1">
-                      <span class="font-semibold text-slate-800">Credit/Debit Card</span>
-                      <p class="text-sm text-slate-600">Pay directly with your card</p>
-                    </div>
-                    <div class="flex space-x-3">
-                      <div class="w-8 h-6 bg-slate-100 rounded flex items-center justify-center">
-                        <span class="text-xs font-bold text-slate-600">VISA</span>
-                      </div>
-                      <div class="w-8 h-6 bg-slate-100 rounded flex items-center justify-center">
-                        <span class="text-xs font-bold text-slate-600">MC</span>
-                      </div>
-                    </div>
-                  </div>
-                </div> -->
               </div>
-              
-              <!-- Card Details Form -->
+
+              <!-- Installment Configuration -->
               <Transition name="fade">
-                <div v-if="paymentMethod === 'manual'" class="border-t border-slate-200 pt-6 mb-8">
-                  <h3 class="text-lg font-semibold text-slate-800 mb-4">Card Details</h3>
-                  <div class="space-y-4">
-                    <div class="space-y-2">
-                      <label for="cardNumber" class="block text-sm font-semibold text-slate-700">Card Number</label>
+                <div v-if="selectedPaymentType === 'installment'" class="mb-8 p-6 bg-blue-50 rounded-xl border border-blue-200">
+                  <h3 class="text-lg font-semibold text-slate-800 mb-6 flex items-center">
+                    <Settings class="w-5 h-5 mr-2 text-blue-600" />
+                    Configure Your Installment Plan
+                  </h3>
+                  
+                  <div class="space-y-6">
+                    <!-- Total Amount Display -->
+                    <div class="bg-white p-4 rounded-lg border border-blue-200">
+                      <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium text-slate-600">Total Amount Agreed</span>
+                        <span class="text-lg font-bold text-slate-800">${{ formatPrice(calculateTotal()) }}</span>
+                      </div>
+                      <p class="text-xs text-slate-500">This is the total amount you agree to pay including interest</p>
+                    </div>
+
+                    <!-- Number of Installments -->
+                    <div class="space-y-3">
+                      <label class="block text-sm font-semibold text-slate-700">
+                        Preferred number of installments?
+                      </label>
+                      <select 
+                        v-model="installmentConfig.numberOfInstallments"
+                        @change="calculateInstallmentDetails"
+                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                        required
+                      >
+                        <option value="">Select installment terms</option>
+                        <option 
+                          v-for="term in availableInstallmentTerms" 
+                          :key="term" 
+                          :value="term"
+                        >
+                          {{ term }} months (Est. ${{ formatPrice(calculateEstimatedMonthlyPayment(term)) }}/month)
+                          )
+                        </option>
+                      </select>
+                    </div>
+
+                    <!-- Payment Frequency -->
+                    <div class="space-y-3">
+                      <label class="block text-sm font-semibold text-slate-700">
+                        How often would you like to pay?
+                      </label>
+                      <select 
+                        v-model="installmentConfig.paymentFrequency"
+                        @change="calculateInstallmentDetails"
+                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                        required
+                      >
+                        <option value="">Select payment frequency</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="biweekly">Bi-weekly (Every 2 weeks)</option>
+                        <option value="monthly">Monthly</option>
+                      </select>
+                    </div>
+
+                    <!-- Down Payment -->
+                    <div class="space-y-3">
+                      <label class="block text-sm font-semibold text-slate-700">
+                        Down Payment Amount ({{ getMinimumDownPaymentPercentage() }}% - {{ getMaximumDownPaymentPercentage() }}%)
+                      </label>
                       <div class="relative">
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
                         <input 
-                          id="cardNumber"
-                          v-model="cardDetails.cardNumber"
-                          type="text"
-                          placeholder="1234 5678 9012 3456"
+                          v-model.number="installmentConfig.downPayment"
+                          @input="calculateInstallmentDetails"
+                          type="number"
+                          :min="getMinimumDownPayment()"
+                          :max="getMaximumDownPayment()"
+                          step="0.01"
+                          class="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                          placeholder="Enter down payment amount"
                           required
-                          class="w-full px-4 py-3 pl-12 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
-                          @input="formatCardNumber"
                         />
-                        <CreditCard class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
+                      </div>
+                      <div class="flex justify-between text-xs text-slate-500">
+                        <span>Min: ${{ formatPrice(getMinimumDownPayment()) }}</span>
+                        <span>Max: ${{ formatPrice(getMaximumDownPayment()) }}</span>
                       </div>
                     </div>
-                    
-                    <div class="space-y-2">
-                      <label for="cardName" class="block text-sm font-semibold text-slate-700">Cardholder Name</label>
+
+                    <!-- Start Date -->
+                    <div class="space-y-3">
+                      <label class="block text-sm font-semibold text-slate-700">
+                        Start date for the first payment?
+                      </label>
                       <input 
-                        id="cardName"
-                        v-model="cardDetails.cardName"
-                        type="text"
-                        placeholder="John Doe"
+                        v-model="installmentConfig.startDate"
+                        type="date"
+                        :min="getMinimumStartDate()"
+                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
                         required
-                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
                       />
                     </div>
-                    
-                    <div class="grid grid-cols-2 gap-4">
+
+                    <!-- Payment Method -->
+                    <div class="space-y-3">
+                      <label class="block text-sm font-semibold text-slate-700">
+                        Preferred payment method?
+                      </label>
+                      <select 
+                        v-model="installmentConfig.paymentMethod"
+                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
+                        required
+                      >
+                        <option value="">Select payment method</option>
+                        <option value="auto_deduction">Auto Deduction (Recommended)</option>
+                        <option value="manual">Manual Payment</option>
+                      </select>
+                    </div>
+
+                    <!-- Formal Agreement -->
+                    <div class="space-y-3">
+                      <label class="block text-sm font-semibold text-slate-700">
+                        Do you need a formal agreement for this plan?
+                      </label>
                       <div class="space-y-2">
-                        <label for="expiryDate" class="block text-sm font-semibold text-slate-700">Expiry Date</label>
-                        <input 
-                          id="expiryDate"
-                          v-model="cardDetails.expiryDate"
-                          type="text"
-                          placeholder="MM/YY"
-                          required
-                          class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
-                          @input="formatExpiryDate"
-                        />
-                      </div>
-                      
-                      <div class="space-y-2">
-                        <label for="cvv" class="block text-sm font-semibold text-slate-700">CVV</label>
-                        <div class="relative">
+                        <label class="flex items-center">
                           <input 
-                            id="cvv"
-                            v-model="cardDetails.cvv"
-                            type="text"
-                            placeholder="123"
-                            required
-                            maxlength="4"
-                            class="w-full px-4 py-3 pr-12 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
+                            v-model="installmentConfig.needsFormalAgreement"
+                            type="radio"
+                            :value="true"
+                            class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                           />
-                          <HelpCircle class="w-5 h-5 text-slate-400 absolute right-4 top-1/2 transform -translate-y-1/2 cursor-help" title="3-digit security code on the back of your card" />
+                          <span class="ml-2 text-sm text-slate-700">Yes, I need a formal agreement</span>
+                        </label>
+                        <label class="flex items-center">
+                          <input 
+                            v-model="installmentConfig.needsFormalAgreement"
+                            type="radio"
+                            :value="false"
+                            class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                          />
+                          <span class="ml-2 text-sm text-slate-700">No, proceed without formal agreement</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Installment Summary -->
+                    <div v-if="installmentSummary.installmentAmount > 0" class="bg-white p-6 rounded-lg border border-blue-200">
+                      <h4 class="font-semibold text-slate-800 mb-4">Installment Plan Summary</h4>
+                      <div class="space-y-3">
+                        <div class="flex justify-between">
+                          <span class="text-sm text-slate-600">Down Payment (Today)</span>
+                          <span class="font-semibold">${{ formatPrice(installmentSummary.downPayment) }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-sm text-slate-600">Installment Amount</span>
+                          <span class="font-semibold">${{ formatPrice(installmentSummary.installmentAmount) }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-sm text-slate-600">Number of Payments</span>
+                          <span class="font-semibold">{{ installmentConfig.numberOfInstallments }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-sm text-slate-600">Interest Rate</span>
+                          <span class="font-semibold">{{ getCurrentInterestRate() }}% annually</span>
+                        </div>
+                        <div class="flex justify-between">
+                          <span class="text-sm text-slate-600">Total Interest</span>
+                          <span class="font-semibold">${{ formatPrice(installmentSummary.totalInterest) }}</span>
+                        </div>
+                        <div class="border-t pt-3">
+                          <div class="flex justify-between">
+                            <span class="font-semibold text-slate-800">Total Payable</span>
+                            <span class="font-bold text-lg">${{ formatPrice(installmentSummary.totalPayable) }}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </Transition>
+
+              <!-- Payment Method Selection -->
+              <div class="mb-8">
+                <h3 class="text-lg font-semibold text-slate-800 mb-4">Payment Gateway</h3>
+                <div class="space-y-4">
+                  <div 
+                    class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
+                    :class="paymentMethod === 'flutterwave' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
+                    @click="handlePaymentMethodChange('flutterwave')"
+                  >
+                    <div class="flex items-center">
+                      <div class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-all duration-200"
+                           :class="paymentMethod === 'flutterwave' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
+                        <div v-if="paymentMethod === 'flutterwave'" class="w-3 h-3 rounded-full bg-white"></div>
+                      </div>
+                      <div class="flex-1">
+                        <span class="font-semibold text-slate-800">Pay with Flutterwave</span>
+                        <p class="text-sm text-slate-600">Secure payment via Flutterwave</p>
+                      </div>
+                      <div class="w-10 h-10 bg-slate-100 rounded-md flex items-center justify-center">
+                        <CreditCard class="w-6 h-6 text-slate-600" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               
               <div class="flex gap-4">
                 <button 
@@ -484,11 +628,11 @@
                 </button>
                 <button 
                   @click="processPayment"
-                  :disabled="isProcessing"
+                  :disabled="isProcessing || !isPaymentConfigValid"
                   class="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   <Loader v-if="isProcessing" class="w-5 h-5 mr-2 animate-spin" />
-                  {{ isProcessing ? 'Processing...' : `Complete Order - $${formatPrice(calculateTotal())}` }}
+                  {{ getPaymentButtonText() }}
                 </button>
               </div>
             </div>
@@ -523,7 +667,11 @@
                 <div class="flex-1 min-w-0">
                   <h4 class="font-semibold text-slate-800 text-sm truncate">{{ item.title }}</h4>
                   <p class="text-sm text-slate-600">${{ formatPrice(item.price) }}</p>
-                  <p v-if="item.size" class="text-xs text-slate-500">Size: {{ item.size }}</p>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span v-if="item.size" class="text-xs px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.size }}</span>
+                    <span v-if="item.color" class="text-xs px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.color }}</span>
+                    <span v-if="item.hasInstallmentOption" class="text-xs px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full">💳 Installments</span>
+                  </div>
                   
                   <div class="flex items-center mt-2">
                     <button 
@@ -572,14 +720,45 @@
                 <span class="font-semibold text-slate-800">${{ formatPrice(getTaxAmount()) }}</span>
               </div>
               
+              <!-- Installment Summary in Order Total -->
+              <div v-if="selectedPaymentType === 'installment' && installmentSummary.installmentAmount > 0" class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                <div class="text-xs font-semibold text-blue-800 mb-2">Installment Plan</div>
+                <div class="flex justify-between text-xs text-blue-700 mb-1">
+                  <span>Down Payment</span>
+                  <span>${{ formatPrice(installmentSummary.downPayment) }}</span>
+                </div>
+                <div class="flex justify-between text-xs text-blue-700 mb-1">
+                  <span>{{ installmentConfig.numberOfInstallments }} × ${{ formatPrice(installmentSummary.installmentAmount) }}</span>
+                  <span>${{ formatPrice(installmentSummary.installmentAmount * installmentConfig.numberOfInstallments) }}</span>
+                </div>
+                <div class="flex justify-between text-xs text-blue-700">
+                  <span>Total Interest</span>
+                  <span>${{ formatPrice(installmentSummary.totalInterest) }}</span>
+                </div>
+              </div>
+              
               <div v-if="selectedCountryInfo" class="text-xs text-slate-500 bg-slate-50 p-3 rounded-lg">
                 <p>Shipping to: {{ selectedCountryInfo.countryName }}</p>
                 <p>Tax Rate: {{ currentTaxRate }}%</p>
+                <p v-if="selectedPaymentType === 'installment'">Payment Type: Installment Plan</p>
               </div>
               
               <div class="flex justify-between font-bold text-lg pt-3 border-t border-slate-200">
-                <span class="text-slate-800">Total</span>
-                <span class="text-slate-800">${{ formatPrice(calculateTotal()) }}</span>
+                <span class="text-slate-800">
+                  {{ selectedPaymentType === 'installment' ? 'Total Payable' : 'Total' }}
+                </span>
+                <span class="text-slate-800">
+                  ${{ formatPrice(selectedPaymentType === 'installment' && installmentSummary.totalPayable > 0 ? installmentSummary.totalPayable : calculateTotal()) }}
+                </span>
+              </div>
+
+              <!-- Today's Payment for Installments -->
+              <div v-if="selectedPaymentType === 'installment' && installmentSummary.downPayment > 0" class="bg-emerald-50 p-3 rounded-lg border border-emerald-200">
+                <div class="flex justify-between font-semibold text-emerald-800">
+                  <span>Today's Payment</span>
+                  <span>${{ formatPrice(installmentSummary.downPayment) }}</span>
+                </div>
+                <p class="text-xs text-emerald-600 mt-1">Down payment due now</p>
               </div>
             </div>
             
@@ -606,7 +785,7 @@
       </div>
     </div>
 
-    <!-- Authentication Modal - FIXED -->
+    <!-- Authentication Modal -->
     <Transition name="modal">
       <div v-if="showAuthModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
@@ -808,14 +987,16 @@ import {
   X, 
   Loader,
   LockIcon,
-  HelpCircle
+  HelpCircle,
+  Calendar,
+  Settings
 } from 'lucide-vue-next'
 
 // Import composables
 import { useCartStore } from '@/composables/useCartStore'
 import { use_auth_signup } from '@/composables/auth/register'
 import { use_auth_login } from '@/composables/auth/login'
-import { useCheckoutStore } from '@/composables/useCheckoutStore'
+import { useCheckoutPayment } from '@/composables/useCheckoutPayment'
 import { useUser } from '@/composables/auth/user'
 import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useTaxConfig } from '@/composables/modules/shipping-tax/useTaxConfig'
@@ -825,6 +1006,22 @@ import { useCustomToast } from '@/composables/core/useCustomToast'
 // Router
 const router = useRouter()
 const route = useRoute()
+
+// Use the enhanced checkout payment composable
+const {
+  processCheckout,
+  verifyPayment,
+  createInstallmentPlan,
+  orderResponse,
+  getPaymentSummary,
+  isLoading: isProcessing,
+  orderLoading,
+  paymentLoading,
+  orderCreationError,
+  paymentError,
+  paymentComplete: orderComplete,
+  paymentForm
+} = useCheckoutPayment()
 
 // FIXED: Use reactive ref for modal visibility instead of localStorage check
 const showAuthModal = ref(false)
@@ -848,27 +1045,6 @@ const { isLoggedIn, user } = useUser()
 
 // Local storage
 const { setItem, getItem, removeItem: removeStorageItem } = useLocalStorage()
-
-// Checkout store
-const { 
-  checkoutStep: storeCheckoutStep,
-  checkoutSummary,
-  deliveryDetails,
-  deliveryMethod,
-  paymentMethod,
-  cardDetails,
-  isProcessing,
-  orderComplete,
-  orderId,
-  nextStep: storeNextStep,
-  prevStep: storePrevStep,
-  setDeliveryMethod,
-  setPaymentMethod,
-  processPayment: storeProcessPayment,
-  persistDeliveryDetails,
-  resetCheckout,
-  initializeCheckout
-} = useCheckoutStore()
 
 // Shipping and Tax data
 const { fetchShippingConfigs } = useShippingConfig()
@@ -899,6 +1075,53 @@ const MAX_STEP = 3
 // Cart items - reactive reference that loads from localStorage
 const cartItems = ref([])
 
+// Delivery details
+const deliveryDetails = ref({
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  address: '',
+  city: '',
+  state: '',
+  zipCode: '',
+  country: ''
+})
+
+// Delivery and payment methods
+const deliveryMethod = ref('standard')
+const paymentMethod = ref('flutterwave')
+
+// Payment type selection
+const selectedPaymentType = ref('full') // 'full' or 'installment'
+
+// Order ID for completed orders
+const orderId = ref('')
+
+// Installment configuration
+const installmentConfig = ref({
+  numberOfInstallments: '',
+  paymentFrequency: '',
+  downPayment: 0,
+  startDate: '',
+  paymentMethod: '',
+  needsFormalAgreement: false,
+  interestRate: 0,
+  totalAmount: 0
+})
+
+// Installment summary
+const installmentSummary = ref({
+  downPayment: 0,
+  installmentAmount: 0,
+  totalInterest: 0,
+  totalPayable: 0,
+  remainingAmount: 0
+})
+
+// Current installment configuration based on selected product size
+const currentInstallmentConfig = ref(null)
+
 // Signup data
 const signupData = ref({
   firstName: '',
@@ -922,10 +1145,283 @@ const PERSISTENCE_KEYS = {
   DELIVERY_DETAILS: 'checkout-delivery-details',
   DELIVERY_METHOD: 'checkout-delivery-method',
   PAYMENT_METHOD: 'checkout-payment-method',
+  PAYMENT_TYPE: 'checkout-payment-type',
+  INSTALLMENT_CONFIG: 'checkout-installment-config',
   SELECTED_COUNTRY: 'checkout-selected-country',
   SHIPPING_CONFIG: 'checkout-shipping-config',
   TAX_CONFIG: 'checkout-tax-config',
   GUEST_MODE: 'checkout-guest-mode'
+}
+
+// FIXED: Check if any cart items have installment options
+const hasInstallmentOptions = computed(() => {
+  console.log('Checking installment options for cart items:', cartItems.value)
+  const hasOptions = cartItems.value.some(item => {
+    const hasInstallment = item.hasInstallmentOption === true && 
+                          item.installmentConfig && 
+                          item.installmentConfig.enabled === true
+    console.log(`Item ${item.id}: hasInstallmentOption=${item.hasInstallmentOption}, config enabled=${item.installmentConfig?.enabled}, result=${hasInstallment}`)
+    return hasInstallment
+  })
+  console.log('Overall hasInstallmentOptions:', hasOptions)
+  return hasOptions
+})
+
+// FIXED: Get cart items with installment options for debugging
+const cartItemsWithInstallments = computed(() => {
+  return cartItems.value.filter(item => 
+    item.hasInstallmentOption === true && 
+    item.installmentConfig && 
+    item.installmentConfig.enabled === true
+  )
+})
+
+// FIXED: Get available installment terms based on cart items
+const availableInstallmentTerms = computed(() => {
+  const allTerms = new Set()
+  
+  cartItems.value.forEach(item => {
+    if (item.hasInstallmentOption === true && item.installmentConfig?.enabled === true) {
+      const config = item.installmentConfig
+      if (config.availableTerms && Array.isArray(config.availableTerms)) {
+        config.availableTerms.forEach(term => allTerms.add(term))
+      }
+    }
+  })
+  
+  const terms = Array.from(allTerms).sort((a, b) => a - b)
+  console.log('Available installment terms:', terms)
+  return terms
+})
+
+// Get minimum installment amount for display
+const getMinimumInstallmentAmount = () => {
+  if (!hasInstallmentOptions.value) return 0
+  
+  const total = calculateTotal()
+  const maxTerms = Math.max(...availableInstallmentTerms.value)
+  return total / maxTerms
+}
+
+// FIXED: Calculate estimated monthly payment for a given term
+const calculateEstimatedMonthlyPayment = (term: number) => {
+  if (!currentInstallmentConfig.value) {
+    // Use a default configuration if none is available
+    const total = calculateTotal()
+    const defaultDownPayment = total * 0.2 // 20% default
+    const remainingAmount = total - defaultDownPayment
+    return remainingAmount / term
+  }
+  
+  const total = calculateTotal()
+  const minDownPaymentPercentage = currentInstallmentConfig.value.minimumDownPaymentPercentage || 20
+  const minDownPayment = (total * minDownPaymentPercentage) / 100
+  const remainingAmount = total - minDownPayment
+  const monthlyInterestRate = (currentInstallmentConfig.value.interestRate || 0) / 12 / 100
+  
+  if (monthlyInterestRate > 0) {
+    const factor = Math.pow(1 + monthlyInterestRate, term)
+    return (remainingAmount * monthlyInterestRate * factor) / (factor - 1)
+  } else {
+    return remainingAmount / term
+  }
+}
+
+// FIXED: Get current installment configuration
+const getCurrentInstallmentConfig = () => {
+  // Find the first item with installment options
+  const firstItemWithInstallments = cartItems.value.find(item => 
+    item.hasInstallmentOption === true && 
+    item.installmentConfig && 
+    item.installmentConfig.enabled === true
+  )
+  
+  console.log('Current installment config from item:', firstItemWithInstallments?.installmentConfig)
+  return firstItemWithInstallments?.installmentConfig || null
+}
+
+// Update current installment config when cart changes
+watch(cartItems, () => {
+  currentInstallmentConfig.value = getCurrentInstallmentConfig()
+  console.log('Updated currentInstallmentConfig:', currentInstallmentConfig.value)
+}, { deep: true })
+
+// FIXED: Get minimum down payment percentage
+const getMinimumDownPaymentPercentage = () => {
+  return currentInstallmentConfig.value?.minimumDownPaymentPercentage || 20
+}
+
+// FIXED: Get maximum down payment percentage
+const getMaximumDownPaymentPercentage = () => {
+  return currentInstallmentConfig.value?.maximumDownPaymentPercentage || 80
+}
+
+// Get minimum down payment
+const getMinimumDownPayment = () => {
+  const total = calculateTotal()
+  return (total * getMinimumDownPaymentPercentage()) / 100
+}
+
+// Get maximum down payment
+const getMaximumDownPayment = () => {
+  const total = calculateTotal()
+  return (total * getMaximumDownPaymentPercentage()) / 100
+}
+
+// Get current interest rate
+const getCurrentInterestRate = () => {
+  return currentInstallmentConfig.value?.interestRate || 0
+}
+
+// Get minimum start date (today)
+const getMinimumStartDate = () => {
+  const today = new Date()
+  return today.toISOString().split('T')[0]
+}
+
+// FIXED: Calculate installment details
+const calculateInstallmentDetails = () => {
+  console.log('Calculating installment details...')
+  console.log('Config:', installmentConfig.value)
+  
+  if (!installmentConfig.value.numberOfInstallments || !installmentConfig.value.downPayment) {
+    console.log('Missing required fields for calculation')
+    installmentSummary.value = {
+      downPayment: 0,
+      installmentAmount: 0,
+      totalInterest: 0,
+      totalPayable: 0,
+      remainingAmount: 0
+    }
+    return
+  }
+  
+  const totalAmount = calculateTotal()
+  const downPayment = Number(installmentConfig.value.downPayment)
+  const remainingAmount = totalAmount - downPayment
+  const numberOfInstallments = parseInt(installmentConfig.value.numberOfInstallments)
+  const annualInterestRate = getCurrentInterestRate()
+  const monthlyInterestRate = annualInterestRate / 12 / 100
+  
+  console.log('Calculation inputs:', {
+    totalAmount,
+    downPayment,
+    remainingAmount,
+    numberOfInstallments,
+    annualInterestRate,
+    monthlyInterestRate
+  })
+  
+  let installmentAmount = 0
+  let totalInterest = 0
+  
+  if (monthlyInterestRate > 0) {
+    // Calculate using compound interest formula
+    const factor = Math.pow(1 + monthlyInterestRate, numberOfInstallments)
+    installmentAmount = (remainingAmount * monthlyInterestRate * factor) / (factor - 1)
+    totalInterest = installmentAmount * numberOfInstallments - remainingAmount
+  } else {
+    // No interest
+    installmentAmount = remainingAmount / numberOfInstallments
+    totalInterest = 0
+  }
+  
+  const totalPayable = downPayment + installmentAmount * numberOfInstallments
+  
+  console.log('Calculation results:', {
+    installmentAmount,
+    totalInterest,
+    totalPayable
+  })
+  
+  installmentSummary.value = {
+    downPayment,
+    installmentAmount,
+    totalInterest,
+    totalPayable,
+    remainingAmount
+  }
+  
+  // Update installment config
+  installmentConfig.value.totalAmount = totalAmount
+  installmentConfig.value.interestRate = annualInterestRate
+}
+
+// FIXED: Check if payment configuration is valid
+const isPaymentConfigValid = computed(() => {
+  console.log('Checking payment config validity...')
+  console.log('Payment type:', selectedPaymentType.value)
+  console.log('Payment method:', paymentMethod.value)
+  
+  if (selectedPaymentType.value === 'full') {
+    const isValid = paymentMethod.value !== ''
+    console.log('Full payment valid:', isValid)
+    return isValid
+  } else if (selectedPaymentType.value === 'installment') {
+    const config = installmentConfig.value
+    const isValid = (
+      paymentMethod.value !== '' &&
+      config.numberOfInstallments !== '' &&
+      config.paymentFrequency !== '' &&
+      config.downPayment > 0 &&
+      config.startDate !== '' &&
+      config.paymentMethod !== '' &&
+      config.downPayment >= getMinimumDownPayment() &&
+      config.downPayment <= getMaximumDownPayment() &&
+      typeof config.needsFormalAgreement === 'boolean'
+    )
+    
+    console.log('Installment payment validation:', {
+      paymentMethod: paymentMethod.value !== '',
+      numberOfInstallments: config.numberOfInstallments !== '',
+      paymentFrequency: config.paymentFrequency !== '',
+      downPayment: config.downPayment > 0,
+      startDate: config.startDate !== '',
+      installmentPaymentMethod: config.paymentMethod !== '',
+      downPaymentRange: config.downPayment >= getMinimumDownPayment() && config.downPayment <= getMaximumDownPayment(),
+      formalAgreement: typeof config.needsFormalAgreement === 'boolean',
+      overall: isValid
+    })
+    
+    return isValid
+  }
+  return false
+})
+
+// Get payment button text
+const getPaymentButtonText = () => {
+  if (isProcessing.value) return 'Processing...'
+  
+  if (selectedPaymentType.value === 'installment') {
+    return `Pay Down Payment - $${formatPrice(installmentSummary.value.downPayment)}`
+  } else {
+    return `Complete Order - $${formatPrice(calculateTotal())}`
+  }
+}
+
+// Handle payment type change
+const handlePaymentTypeChange = (type: string) => {
+  selectedPaymentType.value = type
+  
+  if (type === 'installment') {
+    // Initialize installment config
+    currentInstallmentConfig.value = getCurrentInstallmentConfig()
+    if (currentInstallmentConfig.value) {
+      // Set default down payment to minimum
+      installmentConfig.value.downPayment = getMinimumDownPayment()
+      // Set default start date to 30 days from now
+      const defaultStartDate = new Date()
+      defaultStartDate.setDate(defaultStartDate.getDate() + 30)
+      installmentConfig.value.startDate = defaultStartDate.toISOString().split('T')[0]
+      
+      // Trigger calculation
+      nextTick(() => {
+        calculateInstallmentDetails()
+      })
+    }
+  }
+  
+  persistCheckoutData()
 }
 
 // Load cart from localStorage
@@ -937,6 +1433,7 @@ const loadCartFromStorage = () => {
         const parsedCart = JSON.parse(savedCart)
         if (Array.isArray(parsedCart)) {
           cartItems.value = parsedCart
+          console.log('Loaded cart from storage:', parsedCart)
           return parsedCart
         }
       }
@@ -966,6 +1463,9 @@ const persistCheckoutData = () => {
       setItem(PERSISTENCE_KEYS.CHECKOUT_STEP, currentStep.value.toString())
       setItem(PERSISTENCE_KEYS.DELIVERY_METHOD, deliveryMethod.value)
       setItem(PERSISTENCE_KEYS.PAYMENT_METHOD, paymentMethod.value)
+      setItem(PERSISTENCE_KEYS.PAYMENT_TYPE, selectedPaymentType.value)
+      setItem(PERSISTENCE_KEYS.INSTALLMENT_CONFIG, JSON.stringify(installmentConfig.value))
+      setItem(PERSISTENCE_KEYS.DELIVERY_DETAILS, JSON.stringify(deliveryDetails.value))
       
       if (selectedCountryInfo.value) {
         setItem(PERSISTENCE_KEYS.SELECTED_COUNTRY, JSON.stringify({
@@ -974,13 +1474,15 @@ const persistCheckoutData = () => {
           taxRate: currentTaxRate.value
         }))
       }
-      
-      // Persist delivery details
-      persistDeliveryDetails()
     }
   } catch (error) {
     console.error('Failed to persist checkout data:', error)
   }
+}
+
+// Persist delivery details
+const persistDeliveryDetails = () => {
+  persistCheckoutData()
 }
 
 // Load persisted checkout data
@@ -999,13 +1501,30 @@ const loadPersistedCheckoutData = () => {
       // Load delivery method
       const savedDeliveryMethod = getItem(PERSISTENCE_KEYS.DELIVERY_METHOD)
       if (savedDeliveryMethod && ['standard', 'express', 'pickup'].includes(savedDeliveryMethod)) {
-        setDeliveryMethod(savedDeliveryMethod)
+        deliveryMethod.value = savedDeliveryMethod
       }
       
       // Load payment method
       const savedPaymentMethod = getItem(PERSISTENCE_KEYS.PAYMENT_METHOD)
       if (savedPaymentMethod && ['flutterwave', 'interswitch', 'manual'].includes(savedPaymentMethod)) {
-        setPaymentMethod(savedPaymentMethod)
+        paymentMethod.value = savedPaymentMethod
+      }
+      
+      // Load payment type
+      const savedPaymentType = getItem(PERSISTENCE_KEYS.PAYMENT_TYPE)
+      if (savedPaymentType && ['full', 'installment'].includes(savedPaymentType)) {
+        selectedPaymentType.value = savedPaymentType
+      }
+      
+      // Load installment config
+      const savedInstallmentConfig = getItem(PERSISTENCE_KEYS.INSTALLMENT_CONFIG)
+      if (savedInstallmentConfig) {
+        try {
+          const parsedConfig = JSON.parse(savedInstallmentConfig)
+          Object.assign(installmentConfig.value, parsedConfig)
+        } catch (e) {
+          console.error('Failed to parse saved installment config', e)
+        }
       }
       
       // Load delivery details
@@ -1013,7 +1532,7 @@ const loadPersistedCheckoutData = () => {
       if (savedDeliveryDetails) {
         try {
           const parsedDetails = JSON.parse(savedDeliveryDetails)
-          Object.assign(deliveryDetails, parsedDetails)
+          Object.assign(deliveryDetails.value, parsedDetails)
         } catch (e) {
           console.error('Failed to parse saved delivery details', e)
         }
@@ -1086,7 +1605,7 @@ const loadConfigurations = async () => {
     await nextTick()
     
     // If we have persisted country data, restore it
-    if (deliveryDetails.country && shippingConfigs.value.length > 0) {
+    if (deliveryDetails.value.country && shippingConfigs.value.length > 0) {
       handleCountryChange()
     }
     
@@ -1111,7 +1630,7 @@ const loadConfigurations = async () => {
 
 // Enhanced country change handler
 const handleCountryChange = () => {
-  const countryCode = deliveryDetails.country
+  const countryCode = deliveryDetails.value.country
   
   if (!countryCode) {
     selectedCountryInfo.value = null
@@ -1150,13 +1669,13 @@ const handleCountryChange = () => {
 
 // Enhanced delivery method change handler
 const handleDeliveryMethodChange = (method) => {
-  setDeliveryMethod(method)
+  deliveryMethod.value = method
   persistCheckoutData()
 }
 
 // Enhanced payment method change handler
 const handlePaymentMethodChange = (method) => {
-  setPaymentMethod(method)
+  paymentMethod.value = method
   persistCheckoutData()
 }
 
@@ -1273,8 +1792,9 @@ const extractErrorMessage = (error: any): string => {
   }
 }
 
-// Process payment with updated total
+// FIXED: Process payment with updated total and installment support
 const processPayment = async () => {
+  console.log('process payment')
   try {
     // First, ensure we have cart items
     if (!cartItems.value || cartItems.value.length === 0) {
@@ -1287,70 +1807,93 @@ const processPayment = async () => {
       return;
     }
     
-    // Initialize checkout summary if it doesn't exist
-    if (!checkoutSummary || !checkoutSummary.items) {
-      // Create a new checkout summary with the current cart data
-      const summary = {
-        items: cartItems.value,
-        subtotal: subtotalAmount.value,
-        shipping: getShippingCost(),
-        tax: getTaxAmount(),
-        total: calculateTotal()
-      };
-      
-      // Initialize the checkout store with this data
-      initializeCheckout(summary);
-    } else {
-      // Update the checkout summary with current cart data
-      checkoutSummary.items = cartItems.value;
-      checkoutSummary.subtotal = subtotalAmount.value;
-      checkoutSummary.total = calculateTotal();
-      checkoutSummary.shipping = getShippingCost();
-      checkoutSummary.tax = getTaxAmount();
-      
-      // Add country info to checkout summary
-      if (selectedCountryInfo.value) {
-        checkoutSummary.country = {
-          code: selectedCountryInfo.value.countryCode,
-          name: selectedCountryInfo.value.countryName
-        };
+    // FIXED: Prepare checkout data with correct product IDs
+    const checkoutData = {
+      paymentType: selectedPaymentType.value,
+      items: cartItems.value.map(item => ({
+        // Use the exact productId from cart without any prefix
+        productId: item.productId,
+        id: item.id,
+        title: item.title,
+        image: item.image,
+        price: item.price,
+        quantity: item.quantity,
+        size: item.size,
+        color: item.color,
+        discount: item.discount || 0,
+        total: item.price * item.quantity,
+        hasInstallmentOption: item.hasInstallmentOption,
+        installmentConfig: item.installmentConfig,
+        category: item.category,
+        weight: item.weight,
+        dimensions: item.dimensions
+      })),
+      subtotal: subtotalAmount.value,
+      shipping: getShippingCost(),
+      tax: getTaxAmount(),
+      total: calculateTotal(),
+      deliveryDetails: deliveryDetails.value,
+      deliveryMethod: deliveryMethod.value,
+      paymentMethod: paymentMethod.value
+    }
+
+    console.log(checkoutData, 'here payload')
+    
+    // Add installment configuration if installment payment
+    if (selectedPaymentType.value === 'installment') {
+      checkoutData.installmentConfig = {
+        ...installmentConfig.value,
+        ...installmentSummary.value,
+        productSize: cartItems.value[0]?.size, // Assuming single product for now
+        product: cartItems.value[0]?.productId // Use exact productId
       }
+      
+      // For installment, the immediate payment is the down payment
+      checkoutData.immediatePayment = installmentSummary.value.downPayment
     }
     
-    // Process the payment using the store method
-    if (storeProcessPayment) {
-      const response = await storeProcessPayment();
-      console.log(response, 'store process payment');
+    // Add country info
+    if (selectedCountryInfo.value) {
+      checkoutData.country = {
+        code: selectedCountryInfo.value.countryCode,
+        name: selectedCountryInfo.value.countryName,
+        taxRate: currentTaxRate.value
+      };
+    }
+    
+    console.log('Sending checkout data:', checkoutData)
+    
+    // Process the checkout
+    const result = await processCheckout(checkoutData)
+    console.log(result, 'processing result')
+    
+    if (result.success) {
+      // Set order ID for display
+      orderId.value = result.order.orderNumber
       
-      // Check if the response indicates success
-      if (response && response.success) {
-        // Only clear cart from localStorage on successful order
-        if (process.client && localStorage) {
-          localStorage.removeItem(PERSISTENCE_KEYS.CART);
-          cartItems.value = [];
-        }
-        
-        // Clear all persisted checkout data on successful order
-        clearPersistedCheckoutData();
-        
-        // Clear query parameters on successful order
-        clearQueryParams();
-        
-        return response;
-      } else {
-        // Payment failed - do NOT clear the cart or checkout data
-        console.error('Payment failed:', response);
-        
-        throw new Error(response?.message || "Payment processing failed");
+      // Only clear cart from localStorage on successful order
+      if (process.client && localStorage) {
+        localStorage.removeItem(PERSISTENCE_KEYS.CART);
+        cartItems.value = [];
       }
-    } else {
+      
+      // Clear all persisted checkout data on successful order
+      clearPersistedCheckoutData();
+      
+      // Clear query parameters on successful order
+      clearQueryParams();
+      
+      // Show success message
       showToast({
-        title: "Error",
-        message: "Payment system is not available. Please refresh the page and try again.",
-        toastType: "error",
-        duration: 3000
+        title: "Order Created Successfully",
+        message: `Order #${result.order.orderNumber} has been created. ${selectedPaymentType.value === 'installment' ? 'Down payment processed.' : 'Payment completed.'}`,
+        toastType: "success",
+        duration: 5000
       });
-      throw new Error("Payment system not available");
+      
+      return result;
+    } else {
+      throw new Error(result.error || "Checkout failed");
     }
   } catch (error) {
     console.error('Payment processing failed:', error);
@@ -1403,11 +1946,11 @@ const handleSignup = async () => {
       
       if (response && response.success) {
         // Pre-fill delivery details with user info
-        if (deliveryDetails) {
-          deliveryDetails.firstName = signupData.value.firstName
-          deliveryDetails.lastName = signupData.value.lastName
-          deliveryDetails.email = signupData.value.email
-          deliveryDetails.phone = signupData.value.phone || ''
+        if (deliveryDetails.value) {
+          deliveryDetails.value.firstName = signupData.value.firstName
+          deliveryDetails.value.lastName = signupData.value.lastName
+          deliveryDetails.value.email = signupData.value.email
+          deliveryDetails.value.phone = signupData.value.phone || ''
         }
         
         // Persist delivery details
@@ -1478,11 +2021,11 @@ const handleSignin = async () => {
         // Pre-fill delivery details if available from user data
         try {
           const userData = JSON.parse(localStorage.getItem('user-data') || '{}')
-          if (userData && deliveryDetails) {
-            deliveryDetails.firstName = userData.firstName || ''
-            deliveryDetails.lastName = userData.lastName || ''
-            deliveryDetails.email = userData.email || ''
-            deliveryDetails.phone = userData.phone || ''
+          if (userData && deliveryDetails.value) {
+            deliveryDetails.value.firstName = userData.firstName || ''
+            deliveryDetails.value.lastName = userData.lastName || ''
+            deliveryDetails.value.email = userData.email || ''
+            deliveryDetails.value.phone = userData.phone || ''
             
             // Persist delivery details
             persistCheckoutData()
@@ -1552,24 +2095,6 @@ const generateOrderNumber = () => {
   const min = 100000
   const max = 999999
   return Math.floor(Math.random() * (max - min + 1) + min).toString()
-}
-
-// Format card number with spaces
-const formatCardNumber = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  let value = target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '')
-  const formattedValue = value.match(/.{1,4}/g)?.join(' ') || value
-  cardDetails.cardNumber = formattedValue
-}
-
-// Format expiry date with slash
-const formatExpiryDate = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  let value = target.value.replace(/\D/g, '')
-  if (value.length >= 2) {
-    value = value.substring(0, 2) + '/' + value.substring(2, 4)
-  }
-  cardDetails.expiryDate = value
 }
 
 // Update item quantity in cart
@@ -1713,14 +2238,26 @@ const checkUserAuth = () => {
   }
 }
 
-// Watch for cart changes to update checkout summary
+// Watch for cart changes to update checkout summary and installment calculations
 watch(cartItems, () => {
-  if (checkoutSummary) {
-    checkoutSummary.items = cartItems.value
-    checkoutSummary.subtotal = subtotalAmount.value
-  }
   saveCartToStorage()
+  
+  // Recalculate installment details if in installment mode
+  if (selectedPaymentType.value === 'installment') {
+    calculateInstallmentDetails()
+  }
 }, { deep: true })
+
+// Watch for installment config changes
+watch(installmentConfig, () => {
+  calculateInstallmentDetails()
+  persistCheckoutData()
+}, { deep: true })
+
+// Watch for payment type changes
+watch(selectedPaymentType, () => {
+  persistCheckoutData()
+})
 
 // Watch for login status changes
 watch(isLoggedIn, (newValue) => {
@@ -1729,11 +2266,11 @@ watch(isLoggedIn, (newValue) => {
     showAuthModal.value = false
     
     // Pre-fill delivery details with user info if available
-    if (user.value && deliveryDetails) {
-      deliveryDetails.firstName = user.value.firstName || ''
-      deliveryDetails.lastName = user.value.lastName || ''
-      deliveryDetails.email = user.value.email || ''
-      deliveryDetails.phone = user.value.phone || ''
+    if (user.value && deliveryDetails.value) {
+      deliveryDetails.value.firstName = user.value.firstName || ''
+      deliveryDetails.value.lastName = user.value.lastName || ''
+      deliveryDetails.value.email = user.value.email || ''
+      deliveryDetails.value.phone = user.value.phone || ''
       
       // Persist updated delivery details
       persistCheckoutData()
@@ -1750,26 +2287,6 @@ watch(orderComplete, (newValue) => {
     // Clear query parameters and all persisted data
     clearQueryParams()
     clearPersistedCheckoutData()
-  }
-})
-
-// Watch for changes in the current step
-watch(currentStep, (newValue) => {
-  // Update the store's checkout step to keep them in sync
-  if (storeCheckoutStep) {
-    storeCheckoutStep.value = newValue
-  }
-  // Persist the step change
-  persistCheckoutData()
-})
-
-// Watch for changes in the store's checkout step
-watch(storeCheckoutStep, (newValue) => {
-  // Update the local current step to keep them in sync
-  if (typeof newValue === 'number' && newValue >= MIN_STEP && newValue <= MAX_STEP) {
-    currentStep.value = newValue
-    // Update query parameters
-    updateQueryParams()
   }
 })
 
@@ -1819,17 +2336,10 @@ onMounted(async () => {
     }
   }
   
-  // Initialize checkout summary with current cart data
-  if (cartItems.value && cartItems.value.length > 0) {
-    const summary = {
-      items: cartItems.value,
-      subtotal: subtotalAmount.value,
-      shipping: getShippingCost(),
-      tax: getTaxAmount(),
-      total: calculateTotal()
-    };
-    initializeCheckout(summary);
-  }
+  // Initialize installment configuration
+  currentInstallmentConfig.value = getCurrentInstallmentConfig()
+  console.log('Mounted - currentInstallmentConfig:', currentInstallmentConfig.value)
+  console.log('Mounted - hasInstallmentOptions:', hasInstallmentOptions.value)
 })
 
 // Provide a method to cancel checkout (clear all data)

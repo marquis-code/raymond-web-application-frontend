@@ -359,6 +359,7 @@
 import { ref, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
 import { useCartStore } from '@/composables/useCartStore'
+  import type { InstallmentPlan, InstallmentCalculation, PaymentType } from '~/types/installment'
 import { useCustomToast } from '@/composables/core/useCustomToast'
 const { addToCart: addItemToCart } = useCartStore()
 import { useFetchPromosale } from "@/composables/modules/promosale/useFetchPromosale";
@@ -381,6 +382,11 @@ const expandedSections = reactive({
   returnPolicy: false,
   shippingInfo: false
 })
+
+  // Payment state
+  const paymentType = ref<PaymentType>('full')
+  const selectedInstallmentPlan = ref<InstallmentPlan | null>(null)
+  const installmentCalculation = ref<InstallmentCalculation | null>(null)
 
 // Fetch products outside of conditional block
 const { products, loading } = useFetchProducts()
@@ -485,15 +491,28 @@ const addToCart = (product: any) => {
   const defaultSize = product?.sizes[0]?.size
   const defaultPrice = product?.sizes[0]?.price
   console.log(product.sizes, 'product here', defaultPrice)
+  const cartItem = {
+        id: product._id,
+        title: product.name,
+        image: product.images[0],
+        price: selectedSize.price,
+        quantity: 1,
+        size: selectedSize.size,
+        paymentType: paymentType.value,
+        installmentPlan: selectedInstallmentPlan.value,
+        installmentCalculation: installmentCalculation.value
+      }
+
   if (product && product?.isAvailable) {
-    addItemToCart({
-      id: product?._id,
-      title: product?.name,
-      image: product?.images[0],
-      price: defaultPrice,
-      quantity: 1
-      // size: selectedSize.value.size
-    })
+    addItemToCart(cartItem)
+    // addItemToCart({
+    //   id: product?._id,
+    //   title: product?.name,
+    //   image: product?.images[0],
+    //   price: defaultPrice,
+    //   quantity: 1
+    //   // size: selectedSize.value.size
+    // })
   
   }
 }

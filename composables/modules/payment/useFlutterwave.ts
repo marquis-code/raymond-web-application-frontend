@@ -166,11 +166,11 @@ export const useFlutterwaveSDK = () => {
       loading.value = true
       
       // If order details are provided, use them instead of default user info
-      const customerName = orderDetails?.customerName || computedUsername.value
-      const customerEmail = orderDetails?.customerEmail || user.value.email
-      const customerPhone = orderDetails?.customerPhone || user.value.phone
-      const txRef = orderDetails?.orderRef ? `order-${orderDetails.orderRef}` : generateTxRef()
-      const amount = orderDetails?.amount || paymentForm.value.amount
+      const customerName = `${orderDetails?.shippingAddress.firstName} ${orderDetails?.shippingAddress.lastName}` || `${orderDetails?.billingAddress.firstName} ${orderDetails?.billingAddress.lastName}`
+      const customerEmail = orderDetails?.shippingAddress.email || orderDetails?.billingAddress.email || user.value.email
+      const customerPhone = orderDetails?.shippingAddress.phone || orderDetails?.billingAddress.phone || user.value.phone
+      const txRef = orderDetails?.orderNumber ? `${orderDetails?.orderNumber}` : generateTxRef()
+      const amount = orderDetails?.paidAmount
       
       const paymentData = {
         amount: Number(amount),

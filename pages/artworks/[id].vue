@@ -19,13 +19,13 @@
             <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
           </svg>
         </div>
-        <h1 class="text-3xl font-light mb-4 text-gray-900">Artwork Not Found</h1>
-        <p class="text-gray-600 mb-8 leading-relaxed">The artwork you're looking for doesn't exist or has been removed from our collection.</p>
+        <h1 class="text-3xl font-light mb-4 text-gray-900">Product Not Found</h1>
+        <p class="text-gray-600 mb-8 leading-relaxed">The product you're looking for doesn't exist or has been removed from our collection.</p>
         <NuxtLink 
-          to="/gallery" 
+          to="/artworks" 
           class="inline-flex items-center px-8 py-3 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-all duration-300 hover:scale-105 shadow-lg"
         >
-          <span class="mr-2">Browse Gallery</span>
+          <span class="mr-2">Browse Products</span>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m9 18 6-6-6-6"/>
           </svg>
@@ -45,14 +45,14 @@
           </li>
           <li class="text-gray-300">/</li>
           <li>
-            <NuxtLink to="/gallery" class="text-gray-500 hover:text-gray-900 transition-colors duration-300 font-light">
-              Gallery
+            <NuxtLink to="/artworks" class="text-gray-500 hover:text-gray-900 transition-colors duration-300 font-light">
+              Products
             </NuxtLink>
           </li>
           <li class="text-gray-300">/</li>
           <li>
             <NuxtLink 
-              :to="`/gallery?category=${product.category._id}`" 
+              :to="`/artworks?category=${product.category._id}`" 
               class="text-gray-500 hover:text-gray-900 transition-colors duration-300 font-light"
             >
               {{ product.category.name }}
@@ -64,7 +64,7 @@
       </nav>
       
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-24">
-        <!-- Artwork Gallery Section -->
+        <!-- Product Gallery Section -->
         <div class="relative animate-slide-in-left">
           <!-- Main Image Display -->
           <div class="relative group">
@@ -219,19 +219,28 @@
             <div class="grid gap-4">
               <div 
                 v-for="size in product.sizes" 
-                :key="size._id"
+                :key="size.size"
                 @click="selectSize(size)"
-                class="border-2 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg transform hover:scale-105"
-                :class="selectedSize?._id === size._id ? 'border-gray-900 bg-gray-50 shadow-lg scale-105' : 'border-gray-200 hover:border-gray-300'"
+                class="border-2 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02]"
+                :class="selectedSize?.size === size.size ? 'border-gray-900 bg-gray-50 shadow-lg scale-[1.02]' : 'border-gray-200 hover:border-gray-300'"
               >
                 <div class="flex justify-between items-center">
-                  <div>
-                    <span class="font-medium text-lg capitalize">{{ size.size }}</span>
-                    <p class="text-sm text-gray-500 mt-1">{{ getSizeDescription(size.size) }}</p>
+                  <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                      <span class="font-medium text-lg capitalize">{{ size.size }}</span>
+                      <span class="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600">{{ size.color }}</span>
+                      <span v-if="hasInstallmentOption(size)" class="text-xs px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full">
+                        💳 Installments Available
+                      </span>
+                    </div>
+                    <p class="text-sm text-gray-500">{{ getSizeDescription(size.size) }}</p>
+                    <div v-if="hasInstallmentOption(size)" class="mt-2 text-xs text-emerald-600">
+                      From {{ getInstallmentConfig(size).availableTerms[0] }}-{{ getInstallmentConfig(size).maxInstallments }} months • {{ getInstallmentConfig(size).interestRate }}% APR
+                    </div>
                   </div>
                   <div class="text-right">
                     <span class="font-bold text-xl">${{ formatPrice(size.price) }}</span>
-                    <div v-if="selectedSize?._id === size._id" class="w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center mt-2 ml-auto">
+                    <div v-if="selectedSize?.size === size.size" class="w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center mt-2 ml-auto">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-white">
                         <path d="M20 6 9 17l-5-5"/>
                       </svg>
@@ -279,10 +288,10 @@
           
           <!-- Action Buttons -->
           <div class="mb-8 animate-fade-in-up animation-delay-700">
-            <div class="flex flex-col sm:flex-row gap-4">
+            <div class="flex flex-col gap-4">
               <button 
                 @click="addToCart"
-                class="flex-1 px-8 py-4 bg-gray-900 text-white rounded-2xl hover:bg-gray-800 transition-all duration-300 flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                class="w-full px-8 py-4 bg-gray-900 text-white rounded-2xl hover:bg-gray-800 transition-all duration-300 flex items-center justify-center gap-3 shadow-xl hover:shadow-2xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 :disabled="!product.isAvailable || !selectedSize"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -291,19 +300,34 @@
                   <path d="M16 10a4 4 0 0 1-8 0"/>
                 </svg>
                 <span class="font-medium">
-                  {{ !selectedSize ? 'Select Size First' : product.isAvailable ? 'Add to Collection' : 'Unavailable' }}
+                  {{ !selectedSize ? 'Select Size First' : product.isAvailable ? 'Add to Cart' : 'Unavailable' }}
                 </span>
               </button>
               
-              <button 
-                @click="toggleFavorite"
-                class="px-6 py-4 border-2 border-gray-200 rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-                :class="{ 'text-rose-500 border-rose-300 bg-rose-50': isFavorite }"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="{ 'fill-rose-500': isFavorite }">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                </svg>
-              </button>
+              <div class="flex gap-4">
+                <button 
+                  @click="toggleFavorite"
+                  class="flex-1 px-6 py-4 border-2 border-gray-200 rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
+                  :class="{ 'text-rose-500 border-rose-300 bg-rose-50': isFavorite }"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="{ 'fill-rose-500': isFavorite }">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                  <span class="text-sm font-medium">{{ isFavorite ? 'Saved' : 'Save' }}</span>
+                </button>
+                
+                <button 
+                  @click="shareProduct"
+                  class="flex-1 px-6 py-4 border-2 border-gray-200 rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                    <polyline points="16,6 12,2 8,6"/>
+                    <line x1="12" y1="2" x2="12" y2="15"/>
+                  </svg>
+                  <span class="text-sm font-medium">Share</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -315,7 +339,7 @@
                 @click="toggleAccordion('productInfo')"
                 class="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-300"
               >
-                <span class="font-medium text-gray-900 text-lg">Artwork Details</span>
+                <span class="font-medium text-gray-900 text-lg">Product Details</span>
                 <div class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 transition-all duration-300" :class="{ 'rotate-45 bg-gray-900': openAccordions.productInfo }">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" :class="{ 'text-white': openAccordions.productInfo }">
                     <path d="M12 5v14"/>
@@ -394,29 +418,6 @@
             </div>
           </div>
 
-          <!-- Artwork Specifications -->
-          <!-- <div class="mt-12 bg-white p-8 rounded-2xl shadow-lg animate-fade-in-up animation-delay-900">
-            <h3 class="text-xl font-medium mb-6 text-gray-900">Specifications</h3>
-            <div class="grid grid-cols-2 gap-6">
-              <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl hover:shadow-sm transition-all duration-300">
-                <p class="text-sm text-gray-500 mb-1">Dimensions</p>
-                <p class="text-gray-900 font-medium">{{ product.width }}" × {{ product.height }}"</p>
-              </div>
-              <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl hover:shadow-sm transition-all duration-300">
-                <p class="text-sm text-gray-500 mb-1">Weight</p>
-                <p class="text-gray-900 font-medium">{{ product.weight }} lbs</p>
-              </div>
-              <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl hover:shadow-sm transition-all duration-300">
-                <p class="text-sm text-gray-500 mb-1">Created</p>
-                <p class="text-gray-900 font-medium">{{ formatDate(product.createdAt) }}</p>
-              </div>
-              <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-xl hover:shadow-sm transition-all duration-300">
-                <p class="text-sm text-gray-500 mb-1">Category</p>
-                <p class="text-gray-900 font-medium">{{ product.category.name }}</p>
-              </div>
-            </div>
-          </div> -->
-
           <!-- Trust Badges -->
           <div class="mt-8 space-y-4 animate-fade-in-up animation-delay-1000">
             <div class="flex items-center gap-4 p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
@@ -441,17 +442,17 @@
               </div>
               <div>
                 <h4 class="font-medium text-gray-900">Secure Packaging</h4>
-                <p class="text-sm text-gray-600">Professional art handling & shipping</p>
+                <p class="text-sm text-gray-600">Professional handling & shipping</p>
               </div>
             </div>
           </div>
         </div>
       </div>
       
-      <!-- Related Artworks -->
+      <!-- Related Products -->
       <div class="mt-32 animate-fade-in-up">
         <div class="text-center mb-16">
-          <h2 class="text-3xl font-light text-gray-900 mb-4">You May Also Love</h2>
+          <h2 class="text-3xl font-light text-gray-900 mb-4">You May Also Like</h2>
           <div class="w-24 h-1 bg-gradient-to-r from-gray-400 to-gray-600 mx-auto rounded-full"></div>
         </div>
         
@@ -463,7 +464,7 @@
         </div>
         
         <div v-else-if="relatedProducts.length === 0" class="text-center py-20">
-          <p class="text-gray-500 text-lg">No related artworks found</p>
+          <p class="text-gray-500 text-lg">No related products found</p>
         </div>
         
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -486,7 +487,7 @@
               <!-- Overlay -->
               <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end justify-center pb-8">
                 <div class="transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                  <span class="text-white text-lg font-medium">View Artwork</span>
+                  <span class="text-white text-lg font-medium">View Product</span>
                 </div>
               </div>
               
@@ -500,7 +501,7 @@
             
             <div class="pt-6 text-center">
               <div class="flex items-center justify-center mb-2">
-                <span class="text-sm text-gray-500 mr-3">{{ relatedProduct.category?.name || 'Art' }}</span>
+                <span class="text-sm text-gray-500 mr-3">{{ relatedProduct.category?.name || 'Product' }}</span>
                 <div class="flex items-center">
                   <span class="text-amber-500 mr-1">★</span>
                   <span class="text-sm text-gray-600">{{ relatedProduct.rating || 5.0 }}</span>
@@ -640,10 +641,19 @@ const selectSize = (size: any) => {
 const getSizeDescription = (size: string) => {
   const descriptions: Record<string, string> = {
     small: '16" × 20" (40.64cm × 50.80cm)',
+    basic: '18" × 24" (45.72cm × 60.96cm)',
     medium: '20" × 28" (50.80cm × 71.12cm)',
     large: '24" × 36" (60.96cm × 91.44cm)'
   }
   return descriptions[size.toLowerCase()] || 'Custom dimensions available'
+}
+
+const hasInstallmentOption = (size: any) => {
+  return size.installmentConfig && size.installmentConfig.enabled
+}
+
+const getInstallmentConfig = (size: any) => {
+  return size.installmentConfig || {}
 }
 
 const toggleAccordion = (section: keyof typeof openAccordions.value) => {
@@ -685,6 +695,40 @@ const decrementQuantity = () => {
 
 const toggleFavorite = () => {
   isFavorite.value = !isFavorite.value
+  
+  showToast({
+    title: isFavorite.value ? "Added to Favorites" : "Removed from Favorites",
+    message: isFavorite.value ? "Product saved to your favorites" : "Product removed from favorites",
+    toastType: isFavorite.value ? "success" : "info",
+    duration: 2000
+  });
+}
+
+const shareProduct = async () => {
+  if (navigator.share && product.value) {
+    try {
+      await navigator.share({
+        title: product.value.name,
+        text: product.value.description,
+        url: window.location.href,
+      });
+    } catch (err) {
+      console.log('Error sharing:', err);
+    }
+  } else {
+    // Fallback to copying URL to clipboard
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      showToast({
+        title: "Link Copied",
+        message: "Product link copied to clipboard",
+        toastType: "success",
+        duration: 2000
+      });
+    } catch (err) {
+      console.log('Error copying to clipboard:', err);
+    }
+  }
 }
 
 const openFullscreen = () => {
@@ -693,14 +737,30 @@ const openFullscreen = () => {
 
 const addToCart = () => {
   if (product.value && product.value.isAvailable && selectedSize.value) {
-    addItemToCart({
-      id: product.value._id,
+    // Enhanced cart item with installment configuration
+    const cartItem = {
+      id: `${product.value._id}-${selectedSize.value.size}`,
+      productId: product.value._id,
       title: product.value.name,
       image: product.value.images[0],
       price: selectedSize.value.price,
       quantity: quantity.value,
-      size: selectedSize.value.size
-    })
+      size: selectedSize.value.size,
+      color: selectedSize.value.color,
+      // Include installment configuration for checkout
+      installmentConfig: selectedSize.value.installmentConfig || null,
+      hasInstallmentOption: hasInstallmentOption(selectedSize.value),
+      // Additional product metadata
+      category: product.value.category,
+      weight: product.value.weight,
+      dimensions: {
+        width: product.value.width,
+        height: product.value.height,
+        length: product.value.length
+      }
+    }
+    
+    addItemToCart(cartItem)
     
     showToast({
       title: "Added to Cart",
@@ -711,42 +771,8 @@ const addToCart = () => {
   }
 }
 
-const addRelatedToCart = (relatedProduct: any) => {
-  // For related products, use the first available size or default price
-  const defaultSize = relatedProduct.sizes?.[0]
-  const price = defaultSize ? defaultSize.price : (relatedProduct.discountPrice || relatedProduct.price)
-  
-  addItemToCart({
-    id: relatedProduct._id,
-    title: relatedProduct.name,
-    image: relatedProduct.images[0],
-    price: price,
-    quantity: 1,
-    size: defaultSize?.size || 'default'
-  })
-  
-  showToast({
-    title: "Added to Cart",
-    message: `${relatedProduct.name} added to cart`,
-    toastType: "success",
-    duration: 3000
-  });
-}
-
 const formatPrice = (price: number) => {
   return price.toFixed(2)
-}
-
-const formatDate = (dateString: string) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-}
-
-// Initialize default size selection
-const initializeDefaultSizeSelection = () => {
-  if (product.value && product.value.sizes && product.value.sizes.length > 0) {
-    selectedSize.value = product.value.sizes[0]
-  }
 }
 
 // Initialize image carousel for related products
@@ -779,7 +805,6 @@ const cleanupIntervals = () => {
 }
 
 onMounted(() => {
-  initializeDefaultSizeSelection()
   initializeRelatedProductCarousels()
 })
 
@@ -787,9 +812,15 @@ onUnmounted(() => {
   cleanupIntervals()
 })
 
-watch(() => product.value, () => {
-  initializeDefaultSizeSelection()
-})
+// Watch for product changes to reset selection
+watch(() => product.value, (newProduct) => {
+  if (newProduct) {
+    // Reset selections when product changes
+    selectedSize.value = null
+    quantity.value = 1
+    activeImageIndex.value = 0
+  }
+}, { immediate: true })
 
 watch(() => allProducts.value, () => {
   initializeRelatedProductCarousels()
