@@ -1,40 +1,7 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
     <!-- Hero Section -->
-    <div class="overflow-hidden pt-20 mt-16">
-      <div class="mx-auto max-w-7xl px-6 lg:flex lg:px-8">
-        <div class="mx-auto grid max-w-2xl grid-cols-1 gap-x-12 gap-y-16 lg:mx-0 lg:min-w-full lg:max-w-none lg:flex-none lg:gap-y-8">
-          <div class="lg:col-end-1 lg:w-full lg:max-w-lg lg:pb-8 animate-fade-in-up">
-            <h2 class="text-5xl font-light tracking-tight text-gray-900 sm:text-6xl mb-8">
-              <span class="block">Fine Art</span>
-              <span class="block text-gray-600">PRINTS</span>
-            </h2>
-            <div class="space-y-6 text-gray-600 leading-relaxed">
-              <p class="text-xl font-light">Limited edition prints on premium Hahnemühle German etching paper (310 gsm). Each piece is carefully crafted in editions of 10 to 20.</p>
-              <p class="text-base">Every print includes a Certificate of Authenticity and arrives professionally packaged in protective tubes.</p>
-              <p class="text-base">Available in multiple sizes to suit any space.</p>
-            </div>
-          </div>
-          
-          <div class="flex flex-wrap items-start justify-end gap-6 sm:gap-8 lg:contents">
-            <div class="w-0 flex-auto lg:ml-auto lg:w-auto lg:flex-none lg:self-end animate-fade-in-up animation-delay-200">
-              <img src="@/assets/img/print1.jpg" alt="Featured artwork" class="aspect-[7/5] w-[37rem] max-w-none rounded-3xl bg-gray-50 object-cover shadow-2xl hover:shadow-3xl transition-all duration-700 hover:scale-105">
-            </div>
-            <div class="contents lg:col-span-2 lg:col-end-2 lg:ml-auto lg:flex lg:w-[37rem] lg:items-start lg:justify-end lg:gap-x-8">
-              <div class="order-first flex w-64 flex-none justify-end self-end lg:w-auto animate-fade-in-up animation-delay-300">
-                <img src="@/assets/img/print2.jpg" alt="Gallery piece" class="aspect-[4/3] w-[24rem] max-w-none flex-none rounded-3xl bg-gray-50 object-cover shadow-xl hover:shadow-2xl transition-all duration-700 hover:scale-105">
-              </div>
-              <div class="flex w-96 flex-auto justify-end lg:w-auto lg:flex-none animate-fade-in-up animation-delay-400">
-                <img src="@/assets/img/print3.png" alt="Art collection" class="aspect-[7/5] w-[37rem] max-w-none flex-none rounded-3xl bg-gray-50 object-cover shadow-xl hover:shadow-2xl transition-all duration-700 hover:scale-105">
-              </div>
-              <div class="hidden sm:block sm:w-0 sm:flex-auto lg:w-auto lg:flex-none animate-fade-in-up animation-delay-500">
-                <img src="@/assets/img/print4.png" alt="Artistic work" class="aspect-[4/3] w-[24rem] max-w-none rounded-3xl bg-gray-50 object-cover shadow-xl hover:shadow-2xl transition-all duration-700 hover:scale-105">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <PrintsHeroSection :images="artPrints" />
 
     <div v-if="fetchingPromoSale" class="flex justify-center items-center py-20">
       <div class="relative">
@@ -42,7 +9,7 @@
         <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"></div>
       </div>
     </div>
-    <PromoSaleCTA v-else :promosale="promosale" />
+    <PromoSection v-else :promosale="promosale" :loading="fetchingPromoSale" />
       
     <!-- Products Gallery Section -->
     <div class="container mx-auto px-6 py-20">
@@ -117,7 +84,15 @@
             </h3>
             <p class="text-gray-600 font-light">From ${{ getMinPrice(product) }}</p>
             
-            <div class="pt-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+            <!-- <div class="pt-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+              <button 
+                class="w-full bg-gray-900 text-white py-3 px-6 text-sm rounded-xl font-medium hover:bg-gray-800 transition-all duration-300 hover:scale-105 shadow-lg"
+                @click.stop="addToCart(product)"
+              >
+                Add to Collection
+              </button>
+            </div> -->
+            <div class="pt-4  transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
               <button 
                 class="w-full bg-gray-900 text-white py-3 px-6 text-sm rounded-xl font-medium hover:bg-gray-800 transition-all duration-300 hover:scale-105 shadow-lg"
                 @click.stop="addToCart(product)"
@@ -364,6 +339,10 @@ import { useCustomToast } from '@/composables/core/useCustomToast'
 const { addToCart: addItemToCart } = useCartStore()
 import { useFetchPromosale } from "@/composables/modules/promosale/useFetchPromosale";
 const { showToast } = useCustomToast();
+import shop1 from '@/assets/img/print2.jpg'
+import shop2 from "@/assets/img/print3.png"
+import shop3 from "@/assets/img/print4.png"
+import shop4 from "@/assets/img/print1.jpg"
 const { promosale, loading: fetchingPromoSale } = useFetchPromosale();
 // Modal state
 const modalOpen = ref(false)
@@ -371,6 +350,61 @@ const selectedProduct = ref<any>(null)
 const selectedSize = ref('')
 const quantity = ref(1)
 const currentImageIndex = ref(0)
+
+
+interface ArtPrint {
+  id: number;
+  src: string;
+  alt: string;
+  aspectRatio?: string;
+}
+
+const artPrints = ref<ArtPrint[]>([]);
+const isLoading = ref(true);
+
+// Simulate fetching images from backend
+const fetchArtPrints = async () => {
+  try {
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    // Sample data - replace with your actual API call
+    artPrints.value = [
+      { 
+        id: 1, 
+        src: shop1,
+        alt: 'Abstract Composition #1', 
+        aspectRatio: '7/5' 
+      },
+      { 
+        id: 2, 
+        src: shop2,
+        alt: 'Minimalist Study', 
+        aspectRatio: '4/3' 
+      },
+      { 
+        id: 3, 
+        src: shop3,
+        alt: 'Color Field Exploration', 
+        aspectRatio: '7/5' 
+      },
+      { 
+        id: 4, 
+        src: shop4,
+        alt: 'Geometric Harmony', 
+        aspectRatio: '4/3' 
+      },
+    ];
+  } catch (error) {
+    console.error('Error fetching art prints:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+onMounted(() => {
+  fetchArtPrints();
+});
 
 // Image hover state
 const imageLoading = reactive<Record<number, boolean>>({})
@@ -504,7 +538,7 @@ const addToCart = (product: any) => {
       }
 
   if (product && product?.isAvailable) {
-    addItemToCart(cartItem)
+    addItemToCart({...product, quantity: 1})
     // addItemToCart({
     //   id: product?._id,
     //   title: product?.name,
@@ -531,15 +565,18 @@ const addToCartFromModal = () => {
   
   const size = selectedProduct.value.sizes.find((s: any) => s._id === selectedSize.value)
   if (!size) return
+
+  // addToCartFromModal({...selectedProduct, quantity: quantity.value, size: size.size})
+  addItemToCart({...selectedProduct.value, quantity: quantity.value, size: size.size})
   
-  addItemToCart({
-    id: selectedProduct.value._id,
-    title: selectedProduct.value.name,
-    image: selectedProduct.value.images[0],
-    price: size.price,
-    quantity: quantity.value,
-    size: size.size
-  })
+  // addItemToCart({
+  //   id: selectedProduct.value._id,
+  //   title: selectedProduct.value.name,
+  //   image: selectedProduct.value.images[0],
+  //   price: size.price,
+  //   quantity: quantity.value,
+  //   size: size.size
+  // })
   
   showToast({
     title: 'Added to Collection',

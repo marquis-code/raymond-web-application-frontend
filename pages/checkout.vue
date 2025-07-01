@@ -67,7 +67,7 @@
     <div v-else class="container mx-auto px-4 py-8 lg:py-12">
       <!-- Header -->
       <div class="text-center mt-20 mb-12">
-        <h1 class="text-3xl font-bold text-slate-800 mb-4">Secure Checkout</h1>
+        <h1 class="text-xl lg:text-3xl font-bold text-slate-800 mb-4">Secure Checkout</h1>
         <p class="text-slate-600 max-w-2xl mx-auto">Complete your purchase securely. Your information is protected with industry-standard encryption.</p>
       </div>
 
@@ -118,12 +118,12 @@
       </div>
 
       <!-- Main Content Grid -->
-      <div class="grid lg:grid-cols-5 gap-8 max-w-7xl mx-auto">
+      <div class="lg:grid space-y-6 lg:space-y-0 grid-cols-5 gap-8 lg:max-w-7xl mx-auto">
         <!-- Checkout Steps (Left Side) -->
         <div class="lg:col-span-3">
           <!-- Step 1: Customer Details -->
           <Transition name="slide-fade" mode="out-in">
-            <div v-if="currentStep === 1" class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 lg:p-8">
+            <div v-if="currentStep === 1" class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 lg:p-8">
               <div class="flex items-center mb-6">
                 <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
                   <User class="w-5 h-5 text-slate-600" />
@@ -271,7 +271,7 @@
             </div>
             
             <!-- Step 2: Shipping Method -->
-            <div v-else-if="currentStep === 2" class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 lg:p-8">
+            <div v-else-if="currentStep === 2" class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 lg:p-8">
               <div class="flex items-center mb-6">
                 <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
                   <Truck class="w-5 h-5 text-slate-600" />
@@ -290,17 +290,17 @@
                          :class="deliveryMethod === 'standard' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
                       <div v-if="deliveryMethod === 'standard'" class="w-3 h-3 rounded-full bg-white"></div>
                     </div>
-                    <div class="flex-1">
+                    <!-- <div class="flex-1">
                       <div class="flex justify-between items-center mb-1">
-                        <span class="font-semibold text-slate-800">Standard Shipping</span>
+                        <span class="font-semibold text-slate-800">Express Shipping</span>
                         <span class="font-bold text-slate-800">${{ formatPrice(currentShippingFee) }}</span>
                       </div>
                       <p class="text-sm text-slate-600">Delivery within 5-7 business days</p>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
                 
-                <div 
+                <!-- <div 
                   class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
                   :class="deliveryMethod === 'express' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
                   @click="handleDeliveryMethodChange('express')"
@@ -318,7 +318,7 @@
                       <p class="text-sm text-slate-600">Delivery within 2-3 business days</p>
                     </div>
                   </div>
-                </div>
+                </div> -->
               </div>
               
               <div class="flex gap-2">
@@ -340,17 +340,17 @@
             </div>
             
             <!-- Step 3: Payment -->
-            <div v-else-if="currentStep === 3" class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 lg:p-8">
+            <div v-else-if="currentStep === 3" class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 lg:p-8">
               <div class="flex items-center mb-6">
                 <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
                   <CreditCard class="w-5 h-5 text-slate-600" />
                 </div>
-                <h2 class="text-xl lg:text-2xl font-bold text-slate-800">Payment Options</h2>
+                <h2 class="text-lg lg:text-2xl font-bold text-slate-800">Payment Options</h2>
               </div>
 
               <!-- Payment Type Selection -->
               <div class="mb-8">
-                <h3 class="text-lg font-semibold text-slate-800 mb-4">Choose Payment Type</h3>
+                <h3 class="text-base lg:text-lg font-semibold text-slate-800 mb-4">Choose Payment Type</h3>
                 <div class="space-y-4">
                   <!-- Full Payment Option -->
                   <div 
@@ -607,7 +607,7 @@
                         <div v-if="paymentMethod === 'flutterwave'" class="w-3 h-3 rounded-full bg-white"></div>
                       </div>
                       <div class="flex-1">
-                        <span class="font-semibold text-slate-800">Pay with Flutterwave</span>
+                        <span class="font-semibold text-slate-800">Pay with Card</span>
                         <p class="text-sm text-slate-600">Secure payment via Flutterwave</p>
                       </div>
                       <div class="w-10 h-10 bg-slate-100 rounded-md flex items-center justify-center">
@@ -618,10 +618,10 @@
                 </div>
               </div>
               
-              <div class="flex gap-4">
+              <div class="lg:flex space-y-6 lg:space-y-0 gap-4">
                 <button 
                   @click="handlePrevStep"
-                  class="flex-1 py-3 border-2 border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-all duration-300 font-medium flex items-center justify-center"
+                  class="flex-1 py-3 border-2 w-full border-slate-300 text-slate-700 rounded-xl hover:bg-slate-50 transition-all duration-300 font-medium flex items-center justify-center"
                 >
                   <ArrowLeft class="w-4 h-4 mr-2" />
                   Back
@@ -629,7 +629,7 @@
                 <button 
                   @click="processPayment"
                   :disabled="isProcessing || !isPaymentConfigValid"
-                  class="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                  class="flex-1 py-3 w-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   <Loader v-if="isProcessing" class="w-5 h-5 mr-2 animate-spin" />
                   {{ getPaymentButtonText() }}
@@ -641,12 +641,12 @@
         
         <!-- Order Summary (Right Side) -->
         <div class="lg:col-span-2">
-          <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 sticky top-6">
+          <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 lg:p-6 sticky top-6">
             <div class="flex items-center mb-6">
               <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
                 <ShoppingCart class="w-5 h-5 text-slate-600" />
               </div>
-              <h2 class="text-xl font-bold text-slate-800">Order Summary</h2>
+              <h2 class="text-lg lg:text-xl font-bold text-slate-800">Order Summary</h2>
             </div>
             
             <!-- Cart Items -->

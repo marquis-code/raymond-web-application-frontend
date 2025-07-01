@@ -101,7 +101,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 // Import the motion plugin
-import { directive as motion } from '@vueuse/motion'
+// import { motion } from '@vueuse/motion'
 
 // Import images
 import image1 from '@/assets/img/no-love.jpg'

@@ -25,7 +25,7 @@
           </div> -->
         </div>
       </div>
-    <PromoSaleCTA class="mt-16" v-else :promosale="promosale" :loading="fetchingPromoSale" />
+    <PromoSection class="mt-16" v-else :promosale="promosale" :loading="fetchingPromoSale" />
     <!-- Hero Section with animated image carousel and typewriter effect -->
     <section class="relative">
       <div class="grid grid-cols-1 md:grid-cols-2">
@@ -105,54 +105,12 @@
       </div>
     </section>
 
-    <!-- Gallery & Portrait Order Section with hover animations -->
-    <section class="grid grid-cols-1 md:grid-cols-2">
-      <!-- Gallery Section -->
-      <div
-        class="relative h-[500px] overflow-hidden section-transition cursor-pointer"
-        @click="navigateTo('/artworks')"
-      >
-        <img
-          src="@/assets/img/snap.jpg"
-          alt="Artist with artwork"
-          class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-        />
-        <div
-          class="absolute bottom-0 left-0 right-0 bg-blue-900 text-white p-4 transition-all duration-300 hover:bg-blue-800"
-        >
-          <h3 class="text-2xl font-bold mb-1">Gallery</h3>
-          <p class="text-sm">
-            Click here to view collection of original artworks
-          </p>
-        </div>
-      </div>
 
-      <!-- Portrait Order Section -->
-      <div
-        class="relative h-[500px] overflow-hidden section-transition cursor-pointer"
-        @click="navigateTo('/commission')"
-      >
-        <img
-          src="@/assets/img/potrait.png"
-          alt="Portrait display"
-          class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-        />
-        <div
-          class="absolute bottom-0 left-0 right-0 bg-amber-800 text-white p-4 transition-all duration-300 hover:bg-amber-700"
-        >
-          <h3 class="text-2xl font-bold mb-1">Order a Portrait</h3>
-          <p class="text-sm">
-            Click here to order for a custom artwork made for you.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Product Gallery with advanced scroll and hover effects -->
-    <section ref="productGalleryRef" class="pt-16 overflow-hidden">
+        <!-- Product Gallery with advanced scroll and hover effects -->
+        <section ref="productGalleryRef" class="pt-16 overflow-hidden">
       <div class="mx-auto px-4">
         <h2 class="text-2xl font-bold text-center mb-12 slide-up">
-          Featured Artworks
+          Shop Artworks
         </h2>
 
         <div v-if="loading" class="flex justify-center items-center py-20">
@@ -279,6 +237,48 @@
       </div>
     </section>
 
+    <!-- Gallery & Portrait Order Section with hover animations -->
+    <section class="grid grid-cols-1 md:grid-cols-2">
+      <!-- Gallery Section -->
+      <div
+        class="relative h-[500px] overflow-hidden section-transition cursor-pointer"
+        @click="navigateTo('/artworks')"
+      >
+        <img
+          src="@/assets/img/snap.jpg"
+          alt="Artist with artwork"
+          class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+        />
+        <div
+          class="absolute bottom-0 left-0 right-0 bg-blue-900 text-white p-4 transition-all duration-300 hover:bg-blue-800"
+        >
+          <h3 class="text-2xl font-bold mb-1">Gallery</h3>
+          <p class="text-sm">
+            Click here to view collection of original artworks
+          </p>
+        </div>
+      </div>
+
+      <!-- Portrait Order Section -->
+      <div
+        class="relative h-[500px] overflow-hidden section-transition cursor-pointer"
+        @click="navigateTo('/commission')"
+      >
+        <img
+          src="@/assets/img/potrait.png"
+          alt="Portrait display"
+          class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+        />
+        <div
+          class="absolute bottom-0 left-0 right-0 bg-amber-800 text-white p-4 transition-all duration-300 hover:bg-amber-700"
+        >
+          <h3 class="text-2xl font-bold mb-1">Order a Portrait</h3>
+          <p class="text-sm">
+            Click here to order for a custom artwork made for you.
+          </p>
+        </div>
+      </div>
+    </section>
 
     <TestimonialsCarousel />
   </div>
