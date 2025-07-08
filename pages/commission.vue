@@ -63,7 +63,7 @@
           <div class="order-1 lg:order-2 relative animate-fade-in">
             <div class="relative">
               <div class="absolute inset-0 bg-amber-100 rounded-lg transform rotate-3 animate-pulse-slow"></div>
-                  <img src="@/assets/img/commission.jpg"  class="relative z-10 rounded-lg shadow-xl w-full h-auto transform -rotate-3 transition-transform duration-500 hover:rotate-0" />
+                  <img src="@/assets/img/commission1.jpg"  class="relative z-10 rounded-lg shadow-xl w-full h-auto transform -rotate-3 transition-transform duration-500 hover:rotate-0" />
             </div>
             
             <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-rose-100 rounded-full flex items-center justify-center transform rotate-12 shadow-lg animate-float">
@@ -79,7 +79,7 @@
       <div class="bg-black text-white py-10 px-4 text-center">
         <h2 class="text-2xl font-bold mb-2">BOOK YOUR CUSTOM DRAWING</h2>
         <p class="text-sm">NOTE: (kindly go through the details below for better description)</p>
-        <button @click="nextStep" class="text-sm mt-2 hover:text-emerald-300 transition-colors duration-300">Please submit this form to place an order</button>
+        <button @click="nextStep" class="text-sm mt-2 bg-white text-black py-3 rounded-xl font-semibold px-6 hover:text-emerald-300 transition-colors duration-300">Please submit this form to place an order</button>
       </div>
       
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

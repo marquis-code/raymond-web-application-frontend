@@ -2,6 +2,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useFlutterwave } from "flutterwave-vue3"
 import { useRouter } from 'vue-router'
 import logo from "@/assets/img/logo_main.png"
+import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useUpdateOrderStatus } from "@/composables/modules/orders/useUpdateOrderStatus"
 import { useVerifyPayment } from "@/composables/modules/payment/useVerifyPayment"
 import { useCreateTransaction } from "@/composables/modules/transaction/useCreateTransaction"
@@ -11,7 +12,41 @@ export const useFlutterwaveSDK = () => {
   const { loading: processingOrder, error, updateOrderStatus } = useUpdateOrderStatus()
   const { createTransaction, loading: creatingTransaction, apiRes } = useCreateTransaction()
   const { verifyPayment, loading: processing } = useVerifyPayment()
+  const { setItem, getItem, removeItem: removeStorageItem } = useLocalStorage()
+
+  // Enhanced persistence keys
+const PERSISTENCE_KEYS = {
+  CART: 'art-gallery-cart',
+  CHECKOUT_STEP: 'checkout-step',
+  DELIVERY_DETAILS: 'checkout-delivery-details',
+  DELIVERY_METHOD: 'checkout-delivery-method',
+  PAYMENT_METHOD: 'checkout-payment-method',
+  PAYMENT_TYPE: 'checkout-payment-type',
+  INSTALLMENT_CONFIG: 'checkout-installment-config',
+  SELECTED_COUNTRY: 'checkout-selected-country',
+  SHIPPING_CONFIG: 'checkout-shipping-config',
+  TAX_CONFIG: 'checkout-tax-config',
+  GUEST_MODE: 'checkout-guest-mode'
+}
   
+// Cart items - reactive reference that loads from localStorage
+const cartItems = ref([])
+
+// Clear all persisted checkout data
+const clearPersistedCheckoutData = () => {
+  try {
+    if (process.client && localStorage) {
+      Object.values(PERSISTENCE_KEYS).forEach(key => {
+        if (key !== PERSISTENCE_KEYS.CART) { // Don't clear cart unless explicitly requested
+          removeStorageItem(key)
+        }
+      })
+    }
+  } catch (error) {
+    console.error('Failed to clear persisted checkout data:', error)
+  }
+}
+
   // User information reference that will be updated through parameters
   const user = ref({
     firstname: '',
@@ -40,7 +75,7 @@ export const useFlutterwaveSDK = () => {
 
   // Generate unique transaction reference
   const generateTxRef = () => {
-    return `ngn-tx-${Date.now()}-${Math.floor(Math.random() * 1000000)}`
+    return `usd-tx-${Date.now()}-${Math.floor(Math.random() * 1000000)}`
   }
 
   // Update user data from external source
@@ -66,36 +101,47 @@ export const useFlutterwaveSDK = () => {
       amount: Number(paymentData.amount),
       callback: async (data: any): Promise<void> => {
         console.log(data.flw_ref, 'Payment callback received')
-        console.log(incomingOrderDetails, 'incoming order details accessed from callbac')
-        console.log(data, 'fluttter datda')
+        console.log(incomingOrderDetails.value, 'incoming order details accessed from callback')
+        console.log(data, 'flutterwave data')
+        
         if (data.status === 'successful') {
           try {
+            loading.value = true
+            
             // Create transaction object
             const transactionPayloadObj = {
               user: incomingOrderDetails.value.customer,
               type: "payment",
-              amount: data.order?.total || paymentData.amount,
+              amount: data.amount || paymentData.amount,
               status: "successful",
               order: incomingOrderDetails?.value?.id || incomingOrderDetails?.value?._id,
-              paymentMethod: data.order?.paymentMethod || "flutterwave",
-              paymentReference: data.flw_ref || data.order?.tranxReference,
-              currency: "NGN", // Changed to NGN to match the currency used in payment
+              paymentMethod: "flutterwave",
+              paymentReference: data.flw_ref,
+              currency: "USD", // Updated to USD
               description: `Payment for order #${incomingOrderDetails?.value?.orderNumber || data.flw_ref}`,
             }
             
             // First create the transaction
             const res = await createTransaction(transactionPayloadObj)
-            console.log(res, ' res from transaction creation')
+            console.log(res, 'response from transaction creation')
 
+                            // Only clear cart from localStorage on successful order
+                  if (process.client && localStorage) {
+                    localStorage.removeItem(PERSISTENCE_KEYS.CART);
+                    cartItems.value = [];
+                  }
+                  
+                  // Clear all persisted checkout data on successful order
+                  clearPersistedCheckoutData();
 
-                // Then update the order status
-            const verifyPayloadObj = {
-              transactionId: apiRes?.value?.data?.transactionId,
-              reference: apiRes?.value?.data?.paymentReference
-            }
-
-            if(apiRes?.value?.data?.transactionId) {
-               await verifyPayment(verifyPayloadObj)
+            // Wait for transaction creation to complete before verification
+            if (apiRes?.value?.data?.transactionId) {
+              const verifyPayloadObj = {
+                transactionId: apiRes.value.data.transactionId,
+                reference: apiRes.value.data.paymentReference
+              }
+              
+              await verifyPayment(verifyPayloadObj)
             }
             
             // Then update the order status
@@ -113,11 +159,12 @@ export const useFlutterwaveSDK = () => {
             if (orderId) {
               await updateOrderStatus(orderId, payloadObj)
               
-              // Only redirect after both operations are complete
+              // Only redirect after all operations are complete
               loading.value = false
-               router.push(`/order-success?tranxId=${data.flw_ref || paymentData.tx_ref}&amount=${data.amount || paymentData.amount}`)
-              // Use window.location.href for a full page redirect with query parameters
-              window.location.href = `/order-success?tranxId=${data.flw_ref || paymentData.tx_ref}&amount=${data.amount || paymentData.amount}`
+              
+              // Use router.push for Vue Router navigation
+              await router.push(`/order-success?tranxId=${data.flw_ref}&amount=${data.amount || paymentData.amount}`)
+              
             } else {
               console.error('Order ID is missing')
               loading.value = false
@@ -128,11 +175,11 @@ export const useFlutterwaveSDK = () => {
           }
         } else {
           loading.value = false
-          console.error('Payment was not successful')
+          console.error('Payment was not successful:', data.status)
         }
       },
-      currency: "NGN",
-      country: "NG", 
+      currency: "USD", // Updated to USD
+      country: "US", // Updated to US for USD transactions
       customer: {
         email: paymentData.customerEmail,
         name: paymentData.customerName,
@@ -144,14 +191,14 @@ export const useFlutterwaveSDK = () => {
         title: "Raymond Aworo Art",
       },
       meta: {
-        transaction_type: "local",
+        transaction_type: "international", // Changed from "local" to "international" for USD
         order_ref: paymentData.orderDetails?.orderRef || paymentForm.value.orderRef || 'none',
       },
       onclose(): void {
         loading.value = false
         console.log("Payment modal closed")
       },
-      payment_options: "card,ussd,banktransfer",
+      payment_options: "card,ussd,banktransfer", // Note: USD may have different payment options
       public_key: import.meta.env.VITE_FLW_PUBLIC_KEY,
       redirect_url: undefined,
       tx_ref: paymentData.tx_ref,
@@ -160,17 +207,34 @@ export const useFlutterwaveSDK = () => {
 
   // Handle payment with order details if provided
   const handlePayment = async (orderDetails: any = null) => {
-    console.log(orderDetails, 'incomign order details')
+    console.log(orderDetails, 'incoming order details')
     incomingOrderDetails.value = orderDetails
+    
     try {
       loading.value = true
       
-      // If order details are provided, use them instead of default user info
-      const customerName = `${orderDetails?.shippingAddress.firstName} ${orderDetails?.shippingAddress.lastName}` || `${orderDetails?.billingAddress.firstName} ${orderDetails?.billingAddress.lastName}`
-      const customerEmail = orderDetails?.shippingAddress.email || orderDetails?.billingAddress.email || user.value.email
-      const customerPhone = orderDetails?.shippingAddress.phone || orderDetails?.billingAddress.phone || user.value.phone
-      const txRef = orderDetails?.orderNumber ? `${orderDetails?.orderNumber}` : generateTxRef()
-      const amount = orderDetails?.paidAmount
+      // Validate required order details
+      if (!orderDetails) {
+        throw new Error('Order details are required for payment')
+      }
+      
+      // Extract customer information with fallbacks
+      const shippingAddress = orderDetails.shippingAddress || {}
+      const billingAddress = orderDetails.billingAddress || {}
+      
+      const customerName = `${shippingAddress.firstName || billingAddress.firstName || ''} ${shippingAddress.lastName || billingAddress.lastName || ''}`.trim() || computedUsername.value
+      const customerEmail = shippingAddress.email || billingAddress.email || user.value.email
+      const customerPhone = shippingAddress.phone || billingAddress.phone || user.value.phone
+      const txRef = orderDetails.orderNumber ? `${orderDetails.orderNumber}` : generateTxRef()
+      const amount = orderDetails.paidAmount
+      
+      // Validate required fields
+      if (!customerEmail) {
+        throw new Error('Customer email is required')
+      }
+      if (!amount || amount <= 0) {
+        throw new Error('Valid payment amount is required')
+      }
       
       const paymentData = {
         amount: Number(amount),
@@ -183,15 +247,20 @@ export const useFlutterwaveSDK = () => {
       
       paymentDataRef.value = paymentData;
       
-      // Trigger the payment
+      // Initialize and trigger the payment
       initializeFlutterwave()
+      console.log('initializing,,,,,')
       
       if (flutterwave.value) {
         flutterwave.value.init()
+      } else {
+        throw new Error('Failed to initialize Flutterwave')
       }
+      
     } catch (error) {
       console.error('Error initiating payment:', error)
       loading.value = false
+      // You might want to show an error message to the user here
     }
   }
   

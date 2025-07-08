@@ -721,7 +721,7 @@ import { useEnrollInCourse } from "@/composables/modules/courses/useEnrollInCour
     'Basic drawing materials: charcoal pencils, charcoal sticks, kneaded eraser, blending stumps',
     'Drawing paper or sketchbook (preferably with some texture)',
     'Reference photos for practice (provided in course resources)',
-    'Patience and willingness to practice the techniques demonstrated'
+    'Patience and willi  ess to practice the techniques demonstrated'
   ]
   
   // Course outcomes

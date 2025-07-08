@@ -290,13 +290,13 @@
                          :class="deliveryMethod === 'standard' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
                       <div v-if="deliveryMethod === 'standard'" class="w-3 h-3 rounded-full bg-white"></div>
                     </div>
-                    <!-- <div class="flex-1">
+                    <div class="flex-1">
                       <div class="flex justify-between items-center mb-1">
                         <span class="font-semibold text-slate-800">Express Shipping</span>
                         <span class="font-bold text-slate-800">${{ formatPrice(currentShippingFee) }}</span>
                       </div>
                       <p class="text-sm text-slate-600">Delivery within 5-7 business days</p>
-                    </div> -->
+                    </div>
                   </div>
                 </div>
                 
@@ -1871,14 +1871,14 @@ const processPayment = async () => {
       // Set order ID for display
       orderId.value = result.order.orderNumber
       
-      // Only clear cart from localStorage on successful order
-      if (process.client && localStorage) {
-        localStorage.removeItem(PERSISTENCE_KEYS.CART);
-        cartItems.value = [];
-      }
+      // // Only clear cart from localStorage on successful order
+      // if (process.client && localStorage) {
+      //   localStorage.removeItem(PERSISTENCE_KEYS.CART);
+      //   cartItems.value = [];
+      // }
       
-      // Clear all persisted checkout data on successful order
-      clearPersistedCheckoutData();
+      // // Clear all persisted checkout data on successful order
+      // clearPersistedCheckoutData();
       
       // Clear query parameters on successful order
       clearQueryParams();

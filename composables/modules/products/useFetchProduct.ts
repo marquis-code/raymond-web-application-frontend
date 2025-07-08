@@ -8,11 +8,11 @@ export const useFetchProduct = () => {
   const route = useRoute() as any
 
   // Fetch products with pagination
-  const fetchProduct = async () => {
+  const fetchProduct = async (id?: string) => {
     loading.value = true
     error.value = null
     try {
-      const response = await product_api.$_get_product_by_id(route?.params?.id)
+      const response = await product_api.$_get_product_by_id(route?.params?.id || route?.query?.productId || id)
       product.value = response.data.product || response.data
       
       
@@ -26,7 +26,9 @@ export const useFetchProduct = () => {
   }
 
   onMounted(() => {
-    fetchProduct()
+    if(route?.params?.id || route?.query?.productId){
+      fetchProduct()
+    }
   })
 
   return {

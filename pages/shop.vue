@@ -39,7 +39,7 @@
           :style="{ animationDelay: `${index * 100}ms` }"
           @mouseenter="handleProductHover(index, true)"
           @mouseleave="handleProductHover(index, false)"
-          @click="openQuickView(product)"
+          @click="openProductModal(product._id)"
         >
           <!-- Product Image Container -->
           <div class="relative overflow-hidden bg-white rounded-2xl shadow-lg group-hover:shadow-2xl transition-all duration-700">
@@ -92,10 +92,11 @@
                 Add to Collection
               </button>
             </div> -->
+            <!-- @click.stop="addToCart(product)" -->
             <div class="pt-4  transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
               <button 
                 class="w-full bg-gray-900 text-white py-3 px-6 text-sm rounded-xl font-medium hover:bg-gray-800 transition-all duration-300 hover:scale-105 shadow-lg"
-                @click.stop="addToCart(product)"
+                @click.stop="router.push(`/artworks/${product._id}`)"
               >
                 Add to Collection
               </button>
@@ -104,6 +105,13 @@
         </div>
       </div>
     </div>
+
+    <ProductPreviewModal
+      :is-open="modalOpen"
+      :product-id="selectedProductId"
+      :on-close="closeProductModal"
+      :on-add-to-cart="handleAddToCart"
+    />
 
     <!-- Enhanced Quick View Modal -->
     <Teleport to="body">
@@ -333,6 +341,7 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
+import { useFetchProduct } from "@/composables/modules/products/useFetchProduct"
 import { useCartStore } from '@/composables/useCartStore'
   import type { InstallmentPlan, InstallmentCalculation, PaymentType } from '~/types/installment'
 import { useCustomToast } from '@/composables/core/useCustomToast'
@@ -344,12 +353,53 @@ import shop2 from "@/assets/img/print3.png"
 import shop3 from "@/assets/img/print4.png"
 import shop4 from "@/assets/img/print1.jpg"
 const { promosale, loading: fetchingPromoSale } = useFetchPromosale();
+const { fetchProduct } = useFetchProduct()
 // Modal state
 const modalOpen = ref(false)
 const selectedProduct = ref<any>(null)
 const selectedSize = ref('')
 const quantity = ref(1)
 const currentImageIndex = ref(0)
+const router = useRouter()
+
+
+interface Product {
+  _id: string
+  name: string
+  images: string[]
+  sizes: Array<{
+    _id: string
+    size: string
+    price: number
+    color?: string
+    installmentConfig?: any
+  }>
+  category?: string
+  isAvailable?: boolean
+}
+
+// Modal state
+const selectedProductId = ref<string | null>(null)
+
+const openProductModal = (productId: string) => {
+  console.log(productId, 'hee ooo')
+  selectedProductId.value = productId
+  // Add product ID as query parameter
+  router.push({ 
+    query: { ...router.currentRoute.value.query, productId } 
+  })
+  fetchProduct(productId)
+  modalOpen.value = true
+}
+
+const closeProductModal = () => {
+  modalOpen.value = false
+  selectedProductId.value = null
+  // Remove product ID from query parameters
+  const query = { ...router.currentRoute.value.query }
+  delete query.productId
+  router.push({ query })
+}
 
 
 interface ArtPrint {
@@ -459,22 +509,6 @@ const handleProductHover = (index: number, isHovered: boolean) => {
   hoveredProducts[index] = isHovered
 }
 
-// const openQuickView = (product: any) => {
-//   selectedProduct.value = product
-//   selectedSize.value = product.sizes[0]?._id || ''
-//   quantity.value = 1
-//   currentImageIndex.value = 0
-//   modalOpen.value = true
-//   document.body.style.overflow = 'hidden'
-// }
-
-// const closeQuickView = () => {
-//   modalOpen.value = false
-//   document.body.style.overflow = 'auto'
-//   setTimeout(() => {
-//     selectedProduct.value = null
-//   }, 300)
-// }
 
 const openQuickView = (product: any) => {
   selectedProduct.value = product
@@ -521,44 +555,66 @@ const selectSize = (size: any) => {
   selectedSize.value = size
 }
 
+const hasInstallmentOption = (size: any) => {
+  return size.installmentConfig && size.installmentConfig.enabled
+}
+
 const addToCart = (product: any) => {
+  console.log(product, 'product here')
   const defaultSize = product?.sizes[0]?.size
   const defaultPrice = product?.sizes[0]?.price
   console.log(product.sizes, 'product here', defaultPrice)
+  // const cartItem = {
+  //       id: product._id,
+  //       title: product.name,
+  //       image: product.images[0],
+  //       price: selectedSize.price,
+  //       quantity: 1,
+  //       size: selectedSize.size,
+  //       paymentType: paymentType.value,
+  //       installmentPlan: selectedInstallmentPlan.value,
+  //       installmentCalculation: installmentCalculation.value
+  //     }
+
   const cartItem = {
-        id: product._id,
-        title: product.name,
-        image: product.images[0],
-        price: selectedSize.price,
-        quantity: 1,
-        size: selectedSize.size,
-        paymentType: paymentType.value,
-        installmentPlan: selectedInstallmentPlan.value,
-        installmentCalculation: installmentCalculation.value
+      id: `${product._id}-${selectedSize.value.size}`,
+      productId: product._id,
+      title: product.name,
+      image: product.images[0],
+      price: selectedSize.value.price,
+      // quantity: quantity.value,
+      quantity: 1,
+      size: selectedSize.size,
+      color: selectedSize.color,
+      // Include installment configuration for checkout
+      installmentConfig: selectedSize.installmentConfig || null,
+      hasInstallmentOption: hasInstallmentOption(selectedSize.size),
+      // Additional product metadata
+      category: product.category,
+      weight: product.weight,
+      dimensions: {
+        width: product.width,
+        height: product.height,
+        length: product.length
       }
+    }
+    
+    // addItemToCart(cartItem)
 
   if (product && product?.isAvailable) {
-    addItemToCart({...product, quantity: 1})
-    // addItemToCart({
-    //   id: product?._id,
-    //   title: product?.name,
-    //   image: product?.images[0],
-    //   price: defaultPrice,
-    //   quantity: 1
-    //   // size: selectedSize.value.size
-    // })
+
+    addItemToCart(cartItem)
+    showToast({
+      title: "Added to Cart",
+      message: `1 × ${product.name} (${selectedSize.size}) added to cart`,
+      toastType: "success",
+      duration: 3000
+    });
+
   
   }
 }
 
-// const addToCartFromModal = () => {
-//   if (!selectedProduct.value || !selectedSize.value) return
-  
-//   const size = selectedProduct.value.sizes.find((s: any) => s._id === selectedSize.value)
-//   if (!size) return
-  
-//   console.log(`Added ${quantity.value} ${selectedProduct.value.name} (${size.size}) to cart`)
-// }
 
 const addToCartFromModal = () => {
   if (!selectedProduct.value || !selectedSize.value) return
@@ -568,15 +624,6 @@ const addToCartFromModal = () => {
 
   // addToCartFromModal({...selectedProduct, quantity: quantity.value, size: size.size})
   addItemToCart({...selectedProduct.value, quantity: quantity.value, size: size.size})
-  
-  // addItemToCart({
-  //   id: selectedProduct.value._id,
-  //   title: selectedProduct.value.name,
-  //   image: selectedProduct.value.images[0],
-  //   price: size.price,
-  //   quantity: quantity.value,
-  //   size: size.size
-  // })
   
   showToast({
     title: 'Added to Collection',
