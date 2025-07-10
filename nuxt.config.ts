@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     }
   },
   plugins: ["~/plugins/aos.client.ts", "~/plugins/firebase.client.ts"],
-  css: ["/assets/css/main.css"],
+  css: ['~/assets/css/fonts.css', "/assets/css/main.css",'@/assets/css/fonts.css'],
   modules: ['@kevinmarrec/nuxt-pwa', "@nuxtjs/tailwindcss"],
   runtimeConfig: {
     public: {

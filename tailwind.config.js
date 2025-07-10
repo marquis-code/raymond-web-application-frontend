@@ -11,6 +11,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'avenir': ['Avenir LT Pro', 'sans-serif'],
+      },
       colors: {
         gray: {
           25:  "#fafafa",

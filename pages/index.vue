@@ -1,11 +1,92 @@
 <template>
-  <div>
+  <div class="mt-20">
     <!-- <div v-if="fetchingPromoSale" class="flex justify-center items-center py-20">
       <div class="relative">
         <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-200"></div>
         <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"></div>
       </div>
     </div> -->
+
+    <!-- Hero Section with animated image carousel and typewriter effect -->
+     <ArtistHero />
+    <!-- <section class="relative">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+
+        <div class="relative h-screen overflow-hidden">
+          <div
+            v-for="(image, index) in heroImages"
+            :key="index"
+            class="absolute inset-0 transition-opacity duration-1000 ease-in-out"
+            :class="{
+              'opacity-100': currentImageIndex === index,
+              'opacity-0': currentImageIndex !== index,
+            }"
+          >
+            <img
+              :src="image"
+              alt="Artist with artwork"
+              class="w-full h-full"
+            />
+          </div>
+        </div>
+
+
+        <div
+          class="bg-zinc-800 text-white p-8 md:p-16 flex flex-col justify-center"
+        >
+          <h1
+            ref="titleRef"
+            class="text-2xl md:text-4xl font-bold mb-4 slide-up"
+          >
+            RAYMOND AWORO ART
+          </h1>
+          <p
+            class="text-base md:text-xl text-zinc-300 italic mb-8 overflow-hidden"
+          >
+            Creating Art; Exploring Life at the Intersection of Faith and
+            Creativity
+          </p>
+          <div class="mt-6 md:hidden flex justify-center gap-x-8">
+            <a
+              href="https://web.facebook.com/people/raymondaworo/100067199633701/?mibextid=LQQJ4d"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">Facebook</span>
+              <img class="h-4 w-4" src="@/assets/icons/facebook.svg" />
+            </a>
+            <a
+              href="https://www.instagram.com/raymondaworo/?igshid=OGQ5ZDc2ODk2ZA%3D%3D"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">Instagram</span>
+              <img class="h-4 w-4" src="@/assets/icons/instagram.svg" />
+            </a>
+            <a
+              href="https://x.com/raymondaworo/status/1546911697776115714?s=46&t=wja9T8NIysGx2Vtni1WECQ"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">X</span>
+              <img class="h-4 w-4" src="@/assets/icons/logo-black.png" />
+            </a>
+            <a
+              href="https://www.tiktok.com/@raymondaworo?_t=8fvTbrYZSA1&_r=1"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">Tiktok</span>
+              <img class="h-4 w-4" src="@/assets/icons/tiktok.svg" />
+            </a>
+            <a
+              href="https://www.youtube.com/@raymondaworo"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">YouTube</span>
+              <img class="h-4 w-4" src="@/assets/icons/youtube.svg" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
     <div v-if="fetchingPromoSale" class="flex items-center justify-center lg:py-44">
         <div class="relative">
           <!-- Main Loader -->
@@ -26,84 +107,6 @@
         </div>
       </div>
     <PromoSection class="mt-16" v-else :promosale="promosale" :loading="fetchingPromoSale" />
-    <!-- Hero Section with animated image carousel and typewriter effect -->
-    <section class="relative">
-      <div class="grid grid-cols-1 md:grid-cols-2">
-        <!-- Left side with artist image carousel -->
-        <div class="relative h-screen overflow-hidden">
-          <div
-            v-for="(image, index) in heroImages"
-            :key="index"
-            class="absolute inset-0 transition-opacity duration-1000 ease-in-out"
-            :class="{
-              'opacity-100': currentImageIndex === index,
-              'opacity-0': currentImageIndex !== index,
-            }"
-          >
-            <img
-              :src="image"
-              alt="Artist with artwork"
-              class="w-full h-full object-cover"
-            />
-          </div>
-        </div>
-
-        <!-- Right side with text and typewriter effect -->
-        <div
-          class="bg-zinc-800 text-white p-8 md:p-16 flex flex-col justify-center"
-        >
-          <h1
-            ref="titleRef"
-            class="text-3xl md:text-4xl font-bold mb-4 slide-up"
-          >
-            RAYMOND AWORO ART
-          </h1>
-          <p
-            class="text-lg md:text-xl text-zinc-300 italic mb-8 overflow-hidden"
-          >
-            Creating Art; Exploring Life at the Intersection of Faith and
-            Creativity
-          </p>
-          <div class="mt-6 md:hidden flex justify-center gap-x-10">
-            <a
-              href="https://web.facebook.com/people/raymondaworo/100067199633701/?mibextid=LQQJ4d"
-              class="bg-white rounded-full p-2"
-            >
-              <span class="sr-only">Facebook</span>
-              <img class="h-5 w-5" src="@/assets/icons/facebook.svg" />
-            </a>
-            <a
-              href="https://www.instagram.com/raymondaworo/?igshid=OGQ5ZDc2ODk2ZA%3D%3D"
-              class="bg-white rounded-full p-2"
-            >
-              <span class="sr-only">Instagram</span>
-              <img class="h-5 w-5" src="@/assets/icons/instagram.svg" />
-            </a>
-            <a
-              href="https://x.com/raymondaworo/status/1546911697776115714?s=46&t=wja9T8NIysGx2Vtni1WECQ"
-              class="bg-white rounded-full p-2"
-            >
-              <span class="sr-only">X</span>
-              <img class="h-5 w-5" src="@/assets/icons/logo-black.png" />
-            </a>
-            <a
-              href="https://www.tiktok.com/@raymondaworo?_t=8fvTbrYZSA1&_r=1"
-              class="bg-white rounded-full p-2"
-            >
-              <span class="sr-only">Tiktok</span>
-              <img class="h-5 w-5" src="@/assets/icons/tiktok.svg" />
-            </a>
-            <a
-              href="https://www.youtube.com/@raymondaworo"
-              class="bg-white rounded-full p-2"
-            >
-              <span class="sr-only">YouTube</span>
-              <img class="h-5 w-5" src="@/assets/icons/youtube.svg" />
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
 
 
         <!-- Product Gallery with advanced scroll and hover effects -->
@@ -209,7 +212,8 @@
                 {{ product?.name }}
               </h3>
               <p class="text-center font-medium text-sm text-gray-700 mb-1">
-                From ${{ product.price }}
+                From {{ formatCurrency(product.price, { showSymbol: true }) }} or {{ formatCurrency(fixedInstallmentPayment, { showSymbol: true }) }}/month
+                <!-- From ${{ product.price }} or $50/month fixedInstallmentPayment -->
               </p>
             </div>
           </div>
@@ -280,6 +284,7 @@
       </div>
     </section>
 
+    <!-- <CourseTestimonialCarousel /> -->
     <TestimonialsCarousel />
   </div>
 </template>
@@ -291,6 +296,30 @@ import hero1 from "@/assets/img/commission-art1.jpg";
 import hero2 from "@/assets/img/raymond-hero.png";
 import { useFetchProducts } from "@/composables/modules/products/useFetchProducts";
 import { useFetchPromosale } from "@/composables/modules/promosale/useFetchPromosale";
+import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+const {
+  countryCode,
+  currency,
+  isLoading,
+  error,
+  currencyCode,
+  currencySymbol,
+  currencyName,
+  detectCountry,
+  formatCurrency,
+  setCurrency,
+  setCountry,
+  getSupportedCurrencies,
+  getSupportedCountries
+} = useCurrencyConverter()
+
+const fixedInstallmentPayment = ref(50)
+
+
+// Auto-detect country on mount
+onMounted(() => {
+  detectCountry()
+})
 
 const { products, loading } = useFetchProducts();
 const { promosale, loading: fetchingPromoSale } = useFetchPromosale();
@@ -301,7 +330,7 @@ import PromoSaleCTA from "../components/PromoSaleCTA.vue";
 const router = useRouter();
 
 // Hero section image carousel
-const heroImages = [hero2, hero1];
+const heroImages = [hero2];
 const currentImageIndex = ref(0);
 let imageInterval: number | null = null;
 

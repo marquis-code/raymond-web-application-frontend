@@ -1,0 +1,187 @@
+/* Avenir LT Pro Font Family */
+
+@font-face {
+    font-family: 'Avenir LT Pro';
+    src: url('../font/AvenirLTProLight.eot');
+    src: local('Avenir LT Pro Light'), local('AvenirLTProLight'),
+        url('../font/AvenirLTProLight.eot?#iefix') format('embedded-opentype'),
+        url('../font/AvenirLTProLight.woff2') format('woff2'),
+        url('../font/AvenirLTProLight.woff') format('woff'),
+        url('../font/AvenirLTProLight.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir LT Pro';
+    src: url('../font/AvenirLTProLightOblique.eot');
+    src: local('Avenir LT Pro Light Oblique'), local('AvenirLTProLightOblique'),
+        url('../font/AvenirLTProLightOblique.eot?#iefix') format('embedded-opentype'),
+        url('../font/AvenirLTProLightOblique.woff2') format('woff2'),
+        url('../font/AvenirLTProLightOblique.woff') format('woff'),
+        url('../font/AvenirLTProLightOblique.ttf') format('truetype');
+    font-weight: 300;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir LT Pro';
+    src: url('../font/AvenirLTProBook.eot');
+    src: local('Avenir LT Pro Book'), local('AvenirLTProBook'),
+        url('../font/AvenirLTProBook.eot?#iefix') format('embedded-opentype'),
+        url('../font/AvenirLTProBook.woff2') format('woff2'),
+        url('../font/AvenirLTProBook.woff') format('woff'),
+        url('../font/AvenirLTProBook.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir LT Pro';
+    src: url('../font/AvenirLTProBookOblique.eot');
+    src: local('Avenir LT Pro Book Oblique'), local('AvenirLTProBookOblique'),
+        url('../font/AvenirLTProBookOblique.eot?#iefix') format('embedded-opentype'),
+        url('../font/AvenirLTProBookOblique.woff2') format('woff2'),
+        url('../font/AvenirLTProBookOblique.woff') format('woff'),
+        url('../font/AvenirLTProBookOblique.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir LT Pro';
+    src: url('../font/AvenirLTProRoman.eot');
+    src: local('Avenir LT Pro Roman'), local('AvenirLTProRoman'),
+        url('../font/AvenirLTProRoman.eot?#iefix') format('embedded-opentype'),
+        url('../font/AvenirLTProRoman.woff2') format('woff2'),
+        url('../font/AvenirLTProRoman.woff') format('woff'),
+        url('../font/AvenirLTProRoman.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir LT Pro';
+    src: url('../font/AvenirLTProOblique.eot');
+    src: local('Avenir LT Pro Oblique'), local('AvenirLTProOblique'),
+        url('../font/AvenirLTProOblique.eot?#iefix') format('embedded-opentype'),
+        url('../font/AvenirLTProOblique.woff2') format('woff2'),
+        url('../font/AvenirLTProOblique.woff') format('woff'),
+        url('../font/AvenirLTProOblique.ttf') format('truetype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir LT Pro';
+    src: url('../font/AvenirLTProMedium.eot');
+    src: local('Avenir LT Pro Medium'), local('AvenirLTProMedium'),
+        url('../font/AvenirLTProMedium.eot?#iefix') format('embedded-opentype'),
+        url('../font/AvenirLTProMedium.woff2') format('woff2'),
+        url('../font/AvenirLTProMedium.woff') format('woff'),
+        url('../font/AvenirLTProMedium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir LT Pro';
+    src: url('../font/AvenirLTProMediumOblique.eot');
+    src: local('Avenir LT Pro Medium Oblique'), local('AvenirLTProMediumOblique'),
+        url('../font/AvenirLTProMediumOblique.eot?#iefix') format('embedded-opentype'),
+        url('../font/AvenirLTProMediumOblique.woff2') format('woff2'),
+        url('../font/AvenirLTProMediumOblique.woff') format('woff'),
+        url('../font/AvenirLTProMediumOblique.ttf') format('truetype');
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir LT Pro';
+    src: url('../font/AvenirLTProHeavy.eot');
+    src: local('Avenir LT Pro Heavy'), local('AvenirLTProHeavy'),
+        url('../font/AvenirLTProHeavy.eot?#iefix') format('embedded-opentype'),
+        url('../font/AvenirLTProHeavy.woff2') format('woff2'),
+        url('../font/AvenirLTProHeavy.woff') format('woff'),
+        url('../font/AvenirLTProHeavy.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir LT Pro';
+    src: url('../font/AvenirLTProHeavyOblique.eot');
+    src: local('Avenir LT Pro Heavy Oblique'), local('AvenirLTProHeavyOblique'),
+        url('../font/AvenirLTProHeavyOblique.eot?#iefix') format('embedded-opentype'),
+        url('../font/AvenirLTProHeavyOblique.woff2') format('woff2'),
+        url('../font/AvenirLTProHeavyOblique.woff') format('woff'),
+        url('../font/AvenirLTProHeavyOblique.ttf') format('truetype');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir LT Pro';
+    src: url('../font/AvenirLTProBlack.eot');
+    src: local('Avenir LT Pro Black'), local('AvenirLTProBlack'),
+        url('../font/AvenirLTProBlack.eot?#iefix') format('embedded-opentype'),
+        url('../font/AvenirLTProBlack.woff2') format('woff2'),
+        url('../font/AvenirLTProBlack.woff') format('woff'),
+        url('../font/AvenirLTProBlack.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir LT Pro';
+    src: url('../font/AvenirLTProBlackOblique.eot');
+    src: local('Avenir LT Pro Black Oblique'), local('AvenirLTProBlackOblique'),
+        url('../font/AvenirLTProBlackOblique.eot?#iefix') format('embedded-opentype'),
+        url('../font/AvenirLTProBlackOblique.woff2') format('woff2'),
+        url('../font/AvenirLTProBlackOblique.woff') format('woff'),
+        url('../font/AvenirLTProBlackOblique.ttf') format('truetype');
+    font-weight: 900;
+    font-style: italic;
+    font-display: swap;
+}
+
+/* Utility classes for easy usage */
+.font-avenir {
+    font-family: 'Avenir LT Pro', sans-serif;
+}
+
+.font-avenir-light {
+    font-family: 'Avenir LT Pro', sans-serif;
+    font-weight: 300;
+}
+
+.font-avenir-book {
+    font-family: 'Avenir LT Pro', sans-serif;
+    font-weight: 400;
+}
+
+.font-avenir-medium {
+    font-family: 'Avenir LT Pro', sans-serif;
+    font-weight: 500;
+}
+
+.font-avenir-heavy {
+    font-family: 'Avenir LT Pro', sans-serif;
+    font-weight: 700;
+}
+
+.font-avenir-black {
+    font-family: 'Avenir LT Pro', sans-serif;
+    font-weight: 900;
+}

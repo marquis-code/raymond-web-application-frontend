@@ -104,7 +104,10 @@
                       </svg>
                     </button>
                   </div>
-                  <span class="font-medium text-gray-900">${{ formatPrice(item.price * item.quantity) }}</span>
+                  <span class="font-medium text-gray-900">
+                    <!-- ${{ formatPrice(item.price * item.quantity) }} -->
+                    {{ formatCurrency(item.price * item.quantity, { showSymbol: true }) }}
+                  </span>
                 </div>
               </div>
             </div>
@@ -117,7 +120,10 @@
         <div class="space-y-3 mb-5">
           <div class="flex justify-between text-gray-600">
             <span>Subtotal</span>
-            <span>${{ formatPrice(subtotal) }}</span>
+            <span>
+              <!-- ${{ formatPrice(subtotal) }} -->
+              {{ formatCurrency(subtotal, { showSymbol: true }) }}
+            </span>
           </div>
           <!-- <div class="flex justify-between text-gray-600">
             <span>Shipping</span>
@@ -126,7 +132,10 @@
           </div> -->
           <div class="flex justify-between font-bold text-gray-900 pt-3 border-t border-gray-100">
             <span>Total</span>
-            <span>${{ formatPrice(total) }}</span>
+            <span>
+              {{ formatCurrency(total, { showSymbol: true }) }}
+              <!-- ${{ formatPrice(total) }} -->
+            </span>
           </div>
         </div>
         
@@ -160,6 +169,30 @@ import { useCartStore } from '~/composables/useCartStore'
 import { useCheckoutStore } from '~/composables/useCheckoutStore'
 import { navigateTo } from '#app'
 const router = useRouter()
+import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+const {
+  countryCode,
+  currency,
+  isLoading,
+  error,
+  currencyCode,
+  currencySymbol,
+  currencyName,
+  detectCountry,
+  formatCurrency,
+  setCurrency,
+  setCountry,
+  getSupportedCurrencies,
+  getSupportedCountries
+} = useCurrencyConverter()
+
+const fixedInstallmentPayment = ref(50)
+
+
+// Auto-detect country on mount
+onMounted(() => {
+  detectCountry()
+})
 
 const emit = defineEmits(['close'])
 
@@ -199,8 +232,12 @@ const proceedToCheckout = () => {
   navigateTo('/checkout')
 }
 
+// const formatPrice = (price: number) => {
+//   return price?.toLocaleString('en-US')
+// }
+
 const formatPrice = (price: number) => {
-  return price?.toLocaleString('en-US')
+  return price
 }
 
 const continueToShopping = () => {

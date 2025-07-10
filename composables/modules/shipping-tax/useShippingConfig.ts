@@ -27,6 +27,7 @@ export const useShippingConfig = () => {
       // In a real app, this would be an API call
       // const response = await $fetch('/api/shipping-configs')
      const res = await shipping_tax_api.$_get_all_shipping_configs()
+     console.log(res,'fetching00000000000000000')
       // For demo purposes, return mock data
       return res.data
     } catch (err: any) {
@@ -96,6 +97,7 @@ export const useShippingConfig = () => {
       //   method: 'DELETE'
       // })
       const res = await shipping_tax_api.$_delete_shipping_config(id)
+      console.log(res,'config here')
       
       // For demo purposes, just return
       return res.data

@@ -49,7 +49,7 @@
             >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256"><path d="M230.14,58.87A8,8,0,0,0,224,56H62.68L56.6,22.57A8,8,0,0,0,48.73,16H24a8,8,0,0,0,0,16h18L67.56,172.29a24,24,0,0,0,5.33,11.27,28,28,0,1,0,44.4,8.44h45.42A27.75,27.75,0,0,0,160,204a28,28,0,1,0,28-28H91.17a8,8,0,0,1-7.87-6.57L80.13,152h116a24,24,0,0,0,23.61-19.71l12.16-66.86A8,8,0,0,0,230.14,58.87ZM104,204a12,12,0,1,1-12-12A12,12,0,0,1,104,204Zm96,0a12,12,0,1,1-12-12A12,12,0,0,1,200,204Zm4-74.57A8,8,0,0,1,196.1,136H77.22L65.59,72H214.41Z"></path></svg>
               <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"></path></svg> -->
-              <span v-if="localStorageCartCount > 0" class="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              <span v-if="localStorageCartCount > 0" class="absolute -top-1 -right-1 bg-black text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                 {{ localStorageCartCount }}
               </span>
             </button>
@@ -82,12 +82,13 @@
 
     <!-- Mobile Navigation Menu -->
     <div 
-      class="fixed top-0 right-0 bottom-0 w-4/5 max-w-sm bg-white z-50 shadow-xl transform transition-transform duration-300 ease-in-out"
+      class="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-white z-50 shadow-xl transform transition-transform duration-300 ease-in-out"
       :class="isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'"
     >
       <div class="p-6 h-full flex flex-col">
         <div class="flex justify-between items-center mb-8">
-          <h2 class="text-xl font-bold">Menu</h2>
+          <!-- <h2 class="text-xl font-bold">Menu</h2> -->
+           <img src="@/assets/img/raymond-logo.png" class="h-10 w-10" />
           <button @click="isMobileMenuOpen = false">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path></svg>
           </button>
@@ -98,7 +99,7 @@
             v-for="item in navItems" 
             :key="item.name"
             :to="item.path"
-            class="text-lg py-2 border-b border-gray-100 hover:text-primary transition-colors duration-300"
+            class="text-base py-2 border-b border-gray-100 hover:text-primary transition-colors duration-300"
             @click="isMobileMenuOpen = false"
           >
             {{ item.name }}
@@ -107,7 +108,42 @@
         
         <div class="mt-auto">
           <div class="flex items-center justify-center space-x-4 py-4">
-            <a href="#" class="text-gray-600 hover:text-primary transition-colors duration-300">
+            <a
+              href="https://web.facebook.com/people/raymondaworo/100067199633701/?mibextid=LQQJ4d"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">Facebook</span>
+              <img class="h-4 w-4" src="@/assets/icons/facebook.svg" />
+            </a>
+            <a
+              href="https://www.instagram.com/raymondaworo/?igshid=OGQ5ZDc2ODk2ZA%3D%3D"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">Instagram</span>
+              <img class="h-4 w-4" src="@/assets/icons/instagram.svg" />
+            </a>
+            <a
+              href="https://x.com/raymondaworo/status/1546911697776115714?s=46&t=wja9T8NIysGx2Vtni1WECQ"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">X</span>
+              <img class="h-4 w-4" src="@/assets/icons/logo-black.png" />
+            </a>
+            <a
+              href="https://www.tiktok.com/@raymondaworo?_t=8fvTbrYZSA1&_r=1"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">Tiktok</span>
+              <img class="h-4 w-4" src="@/assets/icons/tiktok.svg" />
+            </a>
+            <a
+              href="https://www.youtube.com/@raymondaworo"
+              class="bg-white rounded-full p-2"
+            >
+              <span class="sr-only">YouTube</span>
+              <img class="h-4 w-4" src="@/assets/icons/youtube.svg" />
+            </a>
+            <!-- <a href="#" class="text-gray-600 hover:text-primary transition-colors duration-300">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160ZM176,24H80A56.06,56.06,0,0,0,24,80v96a56.06,56.06,0,0,0,56,56h96a56.06,56.06,0,0,0,56-56V80A56.06,56.06,0,0,0,176,24Zm40,152a40,40,0,0,1-40,40H80a40,40,0,0,1-40-40V80A40,40,0,0,1,80,40h96a40,40,0,0,1,40,40ZM192,76a12,12,0,1,1-12-12A12,12,0,0,1,192,76Z"></path></svg>
             </a>
             <a href="#" class="text-gray-600 hover:text-primary transition-colors duration-300">
@@ -115,7 +151,7 @@
             </a>
             <a href="#" class="text-gray-600 hover:text-primary transition-colors duration-300">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#000000" viewBox="0 0 256 256"><path d="M88,104a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H96A8,8,0,0,1,88,104Zm8,40h64a8,8,0,0,0,0-16H96a8,8,0,0,0,0,16ZM232,56V184a16,16,0,0,1-16,16H155.57l-13.68,23.94a16,16,0,0,1-27.78,0L100.43,200H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V184h65.07a8,8,0,0,1,7,4l16,28,16-28a8,8,0,0,1,7-4H216Z"></path></svg>
-            </a>
+            </a> -->
           </div>
         </div>
       </div>

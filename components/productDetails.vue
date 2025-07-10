@@ -649,7 +649,7 @@
     if (paymentType.value === 'installment' && selectedInstallmentPlan.value) {
       return `Add to Cart (${selectedInstallmentPlan.value.name})`
     }
-    return 'Add to Collection'
+    return 'Add to Cart'
   }
   
   // Methods

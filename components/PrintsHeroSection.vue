@@ -138,12 +138,12 @@ const getParallaxStyle = (index: number) => {
           :class="{ 'animate-content': !isLoading }"
         >
           <h2 class="text-5xl font-light tracking-tight text-gray-900 sm:text-6xl mb-8">
-            <span class="block text-reveal" style="--delay: 0.2s">Fine Art</span>
-            <span class="block text-gray-600 text-reveal" style="--delay: 0.4s">PRINTS</span>
+            <span class="block text-reveal" style="--delay: 0.2s">SHOP PRINTS</span>
+            <!-- <span class="block text-gray-600 text-reveal" style="--delay: 0.4s">PRINTS</span> -->
           </h2>
 
           <div class="space-y-6 text-gray-600 leading-relaxed">
-            <p class="text-xl font-light text-reveal" style="--delay: 0.6s">
+            <p class="text-base text-reveal" style="--delay: 0.6s">
               Limited edition prints on premium Hahnemühle German etching paper (310 gsm). 
               Each piece is carefully crafted in editions of 10 to 20.
             </p>

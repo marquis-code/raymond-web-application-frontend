@@ -14,7 +14,7 @@
         <h2 class="text-2xl font-bold text-slate-800 mb-4">Your cart is empty</h2>
         <p class="text-slate-600 mb-8">Add some amazing products to your cart to continue with checkout.</p>
         <NuxtLink 
-          to="/artworks" 
+          to="/artworks"
           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
         >
           <ArrowLeft class="w-4 h-4 mr-2" />
@@ -46,16 +46,16 @@
           </div>
           <div v-if="selectedPaymentType === 'installment'" class="flex justify-between items-center mb-3">
             <span class="text-slate-600 font-medium">Down Payment</span>
-            <span class="font-bold text-emerald-600">${{ formatPrice(installmentSummary.downPayment) }}</span>
+            <span class="font-bold text-emerald-600">{{ formatCurrency(installmentSummary.downPayment) }}</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-slate-600 font-medium">{{ selectedPaymentType === 'installment' ? 'Total Order Value' : 'Total Amount' }}</span>
-            <span class="font-bold text-xl text-slate-800">${{ formatPrice(calculateTotal()) }}</span>
+            <span class="font-bold text-xl text-slate-800">{{ formatCurrency(calculateTotal()) }}</span>
           </div>
         </div>
         
         <NuxtLink 
-          to="/" 
+          to="/"
           class="w-full py-4 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium flex items-center justify-center"
         >
           Continue Shopping
@@ -78,7 +78,7 @@
           <div class="absolute top-4 left-0 right-0 h-0.5 bg-slate-200">
             <div 
               class="h-full bg-gradient-to-r from-slate-800 to-slate-900 transition-all duration-500 ease-out"
-              :style="{ width: `${((currentStep - 1) / 2) * 100}%` }"
+              :style="{ width: `{((currentStep - 1) / 2) * 100}%` }"
             ></div>
           </div>
           
@@ -228,6 +228,7 @@
                   
                   <div class="space-y-2">
                     <label for="zipCode" class="block text-sm font-semibold text-slate-700">ZIP Code</label>
+                    <!-- {{taxConfigs}} -->
                     <input 
                       id="zipCode"
                       v-model="deliveryDetails.zipCode"
@@ -239,9 +240,11 @@
                     />
                   </div>
                 </div>
+
                 
                 <div class="space-y-2">
                   <label for="country" class="block text-sm font-semibold text-slate-700">Country</label>
+                  <!-- {{ shippingConfigs }} -->
                   <select 
                     id="country"
                     v-model="deliveryDetails.country"
@@ -251,8 +254,8 @@
                   >
                     <option value="">Select Country</option>
                     <option 
-                      v-for="country in availableCountries" 
-                      :key="country.countryCode" 
+                      v-for="country in availableCountries"
+                      :key="country.countryCode"
                       :value="country.countryCode"
                     >
                       {{ country.countryName }}
@@ -293,32 +296,12 @@
                     <div class="flex-1">
                       <div class="flex justify-between items-center mb-1">
                         <span class="font-semibold text-slate-800">Express Shipping</span>
-                        <span class="font-bold text-slate-800">${{ formatPrice(currentShippingFee) }}</span>
+                        <span class="font-bold text-slate-800">{{ formatCurrency(currentShippingFee) }}</span>
                       </div>
                       <p class="text-sm text-slate-600">Delivery within 5-7 business days</p>
                     </div>
                   </div>
                 </div>
-                
-                <!-- <div 
-                  class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
-                  :class="deliveryMethod === 'express' ? 'border-slate-800 bg-slate-50 shadow-md' : 'border-slate-200 hover:border-slate-300'"
-                  @click="handleDeliveryMethodChange('express')"
-                >
-                  <div class="flex items-center">
-                    <div class="w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-all duration-200"
-                         :class="deliveryMethod === 'express' ? 'border-slate-800 bg-slate-800' : 'border-slate-300'">
-                      <div v-if="deliveryMethod === 'express'" class="w-3 h-3 rounded-full bg-white"></div>
-                    </div>
-                    <div class="flex-1">
-                      <div class="flex justify-between items-center mb-1">
-                        <span class="font-semibold text-slate-800">Express Shipping</span>
-                        <span class="font-bold text-slate-800">${{ formatPrice(currentShippingFee * 2.5) }}</span>
-                      </div>
-                      <p class="text-sm text-slate-600">Delivery within 2-3 business days</p>
-                    </div>
-                  </div>
-                </div> -->
               </div>
               
               <div class="flex gap-2">
@@ -366,7 +349,7 @@
                       <div class="flex-1">
                         <div class="flex justify-between items-center mb-1">
                           <span class="font-semibold text-slate-800">Pay Full Amount</span>
-                          <span class="font-bold text-emerald-600">${{ formatPrice(calculateTotal()) }}</span>
+                          <span class="font-bold text-emerald-600">{{ formatCurrency(calculateTotal()) }}</span>
                         </div>
                         <p class="text-sm text-slate-600">Complete payment now with no additional fees</p>
                       </div>
@@ -391,7 +374,7 @@
                       <div class="flex-1">
                         <div class="flex justify-between items-center mb-1">
                           <span class="font-semibold text-slate-800">Installment Plan</span>
-                          <span class="font-bold text-blue-600">From ${{ formatPrice(getMinimumInstallmentAmount()) }}/month</span>
+                          <span class="font-bold text-blue-600">From {{ formatCurrency(getMinimumInstallmentAmount()) }}/month</span>
                         </div>
                         <p class="text-sm text-slate-600">Split your payment into manageable installments</p>
                       </div>
@@ -428,7 +411,7 @@
                     <div class="bg-white p-4 rounded-lg border border-blue-200">
                       <div class="flex justify-between items-center mb-2">
                         <span class="text-sm font-medium text-slate-600">Total Amount Agreed</span>
-                        <span class="text-lg font-bold text-slate-800">${{ formatPrice(calculateTotal()) }}</span>
+                        <span class="text-lg font-bold text-slate-800">{{ formatCurrency(calculateTotal()) }}</span>
                       </div>
                       <p class="text-xs text-slate-500">This is the total amount you agree to pay including interest</p>
                     </div>
@@ -446,12 +429,11 @@
                       >
                         <option value="">Select installment terms</option>
                         <option 
-                          v-for="term in availableInstallmentTerms" 
-                          :key="term" 
+                          v-for="term in availableInstallmentTerms"
+                          :key="term"
                           :value="term"
                         >
-                          {{ term }} months (Est. ${{ formatPrice(calculateEstimatedMonthlyPayment(term)) }}/month)
-                          )
+                          {{ term }} months (Est. {{ formatCurrency(calculateEstimatedMonthlyPayment(term)) }}/month)
                         </option>
                       </select>
                     </div>
@@ -480,7 +462,7 @@
                         Down Payment Amount ({{ getMinimumDownPaymentPercentage() }}% - {{ getMaximumDownPaymentPercentage() }}%)
                       </label>
                       <div class="relative">
-                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500"></span>
                         <input 
                           v-model.number="installmentConfig.downPayment"
                           @input="calculateInstallmentDetails"
@@ -494,8 +476,8 @@
                         />
                       </div>
                       <div class="flex justify-between text-xs text-slate-500">
-                        <span>Min: ${{ formatPrice(getMinimumDownPayment()) }}</span>
-                        <span>Max: ${{ formatPrice(getMaximumDownPayment()) }}</span>
+                        <span>Min: {{ formatCurrency(getMinimumDownPayment()) }}</span>
+                        <span>Max: {{ formatCurrency(getMaximumDownPayment()) }}</span>
                       </div>
                     </div>
 
@@ -562,11 +544,11 @@
                       <div class="space-y-3">
                         <div class="flex justify-between">
                           <span class="text-sm text-slate-600">Down Payment (Today)</span>
-                          <span class="font-semibold">${{ formatPrice(installmentSummary.downPayment) }}</span>
+                          <span class="font-semibold">{{ formatCurrency(installmentSummary.downPayment) }}</span>
                         </div>
                         <div class="flex justify-between">
                           <span class="text-sm text-slate-600">Installment Amount</span>
-                          <span class="font-semibold">${{ formatPrice(installmentSummary.installmentAmount) }}</span>
+                          <span class="font-semibold">{{ formatCurrency(installmentSummary.installmentAmount) }}</span>
                         </div>
                         <div class="flex justify-between">
                           <span class="text-sm text-slate-600">Number of Payments</span>
@@ -578,12 +560,12 @@
                         </div>
                         <div class="flex justify-between">
                           <span class="text-sm text-slate-600">Total Interest</span>
-                          <span class="font-semibold">${{ formatPrice(installmentSummary.totalInterest) }}</span>
+                          <span class="font-semibold">{{ formatCurrency(installmentSummary.totalInterest) }}</span>
                         </div>
                         <div class="border-t pt-3">
                           <div class="flex justify-between">
                             <span class="font-semibold text-slate-800">Total Payable</span>
-                            <span class="font-bold text-lg">${{ formatPrice(installmentSummary.totalPayable) }}</span>
+                            <span class="font-bold text-lg">{{ formatCurrency(installmentSummary.totalPayable) }}</span>
                           </div>
                         </div>
                       </div>
@@ -652,21 +634,21 @@
             <!-- Cart Items -->
             <div v-if="cartItems && cartItems.length > 0" class="space-y-4 mb-6 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
               <div 
-                v-for="item in cartItems" 
-                :key="item.id" 
+                v-for="item in cartItems"
+                :key="item.id"
                 class="flex gap-4 p-4 border border-slate-100 rounded-xl hover:bg-slate-50 transition-all duration-200 group"
               >
                 <div class="w-16 h-16 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
                   <img 
-                    :src="item.image || '/placeholder.svg?height=64&width=64'" 
-                    :alt="item.title" 
-                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" 
+                    :src="item.image || '/placeholder.svg?height=64&width=64'"
+                    :alt="item.title"
+                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     @error="handleImageError"
                   />
                 </div>
                 <div class="flex-1 min-w-0">
                   <h4 class="font-semibold text-slate-800 text-sm truncate">{{ item.title }}</h4>
-                  <p class="text-sm text-slate-600">${{ formatPrice(item.price) }}</p>
+                  <p class="text-sm text-slate-600">{{ formatCurrency(item.price) }}</p>
                   <div class="flex items-center gap-2 mt-1">
                     <span v-if="item.size" class="text-xs px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.size }}</span>
                     <span v-if="item.color" class="text-xs px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.color }}</span>
@@ -698,7 +680,7 @@
                   </div>
                 </div>
                 <div class="text-right">
-                  <span class="font-semibold text-slate-800">${{ formatPrice(item.price * item.quantity) }}</span>
+                  <span class="font-semibold text-slate-800">{{ formatCurrency(item.price * item.quantity) }}</span>
                 </div>
               </div>
             </div>
@@ -707,17 +689,17 @@
             <div class="border-t border-slate-200 pt-4 space-y-3">
               <div class="flex justify-between text-sm">
                 <span class="text-slate-600">Subtotal</span>
-                <span class="font-semibold text-slate-800">${{ formatPrice(subtotalAmount) }}</span>
+                <span class="font-semibold text-slate-800">{{ formatCurrency(subtotalAmount) }}</span>
               </div>
               
               <div class="flex justify-between text-sm">
                 <span class="text-slate-600">Shipping</span>
-                <span class="font-semibold text-slate-800">{{ getShippingCost() === 0 ? 'Free' : `$${formatPrice(getShippingCost())}` }}</span>
+                <span class="font-semibold text-slate-800">{{ getShippingCost() === 0 ? 'Free' : `{formatCurrency(getShippingCost())}` }}</span>
               </div>
               
               <div class="flex justify-between text-sm">
                 <span class="text-slate-600">Tax ({{ currentTaxRate }}%)</span>
-                <span class="font-semibold text-slate-800">${{ formatPrice(getTaxAmount()) }}</span>
+                <span class="font-semibold text-slate-800">{{ formatCurrency(getTaxAmount()) }}</span>
               </div>
               
               <!-- Installment Summary in Order Total -->
@@ -725,15 +707,15 @@
                 <div class="text-xs font-semibold text-blue-800 mb-2">Installment Plan</div>
                 <div class="flex justify-between text-xs text-blue-700 mb-1">
                   <span>Down Payment</span>
-                  <span>${{ formatPrice(installmentSummary.downPayment) }}</span>
+                  <span>{{ formatCurrency(installmentSummary.downPayment) }}</span>
                 </div>
                 <div class="flex justify-between text-xs text-blue-700 mb-1">
-                  <span>{{ installmentConfig.numberOfInstallments }} × ${{ formatPrice(installmentSummary.installmentAmount) }}</span>
-                  <span>${{ formatPrice(installmentSummary.installmentAmount * installmentConfig.numberOfInstallments) }}</span>
+                  <span>{{ installmentConfig.numberOfInstallments }} × {{ formatCurrency(installmentSummary.installmentAmount) }}</span>
+                  <span>{{ formatCurrency(installmentSummary.installmentAmount * installmentConfig.numberOfInstallments) }}</span>
                 </div>
                 <div class="flex justify-between text-xs text-blue-700">
                   <span>Total Interest</span>
-                  <span>${{ formatPrice(installmentSummary.totalInterest) }}</span>
+                  <span>{{ formatCurrency(installmentSummary.totalInterest) }}</span>
                 </div>
               </div>
               
@@ -748,7 +730,7 @@
                   {{ selectedPaymentType === 'installment' ? 'Total Payable' : 'Total' }}
                 </span>
                 <span class="text-slate-800">
-                  ${{ formatPrice(selectedPaymentType === 'installment' && installmentSummary.totalPayable > 0 ? installmentSummary.totalPayable : calculateTotal()) }}
+                  {{ formatCurrency(selectedPaymentType === 'installment' && installmentSummary.totalPayable > 0 ? installmentSummary.totalPayable : calculateTotal()) }}
                 </span>
               </div>
 
@@ -756,7 +738,7 @@
               <div v-if="selectedPaymentType === 'installment' && installmentSummary.downPayment > 0" class="bg-emerald-50 p-3 rounded-lg border border-emerald-200">
                 <div class="flex justify-between font-semibold text-emerald-800">
                   <span>Today's Payment</span>
-                  <span>${{ formatPrice(installmentSummary.downPayment) }}</span>
+                  <span>{{ formatCurrency(installmentSummary.downPayment) }}</span>
                 </div>
                 <p class="text-xs text-emerald-600 mt-1">Down payment due now</p>
               </div>
@@ -823,11 +805,9 @@
           
           <div v-else-if="authModalMode === 'signin'">
             <h2 class="text-2xl font-bold text-center text-slate-800 mb-6">Sign In</h2>
-
             <div class="mb-4">
               <SocialLoginButtons @callback="handleCallback" authType="login" />
             </div>
-
             <form @submit.prevent="handleSignin" class="space-y-4">
               <div class="space-y-2">
                 <label for="signinEmail" class="block text-sm font-semibold text-slate-700">Email</label>
@@ -865,7 +845,7 @@
               <div class="text-center">
                 <button 
                   type="button"
-                  @click="authModalMode = 'signup'" 
+                  @click="authModalMode = 'signup'"
                   class="text-slate-600 hover:text-slate-800 font-medium"
                 >
                   Don't have an account? Sign up
@@ -955,7 +935,7 @@
               <div class="text-center">
                 <button 
                   type="button"
-                  @click="authModalMode = 'signin'" 
+                  @click="authModalMode = 'signin'"
                   class="text-slate-600 hover:text-slate-800 font-medium"
                 >
                   Already have an account? Sign in
@@ -972,19 +952,19 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { 
-  ShoppingBag, 
-  CheckCircle, 
-  User, 
-  Truck, 
-  CreditCard, 
-  ShoppingCart, 
-  ArrowLeft, 
-  ArrowRight, 
-  Minus, 
-  Plus, 
-  Trash2, 
-  X, 
+import {
+  ShoppingBag,
+  CheckCircle,
+  User,
+  Truck,
+  CreditCard,
+  ShoppingCart,
+  ArrowLeft,
+  ArrowRight,
+  Minus,
+  Plus,
+  Trash2,
+  X,
   Loader,
   LockIcon,
   HelpCircle,
@@ -1002,6 +982,30 @@ import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useTaxConfig } from '@/composables/modules/shipping-tax/useTaxConfig'
 import { useShippingConfig } from '@/composables/modules/shipping-tax/useShippingConfig'
 import { useCustomToast } from '@/composables/core/useCustomToast'
+import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+const {
+  countryCode,
+  currency,
+  isLoading,
+  error,
+  currencyCode,
+  currencySymbol,
+  currencyName,
+  detectCountry,
+  formatCurrency,
+  setCurrency,
+  setCountry,
+  getSupportedCurrencies,
+  getSupportedCountries
+} = useCurrencyConverter()
+
+const fixedInstallmentPayment = ref(50)
+
+
+// Auto-detect country on mount
+onMounted(() => {
+  detectCountry()
+})
 
 // Router
 const router = useRouter()
@@ -1049,7 +1053,6 @@ const { setItem, getItem, removeItem: removeStorageItem } = useLocalStorage()
 // Shipping and Tax data
 const { fetchShippingConfigs } = useShippingConfig()
 const { fetchTaxConfigs } = useTaxConfig()
-
 const shippingConfigs = ref([])
 const taxConfigs = ref([])
 const selectedCountryInfo = ref(null)
@@ -1092,7 +1095,7 @@ const deliveryDetails = ref({
 const deliveryMethod = ref('standard')
 const paymentMethod = ref('flutterwave')
 
-// Payment type selection
+// Payment type selection - UPDATED: Initialize from query params
 const selectedPaymentType = ref('full') // 'full' or 'installment'
 
 // Order ID for completed orders
@@ -1153,14 +1156,27 @@ const PERSISTENCE_KEYS = {
   GUEST_MODE: 'checkout-guest-mode'
 }
 
+// UPDATED: Initialize payment type from query params
+const initializePaymentTypeFromQuery = () => {
+  const paymentTypeParam = route.query.paymentType
+  if (paymentTypeParam && ['full', 'installment'].includes(paymentTypeParam as string)) {
+    selectedPaymentType.value = paymentTypeParam as 'full' | 'installment'
+    console.log('Payment type initialized from query params:', selectedPaymentType.value)
+  } else {
+    // Default to 'full' if no valid payment type in query params
+    selectedPaymentType.value = 'full'
+    console.log('Payment type defaulted to full payment')
+  }
+}
+
 // FIXED: Check if any cart items have installment options
 const hasInstallmentOptions = computed(() => {
   console.log('Checking installment options for cart items:', cartItems.value)
   const hasOptions = cartItems.value.some(item => {
-    const hasInstallment = item.hasInstallmentOption === true && 
-                          item.installmentConfig && 
-                          item.installmentConfig.enabled === true
-    console.log(`Item ${item.id}: hasInstallmentOption=${item.hasInstallmentOption}, config enabled=${item.installmentConfig?.enabled}, result=${hasInstallment}`)
+    const hasInstallment = item.hasInstallmentOption === true &&
+                           item.installmentConfig &&
+                           item.installmentConfig.enabled === true
+    console.log(`Item {item.id}: hasInstallmentOption={item.hasInstallmentOption}, config enabled={item.installmentConfig?.enabled}, result={hasInstallment}`)
     return hasInstallment
   })
   console.log('Overall hasInstallmentOptions:', hasOptions)
@@ -1169,9 +1185,9 @@ const hasInstallmentOptions = computed(() => {
 
 // FIXED: Get cart items with installment options for debugging
 const cartItemsWithInstallments = computed(() => {
-  return cartItems.value.filter(item => 
-    item.hasInstallmentOption === true && 
-    item.installmentConfig && 
+  return cartItems.value.filter(item =>
+    item.hasInstallmentOption === true &&
+    item.installmentConfig &&
     item.installmentConfig.enabled === true
   )
 })
@@ -1230,9 +1246,9 @@ const calculateEstimatedMonthlyPayment = (term: number) => {
 // FIXED: Get current installment configuration
 const getCurrentInstallmentConfig = () => {
   // Find the first item with installment options
-  const firstItemWithInstallments = cartItems.value.find(item => 
-    item.hasInstallmentOption === true && 
-    item.installmentConfig && 
+  const firstItemWithInstallments = cartItems.value.find(item =>
+    item.hasInstallmentOption === true &&
+    item.installmentConfig &&
     item.installmentConfig.enabled === true
   )
   
@@ -1393,9 +1409,9 @@ const getPaymentButtonText = () => {
   if (isProcessing.value) return 'Processing...'
   
   if (selectedPaymentType.value === 'installment') {
-    return `Pay Down Payment - $${formatPrice(installmentSummary.value.downPayment)}`
+    return `Pay Down Payment - ${formatCurrency(installmentSummary.value.downPayment)}`
   } else {
-    return `Complete Order - $${formatPrice(calculateTotal())}`
+    return `Complete Order - ${formatCurrency(calculateTotal())}`
   }
 }
 
@@ -1510,10 +1526,12 @@ const loadPersistedCheckoutData = () => {
         paymentMethod.value = savedPaymentMethod
       }
       
-      // Load payment type
-      const savedPaymentType = getItem(PERSISTENCE_KEYS.PAYMENT_TYPE)
-      if (savedPaymentType && ['full', 'installment'].includes(savedPaymentType)) {
-        selectedPaymentType.value = savedPaymentType
+      // Load payment type - UPDATED: Only load from storage if not already set from query params
+      if (selectedPaymentType.value === 'full') { // Only override if still default
+        const savedPaymentType = getItem(PERSISTENCE_KEYS.PAYMENT_TYPE)
+        if (savedPaymentType && ['full', 'installment'].includes(savedPaymentType)) {
+          selectedPaymentType.value = savedPaymentType
+        }
       }
       
       // Load installment config
@@ -1542,10 +1560,10 @@ const loadPersistedCheckoutData = () => {
       const savedCountryData = getItem(PERSISTENCE_KEYS.SELECTED_COUNTRY)
       if (savedCountryData) {
         try {
-          const parsedCountryData = JSON.parse(savedCountryData)
-          selectedCountryInfo.value = parsedCountryData.countryInfo
-          currentShippingFee.value = parsedCountryData.shippingFee || 0
-          currentTaxRate.value = parsedCountryData.taxRate || 0
+          const parsedData = JSON.parse(savedCountryData)
+          selectedCountryInfo.value = parsedData.countryInfo
+          currentShippingFee.value = parsedData.shippingFee || 0
+          currentTaxRate.value = parsedData.taxRate || 0
         } catch (e) {
           console.error('Failed to parse saved country data', e)
         }
@@ -1556,14 +1574,12 @@ const loadPersistedCheckoutData = () => {
   }
 }
 
-// Clear all persisted checkout data
+// Clear persisted checkout data
 const clearPersistedCheckoutData = () => {
   try {
     if (process.client && localStorage) {
       Object.values(PERSISTENCE_KEYS).forEach(key => {
-        if (key !== PERSISTENCE_KEYS.CART) { // Don't clear cart unless explicitly requested
-          removeStorageItem(key)
-        }
+        removeStorageItem(key)
       })
     }
   } catch (error) {
@@ -1571,660 +1587,531 @@ const clearPersistedCheckoutData = () => {
   }
 }
 
-// Computed properties for reactive totals
+// Available countries
+// Available countries from shipping configs
+// const availableCountries = computed(() => {
+//   return Array.isArray(shippingConfigs.value) && shippingConfigs?.value?.filter(config => config.isActive)
+// })
+
+const availableCountries = ref([
+  { countryCode: 'NG', countryName: 'Nigeria' },
+  { countryCode: 'US', countryName: 'United States' },
+  { countryCode: 'GB', countryName: 'United Kingdom' },
+  { countryCode: 'CA', countryName: 'Canada' },
+  { countryCode: 'AU', countryName: 'Australia' },
+  { countryCode: 'DE', countryName: 'Germany' },
+  { countryCode: 'FR', countryName: 'France' },
+  { countryCode: 'IT', countryName: 'Italy' },
+  { countryCode: 'ES', countryName: 'Spain' },
+  { countryCode: 'NL', countryName: 'Netherlands' },
+  { countryCode: 'BE', countryName: 'Belgium' },
+  { countryCode: 'CH', countryName: 'Switzerland' },
+  { countryCode: 'AT', countryName: 'Austria' },
+  { countryCode: 'SE', countryName: 'Sweden' },
+  { countryCode: 'NO', countryName: 'Norway' },
+  { countryCode: 'DK', countryName: 'Denmark' },
+  { countryCode: 'FI', countryName: 'Finland' },
+  { countryCode: 'IE', countryName: 'Ireland' },
+  { countryCode: 'PT', countryName: 'Portugal' },
+  { countryCode: 'GR', countryName: 'Greece' },
+  { countryCode: 'PL', countryName: 'Poland' },
+  { countryCode: 'CZ', countryName: 'Czech Republic' },
+  { countryCode: 'HU', countryName: 'Hungary' },
+  { countryCode: 'SK', countryName: 'Slovakia' },
+  { countryCode: 'SI', countryName: 'Slovenia' },
+  { countryCode: 'HR', countryName: 'Croatia' },
+  { countryCode: 'BG', countryName: 'Bulgaria' },
+  { countryCode: 'RO', countryName: 'Romania' },
+  { countryCode: 'LT', countryName: 'Lithuania' },
+  { countryCode: 'LV', countryName: 'Latvia' },
+  { countryCode: 'EE', countryName: 'Estonia' },
+  { countryCode: 'MT', countryName: 'Malta' },
+  { countryCode: 'CY', countryName: 'Cyprus' },
+  { countryCode: 'LU', countryName: 'Luxembourg' },
+  { countryCode: 'IS', countryName: 'Iceland' },
+  { countryCode: 'LI', countryName: 'Liechtenstein' },
+  { countryCode: 'MC', countryName: 'Monaco' },
+  { countryCode: 'SM', countryName: 'San Marino' },
+  { countryCode: 'VA', countryName: 'Vatican City' },
+  { countryCode: 'AD', countryName: 'Andorra' },
+  { countryCode: 'JP', countryName: 'Japan' },
+  { countryCode: 'KR', countryName: 'South Korea' },
+  { countryCode: 'CN', countryName: 'China' },
+  { countryCode: 'SG', countryName: 'Singapore' },
+  { countryCode: 'HK', countryName: 'Hong Kong' },
+  { countryCode: 'TW', countryName: 'Taiwan' },
+  { countryCode: 'MY', countryName: 'Malaysia' },
+  { countryCode: 'TH', countryName: 'Thailand' },
+  { countryCode: 'PH', countryName: 'Philippines' },
+  { countryCode: 'ID', countryName: 'Indonesia' },
+  { countryCode: 'VN', countryName: 'Vietnam' },
+  { countryCode: 'IN', countryName: 'India' },
+  { countryCode: 'BD', countryName: 'Bangladesh' },
+  { countryCode: 'PK', countryName: 'Pakistan' },
+  { countryCode: 'LK', countryName: 'Sri Lanka' },
+  { countryCode: 'NP', countryName: 'Nepal' },
+  { countryCode: 'BT', countryName: 'Bhutan' },
+  { countryCode: 'MV', countryName: 'Maldives' },
+  { countryCode: 'AF', countryName: 'Afghanistan' },
+  { countryCode: 'IR', countryName: 'Iran' },
+  { countryCode: 'IQ', countryName: 'Iraq' },
+  { countryCode: 'SA', countryName: 'Saudi Arabia' },
+  { countryCode: 'AE', countryName: 'United Arab Emirates' },
+  { countryCode: 'QA', countryName: 'Qatar' },
+  { countryCode: 'KW', countryName: 'Kuwait' },
+  { countryCode: 'BH', countryName: 'Bahrain' },
+  { countryCode: 'OM', countryName: 'Oman' },
+  { countryCode: 'YE', countryName: 'Yemen' },
+  { countryCode: 'JO', countryName: 'Jordan' },
+  { countryCode: 'LB', countryName: 'Lebanon' },
+  { countryCode: 'SY', countryName: 'Syria' },
+  { countryCode: 'IL', countryName: 'Israel' },
+  { countryCode: 'PS', countryName: 'Palestine' },
+  { countryCode: 'TR', countryName: 'Turkey' },
+  { countryCode: 'CY', countryName: 'Cyprus' },
+  { countryCode: 'GE', countryName: 'Georgia' },
+  { countryCode: 'AM', countryName: 'Armenia' },
+  { countryCode: 'AZ', countryName: 'Azerbaijan' },
+  { countryCode: 'KZ', countryName: 'Kazakhstan' },
+  { countryCode: 'KG', countryName: 'Kyrgyzstan' },
+  { countryCode: 'TJ', countryName: 'Tajikistan' },
+  { countryCode: 'TM', countryName: 'Turkmenistan' },
+  { countryCode: 'UZ', countryName: 'Uzbekistan' },
+  { countryCode: 'MN', countryName: 'Mongolia' },
+  { countryCode: 'RU', countryName: 'Russia' },
+  { countryCode: 'BY', countryName: 'Belarus' },
+  { countryCode: 'UA', countryName: 'Ukraine' },
+  { countryCode: 'MD', countryName: 'Moldova' },
+  { countryCode: 'MX', countryName: 'Mexico' },
+  { countryCode: 'GT', countryName: 'Guatemala' },
+  { countryCode: 'BZ', countryName: 'Belize' },
+  { countryCode: 'SV', countryName: 'El Salvador' },
+  { countryCode: 'HN', countryName: 'Honduras' },
+  { countryCode: 'NI', countryName: 'Nicaragua' },
+  { countryCode: 'CR', countryName: 'Costa Rica' },
+  { countryCode: 'PA', countryName: 'Panama' },
+  { countryCode: 'CU', countryName: 'Cuba' },
+  { countryCode: 'JM', countryName: 'Jamaica' },
+  { countryCode: 'HT', countryName: 'Haiti' },
+  { countryCode: 'DO', countryName: 'Dominican Republic' },
+  { countryCode: 'PR', countryName: 'Puerto Rico' },
+  { countryCode: 'TT', countryName: 'Trinidad and Tobago' },
+  { countryCode: 'BB', countryName: 'Barbados' },
+  { countryCode: 'GD', countryName: 'Grenada' },
+  { countryCode: 'LC', countryName: 'Saint Lucia' },
+  { countryCode: 'VC', countryName: 'Saint Vincent and the Grenadines' },
+  { countryCode: 'AG', countryName: 'Antigua and Barbuda' },
+  { countryCode: 'KN', countryName: 'Saint Kitts and Nevis' },
+  { countryCode: 'DM', countryName: 'Dominica' },
+  { countryCode: 'BS', countryName: 'Bahamas' },
+  { countryCode: 'AR', countryName: 'Argentina' },
+  { countryCode: 'BR', countryName: 'Brazil' },
+  { countryCode: 'CL', countryName: 'Chile' },
+  { countryCode: 'CO', countryName: 'Colombia' },
+  { countryCode: 'EC', countryName: 'Ecuador' },
+  { countryCode: 'GY', countryName: 'Guyana' },
+  { countryCode: 'PY', countryName: 'Paraguay' },
+  { countryCode: 'PE', countryName: 'Peru' },
+  { countryCode: 'SR', countryName: 'Suriname' },
+  { countryCode: 'UY', countryName: 'Uruguay' },
+  { countryCode: 'VE', countryName: 'Venezuela' },
+  { countryCode: 'BO', countryName: 'Bolivia' },
+  { countryCode: 'FK', countryName: 'Falkland Islands' },
+  { countryCode: 'GF', countryName: 'French Guiana' },
+  { countryCode: 'ZA', countryName: 'South Africa' },
+  { countryCode: 'EG', countryName: 'Egypt' },
+  { countryCode: 'LY', countryName: 'Libya' },
+  { countryCode: 'TN', countryName: 'Tunisia' },
+  { countryCode: 'DZ', countryName: 'Algeria' },
+  { countryCode: 'MA', countryName: 'Morocco' },
+  { countryCode: 'SD', countryName: 'Sudan' },
+  { countryCode: 'SS', countryName: 'South Sudan' },
+  { countryCode: 'ET', countryName: 'Ethiopia' },
+  { countryCode: 'ER', countryName: 'Eritrea' },
+  { countryCode: 'DJ', countryName: 'Djibouti' },
+  { countryCode: 'SO', countryName: 'Somalia' },
+  { countryCode: 'KE', countryName: 'Kenya' },
+  { countryCode: 'UG', countryName: 'Uganda' },
+  { countryCode: 'TZ', countryName: 'Tanzania' },
+  { countryCode: 'RW', countryName: 'Rwanda' },
+  { countryCode: 'BI', countryName: 'Burundi' },
+  { countryCode: 'MW', countryName: 'Malawi' },
+  { countryCode: 'ZM', countryName: 'Zambia' },
+  { countryCode: 'ZW', countryName: 'Zimbabwe' },
+  { countryCode: 'BW', countryName: 'Botswana' },
+  { countryCode: 'NA', countryName: 'Namibia' },
+  { countryCode: 'SZ', countryName: 'Eswatini' },
+  { countryCode: 'LS', countryName: 'Lesotho' },
+  { countryCode: 'MZ', countryName: 'Mozambique' },
+  { countryCode: 'MG', countryName: 'Madagascar' },
+  { countryCode: 'MU', countryName: 'Mauritius' },
+  { countryCode: 'SC', countryName: 'Seychelles' },
+  { countryCode: 'KM', countryName: 'Comoros' },
+  { countryCode: 'CV', countryName: 'Cape Verde' },
+  { countryCode: 'ST', countryName: 'São Tomé and Príncipe' },
+  { countryCode: 'GQ', countryName: 'Equatorial Guinea' },
+  { countryCode: 'GA', countryName: 'Gabon' },
+  { countryCode: 'CG', countryName: 'Republic of the Congo' },
+  { countryCode: 'CD', countryName: 'Democratic Republic of the Congo' },
+  { countryCode: 'CF', countryName: 'Central African Republic' },
+  { countryCode: 'CM', countryName: 'Cameroon' },
+  { countryCode: 'TD', countryName: 'Chad' },
+  { countryCode: 'NE', countryName: 'Niger' },
+  { countryCode: 'BF', countryName: 'Burkina Faso' },
+  { countryCode: 'ML', countryName: 'Mali' },
+  { countryCode: 'SN', countryName: 'Senegal' },
+  { countryCode: 'MR', countryName: 'Mauritania' },
+  { countryCode: 'GM', countryName: 'Gambia' },
+  { countryCode: 'GW', countryName: 'Guinea-Bissau' },
+  { countryCode: 'GN', countryName: 'Guinea' },
+  { countryCode: 'SL', countryName: 'Sierra Leone' },
+  { countryCode: 'LR', countryName: 'Liberia' },
+  { countryCode: 'CI', countryName: 'Côte d\'Ivoire' },
+  { countryCode: 'GH', countryName: 'Ghana' },
+  { countryCode: 'TG', countryName: 'Togo' },
+  { countryCode: 'BJ', countryName: 'Benin' },
+  { countryCode: 'AO', countryName: 'Angola' },
+  { countryCode: 'AU', countryName: 'Australia' },
+  { countryCode: 'NZ', countryName: 'New Zealand' },
+  { countryCode: 'PG', countryName: 'Papua New Guinea' },
+  { countryCode: 'FJ', countryName: 'Fiji' },
+  { countryCode: 'SB', countryName: 'Solomon Islands' },
+  { countryCode: 'VU', countryName: 'Vanuatu' },
+  { countryCode: 'NC', countryName: 'New Caledonia' },
+  { countryCode: 'PF', countryName: 'French Polynesia' },
+  { countryCode: 'WS', countryName: 'Samoa' },
+  { countryCode: 'TO', countryName: 'Tonga' },
+  { countryCode: 'KI', countryName: 'Kiribati' },
+  { countryCode: 'TV', countryName: 'Tuvalu' },
+  { countryCode: 'NR', countryName: 'Nauru' },
+  { countryCode: 'PW', countryName: 'Palau' },
+  { countryCode: 'FM', countryName: 'Federated States of Micronesia' },
+  { countryCode: 'MH', countryName: 'Marshall Islands' }
+])
+
+// Computed properties
 const subtotalAmount = computed(() => {
-  if (!cartItems.value || cartItems.value.length === 0) return 0
-  return cartItems.value.reduce((total, item) => {
-    const itemPrice = item.price || 0
-    const itemQuantity = item.quantity || 0
-    return total + (itemPrice * itemQuantity)
-  }, 0)
+  return cartItems.value.reduce((total, item) => total + (item.price * item.quantity), 0)
 })
 
-// Available countries from shipping configs
-const availableCountries = computed(() => {
-  return Array.isArray(shippingConfigs.value) && shippingConfigs?.value?.filter(config => config.isActive)
-})
+const getShippingCost = () => {
+  return currentShippingFee.value * (deliveryMethod.value === 'express' ? EXPRESS_DELIVERY_MULTIPLIER : 1)
+}
+
+const getTaxAmount = () => {
+  const subtotal = subtotalAmount.value
+  const shipping = getShippingCost()
+  return (subtotal + shipping) * (currentTaxRate.value / 100)
+}
+
+const calculateTotal = () => {
+  const subtotal = subtotalAmount.value
+  const shipping = getShippingCost()
+  const tax = getTaxAmount()
+  return subtotal + shipping + tax
+}
 
 // Load shipping and tax configurations
-const loadConfigurations = async () => {
+const loadShippingAndTaxConfigs = async () => {
+  if (isLoadingConfigs.value) return
+  
+  isLoadingConfigs.value = true
   try {
-    isLoadingConfigs.value = true
-    
-    // Fetch shipping and tax configurations
-    const [shippingData, taxData] = await Promise.all([
+    const [shippingResponse, taxResponse] = await Promise.all([
       fetchShippingConfigs(),
       fetchTaxConfigs()
     ])
+
     
-    // Set the configurations
-    shippingConfigs.value = shippingData || []
-    taxConfigs.value = taxData || []
-    
-    // After loading configs, restore country selection if it exists
-    await nextTick()
-    
-    // If we have persisted country data, restore it
-    if (deliveryDetails.value.country && shippingConfigs.value.length > 0) {
-      handleCountryChange()
+    if (shippingResponse) {
+      shippingConfigs.value = shippingResponse
     }
     
+    if (taxResponse) {
+      taxConfigs.value = taxResponse
+    }
   } catch (error) {
-    console.error('Failed to load configurations:', error)
-    
-    // Extract error message from the error object
-    const errorMessage = extractErrorMessage(error)
-    
-    if (showToast) {
-      showToast({
-        title: "Configuration Error",
-        message: errorMessage || "Failed to load shipping and tax configurations. Please refresh the page or contact support.",
-        toastType: "error",
-        duration: 5000
-      })
-    }
+    console.error('Failed to load shipping and tax configs:', error)
+    showToast({
+      title: 'Configuration Error',
+      message: 'Failed to load shipping and tax information. Using default rates.',
+      toastType: 'warning',
+      duration: 5000
+    })
   } finally {
     isLoadingConfigs.value = false
   }
 }
 
-// Enhanced country change handler
+// Handle country change
 const handleCountryChange = () => {
   const countryCode = deliveryDetails.value.country
+  const country = availableCountries.value.find(c => c.countryCode === countryCode)
   
-  if (!countryCode) {
-    selectedCountryInfo.value = null
-    currentShippingFee.value = 0
-    currentTaxRate.value = 0
-    return
+  if (country) {
+    selectedCountryInfo.value = country
+    
+    // Find shipping config for this country
+    const shippingConfig = shippingConfigs.value.find(config => 
+      config.countryCode === countryCode && config.isActive
+    )
+
+    console.log(shippingConfig, 'selected shipping cionfig')
+    
+    if (shippingConfig) {
+      currentShippingFee.value = shippingConfig.shippingRate
+    } else {
+      // Default shipping fee
+      currentShippingFee.value = countryCode === 'NG' ? 0 : 25
+    }
+    
+    // Find tax config for this country
+    const taxConfig = taxConfigs.value.find(config => 
+      config.countryCode === countryCode && config.isActive
+    )
+    
+    if (taxConfig) {
+      currentTaxRate.value = taxConfig.vatRate
+    } else {
+      // Default tax rates
+      const defaultTaxRates = {
+        'NG': 7.5,
+        'US': 8.5,
+        'GB': 20,
+        'CA': 13,
+        'AU': 10,
+        'DE': 19,
+        'FR': 20
+      }
+      currentTaxRate.value = defaultTaxRates[countryCode] || 0
+    }
+    
+    persistCheckoutData()
   }
-  
-  // Find shipping config for selected country
-  const shippingConfig = shippingConfigs.value.find(
-    config => config.countryCode === countryCode && config.isActive
-  )
-  
-  // Find tax config for selected country
-  const taxConfig = taxConfigs.value.find(
-    config => config.countryCode === countryCode && config.isActive
-  )
-  
-  if (shippingConfig) {
-    selectedCountryInfo.value = shippingConfig
-    currentShippingFee.value = shippingConfig.shippingRate || 0
-  } else {
-    selectedCountryInfo.value = null
-    currentShippingFee.value = 0
-  }
-  
-  if (taxConfig) {
-    currentTaxRate.value = taxConfig.vatRate || 0
-  } else {
-    currentTaxRate.value = 0
-  }
-  
-  // Persist the updated data
-  persistCheckoutData()
 }
 
-// Enhanced delivery method change handler
-const handleDeliveryMethodChange = (method) => {
+// Handle delivery method change
+const handleDeliveryMethodChange = (method: string) => {
   deliveryMethod.value = method
   persistCheckoutData()
 }
 
-// Enhanced payment method change handler
-const handlePaymentMethodChange = (method) => {
+// Handle payment method change
+const handlePaymentMethodChange = (method: string) => {
   paymentMethod.value = method
   persistCheckoutData()
 }
 
-// Get shipping cost based on delivery method
-const getShippingCost = () => {
-  if (deliveryMethod.value === 'pickup') {
-    return 0
-  } else if (deliveryMethod.value === 'express') {
-    return currentShippingFee.value * EXPRESS_DELIVERY_MULTIPLIER
-  } else {
-    return currentShippingFee.value
-  }
-}
-
-// Get tax amount
-const getTaxAmount = () => {
-  const subtotal = subtotalAmount.value
-  return (subtotal * currentTaxRate.value) / 100
-}
-
-// Calculate total with shipping and tax
-const calculateTotal = () => {
-  const subtotal = subtotalAmount.value
-  const shipping = getShippingCost()
-  const tax = getTaxAmount()
-  
-  return subtotal + shipping + tax
-}
-
-// Update query parameters
-const updateQueryParams = () => {
-  const query = { ...route.query }
-  if (currentStep.value > MIN_STEP) {
-    query.step = currentStep.value.toString()
-  } else {
-    delete query.step
-  }
-  
-  router.replace({ query })
-}
-
-// Handle next step with enhanced persistence
+// Step navigation
 const handleNextStep = () => {
   if (currentStep.value < MAX_STEP) {
     currentStep.value++
     persistCheckoutData()
-    updateQueryParams()
   }
 }
 
-// Handle previous step with enhanced persistence
 const handlePrevStep = () => {
   if (currentStep.value > MIN_STEP) {
     currentStep.value--
     persistCheckoutData()
-    updateQueryParams()
   }
 }
 
-// Initialize step from query parameter
-const initializeStepFromQuery = () => {
-  const stepParam = route.query.step
-  if (stepParam && !isNaN(Number(stepParam))) {
-    const step = Number(stepParam)
-    if (step >= MIN_STEP && step <= MAX_STEP) {
-      currentStep.value = step
-    }
+// Cart management
+const updateItemQuantity = (itemId: string, newQuantity: number) => {
+  const itemIndex = cartItems.value.findIndex(item => item.id === itemId)
+  if (itemIndex !== -1 && newQuantity > 0) {
+    cartItems.value[itemIndex].quantity = newQuantity
+    saveCartToStorage()
+    updateCartItemQuantity(itemId, newQuantity)
   }
 }
 
-// Clear query parameters on order completion
-const clearQueryParams = () => {
-  const query = { ...route.query }
-  delete query.step
-  router.replace({ query })
+const removeItem = (itemId: string) => {
+  cartItems.value = cartItems.value.filter(item => item.id !== itemId)
+  saveCartToStorage()
+  removeFromCart(itemId)
+  
+  showToast({
+    title: 'Item Removed',
+    message: 'Item has been removed from your cart',
+    toastType: 'info',
+    duration: 3000
+  })
 }
 
-// Helper function to extract error message from various error formats
-const extractErrorMessage = (error: any): string => {
-  if (!error) return "An unknown error occurred";
-  
-  // Check for common error object structures
-  if (typeof error === 'string') return error;
-  
-  if (error.response) {
-    // Axios or similar HTTP client error
-    const { data, statusText } = error.response;
-    
-    // Check for structured error response
-    if (data) {
-      if (typeof data === 'string') return data;
-      if (data.message) return data.message;
-      if (data.error) return typeof data.error === 'string' ? data.error : JSON.stringify(data.error);
-      if (data.errors && Array.isArray(data.errors)) return data.errors.join(', ');
-    }
-    
-    return statusText || `Error ${error.response.status}`;
-  }
-  
-  // Check for error message property
-  if (error.message) return error.message;
-  
-  // Check for error details in nested error object
-  if (error.error) {
-    if (typeof error.error === 'string') return error.error;
-    if (error.error.message) return error.error.message;
-  }
-  
-  // Last resort: stringify the error
-  try {
-    return JSON.stringify(error);
-  } catch (e) {
-    return "An unexpected error occurred";
-  }
+// Authentication functions
+const openAuthModal = () => {
+  showAuthModal.value = true
+  authModalMode.value = 'check'
 }
 
-// FIXED: Process payment with updated total and installment support
-const processPayment = async () => {
-  console.log('process payment')
-  try {
-    // First, ensure we have cart items
-    if (!cartItems.value || cartItems.value.length === 0) {
-      showToast({
-        title: "Error",
-        message: "Your cart is empty. Please add items before proceeding.",
-        toastType: "error",
-        duration: 3000
-      });
-      return;
-    }
-    
-    // FIXED: Prepare checkout data with correct product IDs
-    const checkoutData = {
-      paymentType: selectedPaymentType.value,
-      items: cartItems.value.map(item => ({
-        // Use the exact productId from cart without any prefix
-        productId: item.productId,
-        id: item.id,
-        title: item.title,
-        image: item.image,
-        price: item.price,
-        quantity: item.quantity,
-        size: item.size,
-        color: item.color,
-        discount: item.discount || 0,
-        total: item.price * item.quantity,
-        hasInstallmentOption: item.hasInstallmentOption,
-        installmentConfig: item.installmentConfig,
-        category: item.category,
-        weight: item.weight,
-        dimensions: item.dimensions
-      })),
-      subtotal: subtotalAmount.value,
-      shipping: getShippingCost(),
-      tax: getTaxAmount(),
-      total: calculateTotal(),
-      deliveryDetails: deliveryDetails.value,
-      deliveryMethod: deliveryMethod.value,
-      paymentMethod: paymentMethod.value
-    }
-
-    console.log(checkoutData, 'here payload')
-    
-    // Add installment configuration if installment payment
-    if (selectedPaymentType.value === 'installment') {
-      checkoutData.installmentConfig = {
-        ...installmentConfig.value,
-        ...installmentSummary.value,
-        productSize: cartItems.value[0]?.size, // Assuming single product for now
-        product: cartItems.value[0]?.productId // Use exact productId
-      }
-      
-      // For installment, the immediate payment is the down payment
-      checkoutData.immediatePayment = installmentSummary.value.downPayment
-    }
-    
-    // Add country info
-    if (selectedCountryInfo.value) {
-      checkoutData.country = {
-        code: selectedCountryInfo.value.countryCode,
-        name: selectedCountryInfo.value.countryName,
-        taxRate: currentTaxRate.value
-      };
-    }
-    
-    console.log('Sending checkout data:', checkoutData)
-    
-    // Process the checkout
-    const result = await processCheckout(checkoutData)
-    console.log(result, 'processing result')
-    
-    if (result.success) {
-      // Set order ID for display
-      orderId.value = result.order.orderNumber
-      
-      // // Only clear cart from localStorage on successful order
-      // if (process.client && localStorage) {
-      //   localStorage.removeItem(PERSISTENCE_KEYS.CART);
-      //   cartItems.value = [];
-      // }
-      
-      // // Clear all persisted checkout data on successful order
-      // clearPersistedCheckoutData();
-      
-      // Clear query parameters on successful order
-      clearQueryParams();
-      
-      // Show success message
-      showToast({
-        title: "Order Created Successfully",
-        message: `Order #${result.order.orderNumber} has been created. ${selectedPaymentType.value === 'installment' ? 'Down payment processed.' : 'Payment completed.'}`,
-        toastType: "success",
-        duration: 5000
-      });
-      
-      return result;
-    } else {
-      throw new Error(result.error || "Checkout failed");
-    }
-  } catch (error) {
-    console.error('Payment processing failed:', error);
-    
-    // Extract error message
-    const errorMessage = extractErrorMessage(error);
-    
-    // Show error toast
-    showToast({
-      title: "Payment Failed",
-      message: errorMessage || "There was an error processing your payment. Please try again.",
-      toastType: "error",
-      duration: 5000
-    });
-    
-    throw error;
-  }
-};
-
-// Proceed as guest
-const proceedAsGuest = () => {
-  showAuthModal.value = false
-  if (setItem) {
-    setItem(PERSISTENCE_KEYS.GUEST_MODE, 'true')
-  }
-}
-
-// FIXED: Close auth modal function
 const closeAuthModal = () => {
   showAuthModal.value = false
   authModalMode.value = 'check'
 }
 
-// Handle signup
+const proceedAsGuest = () => {
+  setItem(PERSISTENCE_KEYS.GUEST_MODE, 'true')
+  closeAuthModal()
+}
+
 const handleSignup = async () => {
+  isSigningUp.value = true
   try {
-    isSigningUp.value = true
-    
-    const payloadObj = {
-      firstName: signupData.value.firstName,
-      lastName: signupData.value.lastName,
-      email: signupData.value.email,
-      password: signupData.value.password,
-      phone: signupData.value.phone,
-      role: signupData.value.role
-    }
-    
-    if (signup) {
-      const response = await signup(payloadObj)
-      
-      if (response && response.success) {
-        // Pre-fill delivery details with user info
-        if (deliveryDetails.value) {
-          deliveryDetails.value.firstName = signupData.value.firstName
-          deliveryDetails.value.lastName = signupData.value.lastName
-          deliveryDetails.value.email = signupData.value.email
-          deliveryDetails.value.phone = signupData.value.phone || ''
-        }
-        
-        // Persist delivery details
-        persistCheckoutData()
-        
-        // Show success toast with message from the response if available
-        if (showToast) {
-          showToast({
-            title: response.title || "Account Created",
-            message: response.message || "Your account has been created successfully!",
-            toastType: "success",
-            duration: 3000
-          })
-        }
-        
-        // Close modal on successful signup
-        showAuthModal.value = false
-      } else {
-        // Handle explicit failure response
-        if (response && !response.success) {
-          if (showToast) {
-            showToast({
-              title: response.title || "Signup Failed",
-              message: response.message || "There was an error creating your account. Please try again.",
-              toastType: "error",
-              duration: 5000
-            })
-          }
-        }
-        // Don't close modal if signup failed
-        return
-      }
-    }
-  } catch (error) {
-    console.error('Signup failed:', error)
-    
-    // Extract error message from the error object
-    const errorMessage = extractErrorMessage(error)
-    
-    // Show error toast with the extracted message
-    if (showToast) {
+    const response = await signup(signupData.value)
+    if (response.success) {
       showToast({
-        title: "Signup Failed",
-        message: errorMessage || "There was an error creating your account. Please try again.",
-        toastType: "error",
+        title: 'Account Created',
+        message: 'Your account has been created successfully!',
+        toastType: 'success',
+        duration: 5000
+      })
+      closeAuthModal()
+    } else {
+      showToast({
+        title: 'Signup Failed',
+        message: response.message || 'Failed to create account',
+        toastType: 'error',
         duration: 5000
       })
     }
+  } catch (error) {
+    console.error('Signup error:', error)
+    showToast({
+      title: 'Signup Error',
+      message: 'An error occurred during signup',
+      toastType: 'error',
+      duration: 5000
+    })
   } finally {
     isSigningUp.value = false
   }
 }
 
-// Handle signin
 const handleSignin = async () => {
+  isSigningIn.value = true
   try {
-    isSigningIn.value = true
-    
-    const payloadObj = {
-      email: signinData.value.email,
-      password: signinData.value.password
-    }
-    
-    if (login) {
-      const response = await login(payloadObj)
-      
-      if (response && response.success) {
-        // Pre-fill delivery details if available from user data
-        try {
-          const userData = JSON.parse(localStorage.getItem('user-data') || '{}')
-          if (userData && deliveryDetails.value) {
-            deliveryDetails.value.firstName = userData.firstName || ''
-            deliveryDetails.value.lastName = userData.lastName || ''
-            deliveryDetails.value.email = userData.email || ''
-            deliveryDetails.value.phone = userData.phone || ''
-            
-            // Persist delivery details
-            persistCheckoutData()
-          }
-        } catch (parseError) {
-          console.warn('Failed to parse user data from localStorage:', parseError)
-        }
-        
-        // Show success toast with message from the response if available
-        if (showToast) {
-          showToast({
-            title: response.title || "Signed In",
-            message: response.message || "You have been signed in successfully!",
-            toastType: "success",
-            duration: 3000
-          })
-        }
-        
-        // Close modal on successful login
-        showAuthModal.value = false
-      } else {
-        // Handle explicit failure response
-        if (response && !response.success) {
-          if (showToast) {
-            showToast({
-              title: response.title || "Sign In Failed",
-              message: response.message || "There was an error signing in. Please check your credentials and try again.",
-              toastType: "error",
-              duration: 5000
-            })
-          }
-        }
-        // Don't close modal if login failed
-        return
-      }
-    }
-  } catch (error) {
-    console.error('Signin failed:', error)
-    
-    // Extract error message from the error object
-    const errorMessage = extractErrorMessage(error)
-    
-    // Show error toast with the extracted message
-    if (showToast) {
+    const response = await login(signinData.value)
+    if (response.status === 200 || response.status === 201) {
       showToast({
-        title: "Sign In Failed",
-        message: errorMessage || "There was an error signing in. Please check your credentials and try again.",
-        toastType: "error",
+        title: 'Welcome Back',
+        message: 'You have been signed in successfully!',
+        toastType: 'success',
+        duration: 5000
+      })
+      closeAuthModal()
+    } else {
+      showToast({
+        title: 'Sign In Failed',
+        message: response.message || 'Invalid credentials',
+        toastType: 'error',
         duration: 5000
       })
     }
+  } catch (error) {
+    console.error('Signin error:', error)
+    showToast({
+      title: 'Sign In Error',
+      message: 'An error occurred during sign in',
+      toastType: 'error',
+      duration: 5000
+    })
   } finally {
     isSigningIn.value = false
   }
 }
 
-// Format price
-const formatPrice = (price: number) => {
-  if (typeof price !== 'number' || isNaN(price)) {
-    return '0.00'
+// Payment processing
+const processPayment = async () => {
+  console.log('Processing payment...')
+  console.log('Payment type:', selectedPaymentType.value)
+  console.log('Payment config valid:', isPaymentConfigValid.value)
+  
+  if (!isPaymentConfigValid.value) {
+    showToast({
+      title: 'Invalid Configuration',
+      message: 'Please complete all required fields before proceeding',
+      toastType: 'error',
+      duration: 5000
+    })
+    return
   }
-  return price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+
+  try {
+    // Prepare order data
+    const orderData = {
+      items: cartItems.value,
+      deliveryDetails: deliveryDetails.value,
+      deliveryMethod: deliveryMethod.value,
+      paymentMethod: paymentMethod.value,
+      paymentType: selectedPaymentType.value,
+      subtotal: subtotalAmount.value,
+      shipping: getShippingCost(),
+      tax: getTaxAmount(),
+      total: calculateTotal(),
+      country: selectedCountryInfo.value,
+      installmentConfig: selectedPaymentType.value === 'installment' ? {
+        ...installmentConfig.value,
+        summary: installmentSummary.value
+      } : null
+    }
+
+    console.log('Order data prepared:', orderData)
+
+    // Process the checkout
+    const result = await processCheckout(orderData)
+    
+    console.log('Checkout result:', result)
+
+    if (result.success) {
+      // Generate order ID
+      orderId.value = result.orderId || generateOrderNumber()
+      
+      // Clear cart and persisted data
+      cartItems.value = []
+      saveCartToStorage()
+      clearPersistedCheckoutData()
+      
+      showToast({
+        title: 'Order Successful',
+        message: `Your order #{orderId.value} has been placed successfully!`,
+        toastType: 'success',
+        duration: 5000
+      })
+    } else {
+      console.log(result, 'resal message here')
+      throw new Error(result.error || 'Payment processing failed')
+    }
+  } catch (error) {
+    console.error('Payment processing error:', error)
+    showToast({
+      title: 'Payment Failed',
+      message: error.message || 'An error occurred while processing your payment',
+      toastType: 'error',
+      duration: 5000
+    })
+  }
 }
 
-// Generate random order number
+// Generate order number
 const generateOrderNumber = () => {
-  const min = 100000
-  const max = 999999
-  return Math.floor(Math.random() * (max - min + 1) + min).toString()
+  const timestamp = Date.now().toString().slice(-6)
+  const random = Math.random().toString(36).substring(2, 5).toUpperCase()
+  return `ORD{timestamp}{random}`
 }
 
-// Update item quantity in cart
-const updateItemQuantity = async (id: string, quantity: number) => {
-  if (typeof id === 'string' && typeof quantity === 'number' && quantity > 0) {
-    try {
-      // Update cart store if available
-      if (updateCartItemQuantity) {
-        const response = await updateCartItemQuantity(id, quantity)
-        
-        // Check if the response contains success information
-        if (response && response.success) {
-          // Update local cart state
-          const itemIndex = cartItems.value.findIndex(item => item.id === id)
-          if (itemIndex !== -1) {
-            cartItems.value[itemIndex].quantity = quantity
-            saveCartToStorage()
-          }
-          
-          // Show success toast with message from the response if available
-          if (showToast) {
-            showToast({
-              title: response.title || "Cart Updated",
-              message: response.message || "Item quantity has been updated",
-              toastType: "info",
-              duration: 2000
-            })
-          }
-        } else if (response && !response.success) {
-          // Handle explicit failure response
-          if (showToast) {
-            showToast({
-              title: response.title || "Update Failed",
-              message: response.message || "Failed to update item quantity. Please try again.",
-              toastType: "error",
-              duration: 3000
-            })
-          }
-        }
-      } else {
-        // Fallback to local update if store method is not available
-        const itemIndex = cartItems.value.findIndex(item => item.id === id)
-        if (itemIndex !== -1) {
-          cartItems.value[itemIndex].quantity = quantity
-          saveCartToStorage()
-        }
-      }
-    } catch (error) {
-      console.error('Failed to update item quantity:', error)
-      
-      // Extract error message from the error object
-      const errorMessage = extractErrorMessage(error)
-      
-      // Show error toast with the extracted message
-      if (showToast) {
-        showToast({
-          title: "Update Failed",
-          message: errorMessage || "Failed to update item quantity. Please try again.",
-          toastType: "error",
-          duration: 3000
-        })
-      }
-    }
-  }
-}
+// Utility functions
+// const formatPrice = (price: number) => {
+//   if (typeof price !== 'number' || isNaN(price)) {
+//     return '0.00'
+//   }
+//   return price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+// }
 
-// Remove item from cart
-const removeItem = async (id: string) => {
-  if (typeof id === 'string') {
-    try {
-      // Update cart store if available
-      if (removeFromCart) {
-        const response = await removeFromCart(id)
-        
-        // Check if the response contains success information
-        if (response && response.success) {
-          // Update local cart state
-          cartItems.value = cartItems.value.filter(item => item.id !== id)
-          saveCartToStorage()
-          
-          // Show success toast with message from the response if available
-          if (showToast) {
-            showToast({
-              title: response.title || "Item Removed",
-              message: response.message || "Item has been removed from your cart",
-              toastType: "info",
-              duration: 3000
-            })
-          }
-        } else if (response && !response.success) {
-          // Handle explicit failure response
-          if (showToast) {
-            showToast({
-              title: response.title || "Removal Failed",
-              message: response.message || "Failed to remove item from cart. Please try again.",
-              toastType: "error",
-              duration: 3000
-            })
-          }
-        }
-      } else {
-        // Fallback to local removal if store method is not available
-        cartItems.value = cartItems.value.filter(item => item.id !== id)
-        saveCartToStorage()
-      }
-    } catch (error) {
-      console.error('Failed to remove item from cart:', error)
-      
-      // Extract error message from the error object
-      const errorMessage = extractErrorMessage(error)
-      
-      // Show error toast with the extracted message
-      if (showToast) {
-        showToast({
-          title: "Removal Failed",
-          message: errorMessage || "Failed to remove item from cart. Please try again.",
-          toastType: "error",
-          duration: 3000
-        })
-      }
-    }
-  }
-}
-
-// Handle image error
 const handleImageError = (event: Event) => {
   const target = event.target as HTMLImageElement
-  if (target) {
-    target.src = '/placeholder.svg?height=100&width=100'
-  }
+  target.src = '/placeholder.svg?height=64&width=64'
 }
 
 // FIXED: Check if user is logged in on page load
@@ -2238,137 +2125,98 @@ const checkUserAuth = () => {
   }
 }
 
-// Watch for cart changes to update checkout summary and installment calculations
-watch(cartItems, () => {
-  saveCartToStorage()
-  
-  // Recalculate installment details if in installment mode
+
+// Watch for route changes to sync query parameters
+watch(() => route.query, (newQuery) => {
+  // Update payment type if it changes in query params
+  if (newQuery.paymentType && ['full', 'installment'].includes(newQuery.paymentType as string)) {
+    const newPaymentType = newQuery.paymentType as 'full' | 'installment'
+    if (selectedPaymentType.value !== newPaymentType) {
+      selectedPaymentType.value = newPaymentType
+      handlePaymentTypeChange(newPaymentType)
+    }
+  }
+}, { immediate: true })
+
+// Watch for payment type changes to update query params
+watch(selectedPaymentType, (newType) => {
+  // Update query params when payment type changes
+  const currentQuery = { ...route.query }
+  if (newType !== currentQuery.paymentType) {
+    router.push({
+      query: { ...currentQuery, paymentType: newType }
+    })
+  }
+}, { immediate: false })
+
+// Watch for installment config changes
+watch(() => installmentConfig.value, () => {
   if (selectedPaymentType.value === 'installment') {
     calculateInstallmentDetails()
   }
-}, { deep: true })
-
-// Watch for installment config changes
-watch(installmentConfig, () => {
-  calculateInstallmentDetails()
   persistCheckoutData()
 }, { deep: true })
-
-// Watch for payment type changes
-watch(selectedPaymentType, () => {
-  persistCheckoutData()
-})
-
-// Watch for login status changes
-watch(isLoggedIn, (newValue) => {
-  if (newValue) {
-    // User is now logged in, close auth modal if open
-    showAuthModal.value = false
-    
-    // Pre-fill delivery details with user info if available
-    if (user.value && deliveryDetails.value) {
-      deliveryDetails.value.firstName = user.value.firstName || ''
-      deliveryDetails.value.lastName = user.value.lastName || ''
-      deliveryDetails.value.email = user.value.email || ''
-      deliveryDetails.value.phone = user.value.phone || ''
-      
-      // Persist updated delivery details
-      persistCheckoutData()
-    }
-  } else {
-    // User is logged out, check if we should show auth modal
-    checkUserAuth()
-  }
-})
-
-// Watch for order completion
-watch(orderComplete, (newValue) => {
-  if (newValue) {
-    // Clear query parameters and all persisted data
-    clearQueryParams()
-    clearPersistedCheckoutData()
-  }
-})
-
-// Watch for delivery details changes
-watch(deliveryDetails, () => {
-  persistCheckoutData()
-}, { deep: true })
-
-// Watch for delivery method changes
-watch(deliveryMethod, () => {
-  persistCheckoutData()
-})
-
-// Watch for payment method changes
-watch(paymentMethod, () => {
-  persistCheckoutData()
-})
 
 // Lifecycle hooks
 onMounted(async () => {
-  // Load cart from localStorage first
+  console.log('Checkout page mounted')
+
+    // Check if user is logged in immediately on mount
+    nextTick(() => {
+    checkUserAuth()
+  })
+  
+  // Initialize payment type from query params first
+  initializePaymentTypeFromQuery()
+  
+  // Load cart from storage
   loadCartFromStorage()
   
   // Load persisted checkout data
   loadPersistedCheckoutData()
   
   // Load shipping and tax configurations
-  await loadConfigurations()
+  await loadShippingAndTaxConfigs()
   
-  // Initialize step from query parameter (this might override persisted step)
-  initializeStepFromQuery()
+  // Set current installment config
+  currentInstallmentConfig.value = getCurrentInstallmentConfig()
   
-  // Check if user is logged in immediately on mount
-  nextTick(() => {
-    checkUserAuth()
-  })
-  
-  // Check if cart is empty and redirect if necessary
-  if (!cartItems.value || cartItems.value.length === 0) {
-    // Try to load from cart store as fallback
-    if (cart.value && cart.value.length > 0) {
-      cartItems.value = cart.value
-      saveCartToStorage()
-    } else {
-      // Redirect to artworks page if cart is truly empty
-      router.push('/artworks')
-    }
+  // If installment payment type is selected, initialize config
+  if (selectedPaymentType.value === 'installment' && hasInstallmentOptions.value) {
+    // Set default values
+    installmentConfig.value.downPayment = getMinimumDownPayment()
+    const defaultStartDate = new Date()
+    defaultStartDate.setDate(defaultStartDate.getDate() + 30)
+    installmentConfig.value.startDate = defaultStartDate.toISOString().split('T')[0]
+    
+    // Calculate initial details
+    nextTick(() => {
+      calculateInstallmentDetails()
+    })
   }
   
-  // Initialize installment configuration
-  currentInstallmentConfig.value = getCurrentInstallmentConfig()
-  console.log('Mounted - currentInstallmentConfig:', currentInstallmentConfig.value)
-  console.log('Mounted - hasInstallmentOptions:', hasInstallmentOptions.value)
-})
-
-// Provide a method to cancel checkout (clear all data)
-const cancelCheckout = () => {
-  clearPersistedCheckoutData()
-  clearQueryParams()
-  router.push('/artworks')
-}
-
-// Expose cancel method for potential use
-defineExpose({
-  cancelCheckout
+  console.log('Checkout initialization complete')
+  console.log('Cart items:', cartItems.value)
+  console.log('Has installment options:', hasInstallmentOptions.value)
+  console.log('Selected payment type:', selectedPaymentType.value)
 })
 </script>
 
 <style scoped>
+/* Transitions */
 .slide-fade-enter-active,
 .slide-fade-leave-active {
   transition: all 0.3s ease;
 }
 
 .slide-fade-enter-from {
+  transform: translateX(30px);
   opacity: 0;
-  transform: translateX(20px);
 }
 
 .slide-fade-leave-to {
+  transform: translateX(-30px);
   opacity: 0;
-  transform: translateX(-20px);
 }
 
 .fade-enter-active,
@@ -2398,16 +2246,129 @@ defineExpose({
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Loading animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: transform 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Focus styles */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Button loading state */
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .grid {
+    gap: 1rem;
+  }
+  
+  .text-3xl {
+    font-size: 1.875rem;
+  }
+  
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+}
+
+/* Animation delays for staggered effects */
+.animation-delay-100 { animation-delay: 0.1s; }
+.animation-delay-200 { animation-delay: 0.2s; }
+.animation-delay-300 { animation-delay: 0.3s; }
+.animation-delay-400 { animation-delay: 0.4s; }
+.animation-delay-500 { animation-delay: 0.5s; }
+
+/* Progress bar animation */
+.progress-bar {
+  transition: width 0.5s ease-in-out;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Gradient backgrounds */
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Text gradients */
+.text-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Custom radio buttons */
+input[type="radio"]:checked {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+/* Custom checkboxes */
+input[type="checkbox"]:checked {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
 }
 </style>

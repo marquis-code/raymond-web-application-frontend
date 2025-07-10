@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
     <!-- Hero Section -->
-    <PrintsHeroSection :images="artPrints" />
+    <PrintsHeroSection class="mb-10" :images="artPrints" />
 
     <div v-if="fetchingPromoSale" class="flex justify-center items-center py-20">
       <div class="relative">
@@ -9,16 +9,17 @@
         <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"></div>
       </div>
     </div>
-    <PromoSection v-else :promosale="promosale" :loading="fetchingPromoSale" />
-      
+
+    <!-- <PromoSection v-else :promosale="promosale" :loading="fetchingPromoSale" /> -->
+
     <!-- Products Gallery Section -->
-    <div class="container mx-auto px-6 py-20">
+    <div class="container mx-auto px-6">
       <div class="text-center mb-16 animate-fade-in-up">
         <h2 class="text-4xl font-light text-gray-900 mb-4">Curated Collection</h2>
         <div class="w-24 h-1 bg-gradient-to-r from-gray-400 to-gray-600 mx-auto rounded-full"></div>
         <p class="text-gray-600 mt-6 max-w-2xl mx-auto">Each piece tells a story, crafted with precision and passion to bring art into your space.</p>
       </div>
-      
+
       <!-- Loading Spinner -->
       <div v-if="loading" class="flex justify-center items-center py-20">
         <div class="relative">
@@ -67,9 +68,7 @@
             </div>
 
             <!-- Quick View Overlay -->
-            <div 
-              class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end justify-center pb-8"
-            >
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end justify-center pb-8">
               <div class="transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
                 <span class="text-white text-lg font-medium tracking-wide">Quick View</span>
                 <div class="w-16 h-0.5 bg-white mx-auto mt-2 scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
@@ -82,23 +81,17 @@
             <h3 class="text-lg font-medium text-gray-900 tracking-wide group-hover:text-gray-700 transition-colors">
               {{ product.name }}
             </h3>
-            <p class="text-gray-600 font-light">From ${{ getMinPrice(product) }}</p>
-            
-            <!-- <div class="pt-4 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
-              <button 
-                class="w-full bg-gray-900 text-white py-3 px-6 text-sm rounded-xl font-medium hover:bg-gray-800 transition-all duration-300 hover:scale-105 shadow-lg"
-                @click.stop="addToCart(product)"
-              >
-                Add to Collection
-              </button>
-            </div> -->
-            <!-- @click.stop="addToCart(product)" -->
-            <div class="pt-4  transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+            <p class="text-gray-600 font-light">From 
+              {{ formatCurrency(getMinPrice(product), { showSymbol: true }) }} 
+              or {{formatCurrency(fixedInstallmentPayment, { showSymbol: true }) }}/month
+            </p>
+
+            <div class="pt-4 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
               <button 
                 class="w-full bg-gray-900 text-white py-3 px-6 text-sm rounded-xl font-medium hover:bg-gray-800 transition-all duration-300 hover:scale-105 shadow-lg"
                 @click.stop="router.push(`/artworks/${product._id}`)"
               >
-                Add to Collection
+                Add to Cart
               </button>
             </div>
           </div>
@@ -106,262 +99,58 @@
       </div>
     </div>
 
+    <!-- Product Preview Modal -->
     <ProductPreviewModal
       :is-open="modalOpen"
       :product-id="selectedProductId"
       :on-close="closeProductModal"
       :on-add-to-cart="handleAddToCart"
     />
-
-    <!-- Enhanced Quick View Modal -->
-    <Teleport to="body">
-      <div 
-        v-if="selectedProduct" 
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 overflow-y-auto"
-        :class="{'opacity-100': modalOpen, 'opacity-0': !modalOpen}"
-      >
-        <!-- Backdrop -->
-        <div 
-          class="absolute inset-0 bg-black/60 backdrop-blur-sm" 
-          @click="closeQuickView"
-        ></div>
-        
-        <!-- Modal Container -->
-        <div 
-          class="relative w-full max-w-5xl bg-white rounded-2xl shadow-2xl transform transition-all duration-500 max-h-[90vh] overflow-hidden flex flex-col"
-          :class="{'translate-y-0 scale-100': modalOpen, 'translate-y-8 scale-95': !modalOpen}"
-          @click.stop
-        >
-          <!-- Close Button -->
-          <button 
-            @click="closeQuickView"
-            class="absolute top-4 right-4 z-20 bg-white hover:bg-gray-100 p-2 rounded-full transition-all duration-300 shadow-md"
-            aria-label="Close preview"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700">
-              <path d="m18 6-12 12"/>
-              <path d="m6 6 12 12"/>
-            </svg>
-          </button>
-
-          <!-- Content Container with Scrollable Area -->
-          <div class="overflow-y-auto flex-1 flex flex-col md:flex-row">
-            <!-- Image Section -->
-            <div class="md:w-1/2 p-6 flex items-center justify-center">
-              <div class="relative w-full">
-                <img 
-                  :src="selectedProduct.images[currentImageIndex]" 
-                  :alt="selectedProduct.name" 
-                  class="w-full h-auto object-contain rounded-lg"
-                />
-                
-                <!-- Image Navigation -->
-                <div v-if="selectedProduct.images.length > 1" class="absolute top-1/2 -translate-y-1/2 flex justify-between w-full px-2">
-                  <button 
-                    @click.stop="previousImage" 
-                    class="bg-white/90 hover:bg-white p-2 rounded-full shadow-md transition-all duration-300"
-                    aria-label="Previous image"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700">
-                      <path d="m15 18-6-6 6-6"/>
-                    </svg>
-                  </button>
-                  <button 
-                    @click.stop="nextImage" 
-                    class="bg-white/90 hover:bg-white p-2 rounded-full shadow-md transition-all duration-300"
-                    aria-label="Next image"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700">
-                      <path d="m9 18 6-6-6-6"/>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Product Details Section -->
-            <div class="md:w-1/2 p-6 bg-gray-50 border-t md:border-t-0 md:border-l border-gray-100">
-              <div class="space-y-6">
-                <!-- Title Section -->
-                <div>
-                  <h2 class="text-2xl font-medium text-gray-900 mb-2">{{ selectedProduct.name }}</h2>
-                  <div class="w-16 h-1 bg-gray-400 rounded-full"></div>
-                </div>
-
-                <!-- Price Section -->
-                <div>
-                  <p class="text-xl font-medium text-gray-800">
-                    <span v-if="!selectedSize">From ${{ getMinPrice(selectedProduct) }}</span>
-                    <span v-else>${{ getSelectedSizePrice() }}</span>
-                  </p>
-                </div>
-                
-                <!-- Size Selection -->
-                <div>
-                  <label class="block text-sm font-medium mb-2 text-gray-700">Size Selection</label>
-                  <select 
-                    v-model="selectedSize" 
-                    class="w-full p-3 border border-gray-200 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent transition-all duration-300"
-                  >
-                    <option disabled value="">Choose your size</option>
-                    <option 
-                      v-for="size in selectedProduct.sizes" 
-                      :key="size._id" 
-                      :value="size._id"
-                    >
-                      {{ size.size.charAt(0).toUpperCase() + size.size.slice(1) }} - ${{ size.price }}
-                    </option>
-                  </select>
-                </div>
-                
-                <!-- Quantity Selection -->
-                <div>
-                  <label class="block text-sm font-medium mb-2 text-gray-700">Quantity</label>
-                  <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                    <button 
-                      @click.stop="decrementQuantity" 
-                      class="px-4 py-2 hover:bg-gray-50 transition-colors duration-300 text-gray-600"
-                      :disabled="quantity <= 1"
-                      aria-label="Decrease quantity"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14"/>
-                      </svg>
-                    </button>
-                    <input 
-                      v-model.number="quantity" 
-                      type="number" 
-                      min="1" 
-                      class="flex-1 py-2 text-center border-0 bg-white text-gray-900 focus:ring-0 focus:outline-none"
-                      aria-label="Quantity"
-                    />
-                    <button 
-                      @click.stop="incrementQuantity" 
-                      class="px-4 py-2 hover:bg-gray-50 transition-colors duration-300 text-gray-600"
-                      aria-label="Increase quantity"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 5v14m-7-7h14"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                
-                <!-- Total Price -->
-                <div v-if="selectedSize && quantity > 1" class="text-gray-700">
-                  Total: <span class="font-medium">${{ getTotalPrice() }}</span>
-                </div>
-                
-                <!-- Add to Cart Button -->
-                <div>
-                  <button 
-                    @click.stop="addToCartFromModal" 
-                    class="w-full bg-gray-900 text-white py-3 font-medium rounded-lg hover:bg-gray-800 transition-all duration-300 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                    :disabled="!selectedSize"
-                  >
-                    Add to Collection
-                  </button>
-                </div>
-
-                <!-- View More Details Link -->
-                <div class="text-center">
-                  <NuxtLink 
-                    :to="`/artworks/${selectedProduct._id}`"
-                    class="text-gray-600 hover:text-gray-900 transition-colors duration-300 font-medium"
-                  >
-                    View Complete Details →
-                  </NuxtLink>
-                </div>
-                
-                <!-- Product Info Accordion -->
-                <div v-if="selectedProduct.productInfo" class="border border-gray-200 rounded-lg overflow-hidden">
-                  <button 
-                    @click.stop="toggleSection('productInfo')"
-                    class="flex justify-between items-center w-full text-left p-4 hover:bg-gray-50 transition-all duration-300"
-                    :aria-expanded="expandedSections.productInfo"
-                  >
-                    <h3 class="font-medium text-gray-800">Product Details</h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300" :class="{'rotate-45': expandedSections.productInfo}">
-                      <path d="M12 5v14m-7-7h14"/>
-                    </svg>
-                  </button>
-                  <div 
-                    class="overflow-hidden transition-all duration-300"
-                    :class="expandedSections.productInfo ? 'max-h-96 p-4 pt-0' : 'max-h-0'"
-                  >
-                    <div class="text-gray-600 text-sm" v-html="selectedProduct.productInfo"></div>
-                  </div>
-                </div>
-                
-                <!-- Shipping Info Accordion -->
-                <div v-if="selectedProduct.shippingInfo" class="border border-gray-200 rounded-lg overflow-hidden">
-                  <button 
-                    @click.stop="toggleSection('shippingInfo')"
-                    class="flex justify-between items-center w-full text-left p-4 hover:bg-gray-50 transition-all duration-300"
-                    :aria-expanded="expandedSections.shippingInfo"
-                  >
-                    <h3 class="font-medium text-gray-800">Shipping Information</h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300" :class="{'rotate-45': expandedSections.shippingInfo}">
-                      <path d="M12 5v14m-7-7h14"/>
-                    </svg>
-                  </button>
-                  <div 
-                    class="overflow-hidden transition-all duration-300"
-                    :class="expandedSections.shippingInfo ? 'max-h-96 p-4 pt-0' : 'max-h-0'"
-                  >
-                    <div class="text-gray-600 text-sm" v-html="selectedProduct.shippingInfo"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Image Thumbnails -->
-          <div v-if="selectedProduct?.images?.length > 1" class="flex justify-center p-4 border-t border-gray-100 bg-white">
-            <div class="flex space-x-2 overflow-x-auto pb-2 max-w-full">
-              <button
-                v-for="(image, index) in selectedProduct.images"
-                :key="index"
-                @click.stop="currentImageIndex = index"
-                class="w-16 h-16 rounded-md overflow-hidden border-2 transition-all duration-300 flex-shrink-0"
-                :class="currentImageIndex === index ? 'border-gray-800' : 'border-transparent hover:border-gray-300'"
-                :aria-label="`View image ${index + 1}`"
-                :aria-current="currentImageIndex === index"
-              >
-                <img :src="image" :alt="`${selectedProduct.name} - view ${index + 1}`" class="w-full h-full object-cover">
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useFetchProducts } from "@/composables/modules/products/useFetchProducts"
-import { useFetchProduct } from "@/composables/modules/products/useFetchProduct"
 import { useCartStore } from '@/composables/useCartStore'
-  import type { InstallmentPlan, InstallmentCalculation, PaymentType } from '~/types/installment'
 import { useCustomToast } from '@/composables/core/useCustomToast'
+import { useFetchPromosale } from "@/composables/modules/promosale/useFetchPromosale"
+import ProductPreviewModal from '@/components/ProductPreviewModal.vue'
+import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+const {
+  countryCode,
+  currency,
+  // isLoading,
+  error,
+  currencyCode,
+  currencySymbol,
+  currencyName,
+  detectCountry,
+  formatCurrency,
+  setCurrency,
+  setCountry,
+  getSupportedCurrencies,
+  getSupportedCountries
+} = useCurrencyConverter()
+
+const fixedInstallmentPayment = ref(50)
+
+
+// Auto-detect country on mount
+onMounted(() => {
+  detectCountry()
+})
+
 const { addToCart: addItemToCart } = useCartStore()
-import { useFetchPromosale } from "@/composables/modules/promosale/useFetchPromosale";
-const { showToast } = useCustomToast();
+const { showToast } = useCustomToast()
+const { promosale, loading: fetchingPromoSale } = useFetchPromosale()
+
 import shop1 from '@/assets/img/print2.jpg'
 import shop2 from "@/assets/img/print3.png"
 import shop3 from "@/assets/img/print4.png"
 import shop4 from "@/assets/img/print1.jpg"
-const { promosale, loading: fetchingPromoSale } = useFetchPromosale();
-const { fetchProduct } = useFetchProduct()
-// Modal state
-const modalOpen = ref(false)
-const selectedProduct = ref<any>(null)
-const selectedSize = ref('')
-const quantity = ref(1)
-const currentImageIndex = ref(0)
-const router = useRouter()
 
+const router = useRouter()
 
 interface Product {
   _id: string
@@ -378,106 +167,71 @@ interface Product {
   isAvailable?: boolean
 }
 
+interface ArtPrint {
+  id: number
+  src: string
+  alt: string
+  aspectRatio?: string
+}
+
 // Modal state
+const modalOpen = ref(false)
 const selectedProductId = ref<string | null>(null)
 
+// Art prints for hero section
+const artPrints = ref<ArtPrint[]>([])
+const isLoading = ref(true)
+
+// Image hover state
+const imageLoading = reactive<Record<number, boolean>>({})
+const hoveredProducts = reactive<Record<number, boolean>>({})
+
+// Fetch products
+const { products, loading } = useFetchProducts()
+
+// Simulate fetching images from backend
+const fetchArtPrints = async () => {
+  try {
+    await new Promise(resolve => setTimeout(resolve, 100))
+    artPrints.value = [
+      { id: 1, src: shop1, alt: 'Abstract Composition #1', aspectRatio: '7/5' },
+      { id: 2, src: shop2, alt: 'Minimalist Study', aspectRatio: '4/3' },
+      { id: 3, src: shop3, alt: 'Color Field Exploration', aspectRatio: '7/5' },
+      { id: 4, src: shop4, alt: 'Geometric Harmony', aspectRatio: '4/3' },
+    ]
+  } catch (error) {
+    console.error('Error fetching art prints:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
 const openProductModal = (productId: string) => {
-  console.log(productId, 'hee ooo')
+  console.log(productId, 'opening modal for product')
   selectedProductId.value = productId
+  
   // Add product ID as query parameter
-  router.push({ 
-    query: { ...router.currentRoute.value.query, productId } 
+  router.push({
+    query: { ...router.currentRoute.value.query, productId }
   })
-  fetchProduct(productId)
+  
   modalOpen.value = true
 }
 
 const closeProductModal = () => {
   modalOpen.value = false
   selectedProductId.value = null
+  
   // Remove product ID from query parameters
   const query = { ...router.currentRoute.value.query }
   delete query.productId
   router.push({ query })
 }
 
-
-interface ArtPrint {
-  id: number;
-  src: string;
-  alt: string;
-  aspectRatio?: string;
+const handleAddToCart = (cartItem: any) => {
+  console.log('Item added to cart from modal:', cartItem)
+  // Additional handling if needed
 }
-
-const artPrints = ref<ArtPrint[]>([]);
-const isLoading = ref(true);
-
-// Simulate fetching images from backend
-const fetchArtPrints = async () => {
-  try {
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
-    // Sample data - replace with your actual API call
-    artPrints.value = [
-      { 
-        id: 1, 
-        src: shop1,
-        alt: 'Abstract Composition #1', 
-        aspectRatio: '7/5' 
-      },
-      { 
-        id: 2, 
-        src: shop2,
-        alt: 'Minimalist Study', 
-        aspectRatio: '4/3' 
-      },
-      { 
-        id: 3, 
-        src: shop3,
-        alt: 'Color Field Exploration', 
-        aspectRatio: '7/5' 
-      },
-      { 
-        id: 4, 
-        src: shop4,
-        alt: 'Geometric Harmony', 
-        aspectRatio: '4/3' 
-      },
-    ];
-  } catch (error) {
-    console.error('Error fetching art prints:', error);
-  } finally {
-    isLoading.value = false;
-  }
-};
-
-onMounted(() => {
-  fetchArtPrints();
-});
-
-// Image hover state
-const imageLoading = reactive<Record<number, boolean>>({})
-const hoveredProducts = reactive<Record<number, boolean>>({})
-
-// Expandable sections state
-const expandedSections = reactive({
-  productInfo: false,
-  returnPolicy: false,
-  shippingInfo: false
-})
-
-  // Payment state
-  const paymentType = ref<PaymentType>('full')
-  const selectedInstallmentPlan = ref<InstallmentPlan | null>(null)
-  const installmentCalculation = ref<InstallmentCalculation | null>(null)
-
-// Fetch products outside of conditional block
-const { products, loading } = useFetchProducts()
-
-// Parallax effect refs
-const promotionRef = ref<HTMLElement | null>(null)
-const parallaxBgRef = ref<HTMLElement | null>(null)
 
 const getProductTag = (product: any) => {
   if (product.isFeatured) return 'Featured'
@@ -490,148 +244,21 @@ const getMinPrice = (product: any) => {
   if (product.sizes && product.sizes.length > 0) {
     return Math.min(...product.sizes.map((size: any) => size.price))
   }
-  return product.price
+  return formatCurrency(product.price, { showSymbol: true })
 }
 
 const getProductImage = (product: any, index: number) => {
   if (!product || !product.images || product.images.length === 0) {
     return ''
   }
-  
   if (hoveredProducts[index] && product.images.length > 1) {
     return product.images[1]
   }
-  
   return product.images[0]
 }
 
 const handleProductHover = (index: number, isHovered: boolean) => {
   hoveredProducts[index] = isHovered
-}
-
-
-const openQuickView = (product: any) => {
-  selectedProduct.value = product
-  selectedSize.value = product.sizes && product.sizes.length > 0 ? product.sizes[0]._id : ''
-  quantity.value = 1
-  currentImageIndex.value = 0
-  modalOpen.value = true
-  
-  // Don't completely disable scrolling, as we want the modal to be scrollable
-  document.body.classList.add('modal-open')
-}
-
-const closeQuickView = () => {
-  modalOpen.value = false
-  document.body.classList.remove('modal-open')
-  setTimeout(() => {
-    selectedProduct.value = null
-  }, 300)
-}
-
-const nextImage = () => {
-  if (selectedProduct.value && selectedProduct.value.images.length > 1) {
-    currentImageIndex.value = (currentImageIndex.value + 1) % selectedProduct.value.images.length
-  }
-}
-
-const previousImage = () => {
-  if (selectedProduct.value && selectedProduct.value.images.length > 1) {
-    currentImageIndex.value = currentImageIndex.value === 0 
-      ? selectedProduct.value.images.length - 1 
-      : currentImageIndex.value - 1
-  }
-}
-
-const toggleSection = (section: keyof typeof expandedSections) => {
-  expandedSections[section] = !expandedSections[section]
-}
-
-// const addToCart = (product: any) => {
-//   console.log('Adding to cart:', product)
-// }
-
-const selectSize = (size: any) => {
-  selectedSize.value = size
-}
-
-const hasInstallmentOption = (size: any) => {
-  return size.installmentConfig && size.installmentConfig.enabled
-}
-
-const addToCart = (product: any) => {
-  console.log(product, 'product here')
-  const defaultSize = product?.sizes[0]?.size
-  const defaultPrice = product?.sizes[0]?.price
-  console.log(product.sizes, 'product here', defaultPrice)
-  // const cartItem = {
-  //       id: product._id,
-  //       title: product.name,
-  //       image: product.images[0],
-  //       price: selectedSize.price,
-  //       quantity: 1,
-  //       size: selectedSize.size,
-  //       paymentType: paymentType.value,
-  //       installmentPlan: selectedInstallmentPlan.value,
-  //       installmentCalculation: installmentCalculation.value
-  //     }
-
-  const cartItem = {
-      id: `${product._id}-${selectedSize.value.size}`,
-      productId: product._id,
-      title: product.name,
-      image: product.images[0],
-      price: selectedSize.value.price,
-      // quantity: quantity.value,
-      quantity: 1,
-      size: selectedSize.size,
-      color: selectedSize.color,
-      // Include installment configuration for checkout
-      installmentConfig: selectedSize.installmentConfig || null,
-      hasInstallmentOption: hasInstallmentOption(selectedSize.size),
-      // Additional product metadata
-      category: product.category,
-      weight: product.weight,
-      dimensions: {
-        width: product.width,
-        height: product.height,
-        length: product.length
-      }
-    }
-    
-    // addItemToCart(cartItem)
-
-  if (product && product?.isAvailable) {
-
-    addItemToCart(cartItem)
-    showToast({
-      title: "Added to Cart",
-      message: `1 × ${product.name} (${selectedSize.size}) added to cart`,
-      toastType: "success",
-      duration: 3000
-    });
-
-  
-  }
-}
-
-
-const addToCartFromModal = () => {
-  if (!selectedProduct.value || !selectedSize.value) return
-  
-  const size = selectedProduct.value.sizes.find((s: any) => s._id === selectedSize.value)
-  if (!size) return
-
-  // addToCartFromModal({...selectedProduct, quantity: quantity.value, size: size.size})
-  addItemToCart({...selectedProduct.value, quantity: quantity.value, size: size.size})
-  
-  showToast({
-    title: 'Added to Collection',
-    message: `${quantity.value} × ${selectedProduct.value.name} (${size.size}) has been added to your collection.`,
-    toastType: 'success'
-  })
-  
-  closeQuickView()
 }
 
 const handleImageLoad = (index: number) => {
@@ -642,32 +269,7 @@ const handleImageError = (index: number) => {
   imageLoading[index] = false
 }
 
-const getSelectedSizePrice = () => {
-  if (!selectedProduct.value || !selectedSize.value) return 0
-  
-  const size = selectedProduct.value.sizes.find((s: any) => s._id === selectedSize.value)
-  return size ? size.price : getMinPrice(selectedProduct.value)
-}
-
-const getTotalPrice = () => {
-  return getSelectedSizePrice() * quantity.value
-}
-
-const handleScroll = () => {
-  if (parallaxBgRef.value && promotionRef.value) {
-    const scrollPosition = window.scrollY
-    const promotionPosition = promotionRef.value.offsetTop
-    const offset = scrollPosition - promotionPosition
-
-    if (
-      scrollPosition > promotionPosition - window.innerHeight &&
-      scrollPosition < promotionPosition + promotionRef.value.offsetHeight
-    ) {
-      parallaxBgRef.value.style.transform = `translateY(${offset * 0.3}px) scale(1.1)`
-    }
-  }
-}
-
+// Watch for products changes to initialize loading states
 watch(() => products.value, (newProducts) => {
   if (newProducts) {
     newProducts.forEach((_, index) => {
@@ -677,21 +279,8 @@ watch(() => products.value, (newProducts) => {
   }
 }, { immediate: true })
 
-const handleKeydown = (e: KeyboardEvent) => {
-  if (e.key === 'Escape' && modalOpen.value) {
-    closeQuickView()
-  }
-}
-
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-  document.addEventListener('keydown', handleKeydown)
-})
-
-onBeforeUnmount(() => {
-  window.removeEventListener('scroll', handleScroll)
-  document.body.style.overflow = 'auto'
-  document.removeEventListener('keydown', handleKeydown)
+  fetchArtPrints()
 })
 </script>
 

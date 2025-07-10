@@ -195,7 +195,10 @@
           <div class="mb-8 bg-gradient-to-r from-white to-gray-50 p-6 rounded-2xl shadow-lg animate-fade-in-up animation-delay-300">
             <div class="flex items-baseline gap-4 mb-3">
               <span class="text-4xl font-light text-gray-900">${{ formatPrice(currentPrice) }}</span>
-              <span v-if="selectedSize && selectedSize.price !== product.price" class="text-xl text-gray-400 line-through">${{ formatPrice(product.price) }}</span>
+              <span v-if="selectedSize && selectedSize.price !== product.price" class="text-xl text-gray-400 line-through">
+                <!-- ${{ formatPrice(product.price) }} -->
+                {{ formatCurrency(product.price, { showSymbol: true }) }}
+              </span>
               <span v-if="product.discountPercentage" class="text-sm text-white bg-gradient-to-r from-rose-500 to-pink-500 px-3 py-1 rounded-full animate-pulse">
                 -{{ product.discountPercentage }}% OFF
               </span>
@@ -239,7 +242,10 @@
                     </div>
                   </div>
                   <div class="text-right">
-                    <span class="font-bold text-xl">${{ formatPrice(size.price) }}</span>
+                    <span class="font-bold text-xl">
+                      <!-- ${{ formatPrice(size.price) }} -->
+                      {{ formatCurrency(size.price, { showSymbol: true }) }}
+                    </span>
                     <div v-if="selectedSize?.size === size.size" class="w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center mt-2 ml-auto">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-white">
                         <path d="M20 6 9 17l-5-5"/>
@@ -257,7 +263,10 @@
               <label class="text-lg font-medium text-gray-900">Quantity</label>
               <div class="text-right">
                 <p class="text-sm text-gray-500">Total</p>
-                <p class="text-2xl font-bold text-gray-900">${{ formatPrice(totalPrice) }}</p>
+                <p class="text-2xl font-bold text-gray-900">
+                  <!-- ${{ formatPrice(totalPrice) }} -->
+                  {{ formatCurrency(totalPrice, { showSymbol: true }) }}
+                </p>
               </div>
             </div>
             
@@ -509,8 +518,16 @@
               </div>
               <h3 class="font-medium mb-3 text-gray-900 group-hover:text-gray-700 transition-colors">{{ relatedProduct.name }}</h3>
               <div class="flex items-center justify-center gap-3">
-                <span class="font-bold text-lg">${{ formatPrice(relatedProduct.discountPrice || relatedProduct.price) }}</span>
-                <span v-if="relatedProduct.discountPrice" class="text-sm text-gray-400 line-through">${{ formatPrice(relatedProduct.price) }}</span>
+                <span class="font-bold text-lg">
+                <!-- <span class="font-bold text-lg">
+                  ${{ formatPrice(relatedProduct.discountPrice || relatedProduct.price) }} -->
+                  {{ formatCurrency(relatedProduct.discountPrice || relatedProduct.price, { showSymbol: true }) }}
+                
+                </span>
+                <span v-if="relatedProduct.discountPrice" class="text-sm text-gray-400 line-through">
+                  {{ formatCurrency(relatedProduct.price, { showSymbol: true }) }}
+                  <!-- ${{ formatPrice(relatedProduct.price) }} -->
+                </span>
               </div>
             </div>
           </div>
@@ -570,6 +587,30 @@ import { useFetchProduct } from "@/composables/modules/products/useFetchProduct"
 import { useCustomToast } from '@/composables/core/useCustomToast'
 import { useCartStore } from '~/composables/useCartStore'
 import { useRoute, useRouter } from 'vue-router'
+import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+const {
+  countryCode,
+  currency,
+  isLoading,
+  error,
+  currencyCode,
+  currencySymbol,
+  currencyName,
+  detectCountry,
+  formatCurrency,
+  setCurrency,
+  setCountry,
+  getSupportedCurrencies,
+  getSupportedCountries
+} = useCurrencyConverter()
+
+const fixedInstallmentPayment = ref(50)
+
+
+// Auto-detect country on mount
+onMounted(() => {
+  detectCountry()
+})
 
 const route = useRoute()
 const router = useRouter()
