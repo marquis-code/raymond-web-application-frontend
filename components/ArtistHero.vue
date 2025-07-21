@@ -21,7 +21,7 @@
   
           <!-- Mobile overlay content - positioned over the image -->
           <div class="absolute inset-0 md:hidden">
-            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-8">
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#232323] via-[#232323] to-[#232323] p-8">
               <div class="animate-slide-up">
                 <h1 
                   ref="titleRef"

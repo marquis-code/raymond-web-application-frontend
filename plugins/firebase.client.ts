@@ -6,9 +6,9 @@ import { getAuth } from 'firebase/auth';
 // Your Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyA0ylGgHrPv68eiTFo06WG82LblM-Jrghk",
-  authDomain: "raymondaworoarts-852f6.firebaseapp.com",
-  projectId: "raymondaworoarts-852f6",
-  storageBucket: "raymondaworoarts-852f6.firebasestorage.app",
+  authDomain: "raymondaworoart-852f6.firebaseapp.com",
+  projectId: "raymondaworoart-852f6",
+  storageBucket: "raymondaworoart-852f6.firebasestorage.app",
   messagingSenderId: "1048971000950",
   appId: "1:1048971000950:web:e59012ff2e6418b3abb357",
   measurementId: "G-48DYQVGS23"

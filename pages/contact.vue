@@ -259,10 +259,10 @@
                 <div class="ml-4 flex-1">
                   <h3 class="text-lg font-semibold text-gray-900 mb-1">Email</h3>
                   <a 
-                    href="mailto:hello@raymondaworoarts.com" 
+                    href="mailto:hello@raymondaworoart.com" 
                     class="text-rose-600 hover:text-rose-700 transition-colors duration-300 font-medium hover:underline text-sm md:text-base"
                   >
-                    hello@raymondaworoarts.com
+                    hello@raymondaworoart.com
                   </a>
                   <p class="text-xs text-gray-500 mt-1">I'll respond within 24 hours</p>
                 </div>
@@ -278,9 +278,14 @@
                 <div class="ml-4 flex-1">
                   <h3 class="text-lg font-semibold text-gray-900 mb-1">Location</h3>
                   <p class="text-gray-600 text-sm md:text-base leading-relaxed">
-                    14, Oreofe Street, Adeleye,<br>
-                    Ado-Odo-Ota, Ogun State,<br>
-                    Nigeria 🇳🇬
+                    Nigeria Office:<br>
+                    Flat 1, 15a Livingstone Road, Lekki Phase 1, Lagos<br>
+                    +2348119963202
+                  </p>
+                  <p class="text-gray-600 text-sm md:text-base leading-relaxed">
+                    U.S. Office:<br>
+                    1234 Main Street, Suite 100, Wilmington, DE 19801<br>
+                    +1 (559) 859-5124
                   </p>
                 </div>
               </div>
@@ -396,10 +401,10 @@
                   <p class="text-gray-700 text-sm leading-relaxed">
                     For business inquiries or collaborations, please email me directly at 
                     <a 
-                      href="mailto:hello@raymondaworoarts.com" 
+                      href="mailto:hello@raymondaworoart.com" 
                       class="text-rose-600 font-semibold hover:text-rose-700 hover:underline transition-colors duration-300"
                     >
-                      hello@raymondaworoarts.com
+                      hello@raymondaworoart.com
                     </a>
                   </p>
                 </div>

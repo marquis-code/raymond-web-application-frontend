@@ -203,7 +203,7 @@ const navItems = [
   { name: 'Commission', path: '/commission' },
   { name: 'Contact', path: '/contact' },
   { name: 'About Us', path: '/about' },
-  { name: 'Academy', path: '/academy' }
+  { name: 'Academy', path: '#' }
 ]
 
 const isMobileMenuOpen = ref(false)

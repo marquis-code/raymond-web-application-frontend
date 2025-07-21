@@ -648,7 +648,7 @@
                 </div>
                 <div class="flex-1 min-w-0">
                   <h4 class="font-semibold text-slate-800 text-sm truncate">{{ item.title }}</h4>
-                  <p class="text-sm text-slate-600">{{ formatCurrency(item.price) }}</p>
+                  <p class="text-sm text-slate-600">{{ convertFromUSD(item.price).formattedAmount }}</p>
                   <div class="flex items-center gap-2 mt-1">
                     <span v-if="item.size" class="text-xs px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.size }}</span>
                     <span v-if="item.color" class="text-xs px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.color }}</span>
@@ -680,7 +680,7 @@
                   </div>
                 </div>
                 <div class="text-right">
-                  <span class="font-semibold text-slate-800">{{ formatCurrency(item.price * item.quantity) }}</span>
+                  <span class="font-semibold text-slate-800">{{ convertFromUSD(item.price * item.quantity).formattedAmount }}</span>
                 </div>
               </div>
             </div>
@@ -689,17 +689,17 @@
             <div class="border-t border-slate-200 pt-4 space-y-3">
               <div class="flex justify-between text-sm">
                 <span class="text-slate-600">Subtotal</span>
-                <span class="font-semibold text-slate-800">{{ formatCurrency(subtotalAmount) }}</span>
+                <span class="font-semibold text-slate-800">{{ convertFromUSD(subtotalAmount).formattedAmount }}</span>
               </div>
               
               <div class="flex justify-between text-sm">
                 <span class="text-slate-600">Shipping</span>
-                <span class="font-semibold text-slate-800">{{ getShippingCost() === 0 ? 'Free' : `{formatCurrency(getShippingCost())}` }}</span>
+                <span class="font-semibold text-slate-800">{{ getShippingCost() === 0 ? 'Free' : `${convertFromUSD(getShippingCost()).formattedAmount}` }}</span>
               </div>
               
               <div class="flex justify-between text-sm">
                 <span class="text-slate-600">Tax ({{ currentTaxRate }}%)</span>
-                <span class="font-semibold text-slate-800">{{ formatCurrency(getTaxAmount()) }}</span>
+                <span class="font-semibold text-slate-800">{{ convertFromUSD(getTaxAmount()).formattedAmount }}</span>
               </div>
               
               <!-- Installment Summary in Order Total -->
@@ -982,29 +982,82 @@ import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useTaxConfig } from '@/composables/modules/shipping-tax/useTaxConfig'
 import { useShippingConfig } from '@/composables/modules/shipping-tax/useShippingConfig'
 import { useCustomToast } from '@/composables/core/useCustomToast'
-import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+// import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter"
+// const {
+//   countryCode,
+//   currency,
+//   isLoading,
+//   error,
+//   currencyCode,
+//   currencySymbol,
+//   currencyName,
+//   detectCountry,
+//   formatCurrency,
+//   setCurrency,
+//   setCountry,
+//   getSupportedCurrencies,
+//   getSupportedCountries
+// } = useCurrencyConverter()
 const {
-  countryCode,
-  currency,
-  isLoading,
-  error,
-  currencyCode,
-  currencySymbol,
-  currencyName,
-  detectCountry,
-  formatCurrency,
-  setCurrency,
-  setCountry,
-  getSupportedCurrencies,
-  getSupportedCountries
+  userCountry,
+  userCurrency,
+  exchangeRates,
+  isLoading: currencyLoading,
+  error: currencyError,
+  lastUpdated,
+  initializeUserCurrency,
+  convertFromUSD,
+  convertCurrency,
 } = useCurrencyConverter()
 
 const fixedInstallmentPayment = ref(50)
 
 
 // Auto-detect country on mount
-onMounted(() => {
-  detectCountry()
+// onMounted(() => {
+//   detectCountry()
+// })
+
+// const fixedInstallmentPayment = ref(50) // USD base amount
+
+const convertedPrice = ref<any>({})
+const fromCurrency = ref<string>('USD')
+const toCurrency = ref<string>('NGN')
+const manualConversionResult = ref<any>(null)
+
+// Available currencies for dropdown
+const availableCurrencies = computed(() => {
+  return Object.keys(exchangeRates.value).sort()
+})
+
+// Initialize on mount
+onMounted(async () => {
+  await initializeUserCurrency()
+  updateConvertedPrice()
+})
+
+// Watch for currency changes
+watch([userCurrency, exchangeRates], () => {
+  updateConvertedPrice()
+})
+
+// Update converted price when user currency or exchange rates change
+const updateConvertedPrice = () => {
+  if (userCurrency.value && Object.keys(exchangeRates.value).length > 0) {
+    convertedPrice.value = convertFromUSD(100) // Example conversion
+  }
+}
+
+// Retry initialization on error
+const retryInitialization = async () => {
+  await initializeUserCurrency()
+  updateConvertedPrice()
+}
+
+// Set default target currency to user currency when it changes
+watch(userCurrency, (newCurrency) => {
+  toCurrency.value = newCurrency
 })
 
 // Router

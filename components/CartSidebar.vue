@@ -78,7 +78,7 @@
                     </svg>
                   </button>
                 </div>
-                <p class="text-sm text-gray-500 mb-3">{{ item.quantity }} × ${{ formatPrice(item.price) }}</p>
+                <p class="text-sm text-gray-500 mb-3">{{ item.quantity }} × {{ convertFromUSD(item.price).formattedAmount }}</p>
                 
                 <div class="flex justify-between items-center">
                   <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
@@ -106,7 +106,7 @@
                   </div>
                   <span class="font-medium text-gray-900">
                     <!-- ${{ formatPrice(item.price * item.quantity) }} -->
-                    {{ formatCurrency(item.price * item.quantity, { showSymbol: true }) }}
+                    {{ convertFromUSD(item.price * item.quantity).formattedAmount }}
                   </span>
                 </div>
               </div>
@@ -122,7 +122,7 @@
             <span>Subtotal</span>
             <span>
               <!-- ${{ formatPrice(subtotal) }} -->
-              {{ formatCurrency(subtotal, { showSymbol: true }) }}
+              {{ convertFromUSD(subtotal)?.formattedAmount }}
             </span>
           </div>
           <!-- <div class="flex justify-between text-gray-600">
@@ -133,7 +133,7 @@
           <div class="flex justify-between font-bold text-gray-900 pt-3 border-t border-gray-100">
             <span>Total</span>
             <span>
-              {{ formatCurrency(total, { showSymbol: true }) }}
+              {{ convertFromUSD(total)?.formattedAmount }}
               <!-- ${{ formatPrice(total) }} -->
             </span>
           </div>
@@ -169,30 +169,85 @@ import { useCartStore } from '~/composables/useCartStore'
 import { useCheckoutStore } from '~/composables/useCheckoutStore'
 import { navigateTo } from '#app'
 const router = useRouter()
-import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter"
+// import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+// const {
+//   countryCode,
+//   currency,
+//   isLoading,
+//   error,
+//   currencyCode,
+//   currencySymbol,
+//   currencyName,
+//   detectCountry,
+//   formatCurrency,
+//   setCurrency,
+//   setCountry,
+//   getSupportedCurrencies,
+//   getSupportedCountries
+// } = useCurrencyConverter()
 const {
-  countryCode,
-  currency,
-  isLoading,
-  error,
-  currencyCode,
-  currencySymbol,
-  currencyName,
-  detectCountry,
-  formatCurrency,
-  setCurrency,
-  setCountry,
-  getSupportedCurrencies,
-  getSupportedCountries
+  userCountry,
+  userCurrency,
+  exchangeRates,
+  isLoading: currencyLoading,
+  error: currencyError,
+  lastUpdated,
+  initializeUserCurrency,
+  convertFromUSD,
+  convertCurrency,
 } = useCurrencyConverter()
 
 const fixedInstallmentPayment = ref(50)
 
 
 // Auto-detect country on mount
-onMounted(() => {
-  detectCountry()
+// onMounted(() => {
+//   detectCountry()
+// })
+
+// const fixedInstallmentPayment = ref(50) // USD base amount
+
+const convertedPrice = ref<any>({})
+const fromCurrency = ref<string>('USD')
+const toCurrency = ref<string>('NGN')
+const manualConversionResult = ref<any>(null)
+
+
+// // Auto-detect country on mount
+// onMounted(() => {
+//   detectCountry()
+// })
+
+
+// Available currencies for dropdown
+const availableCurrencies = computed(() => {
+  return Object.keys(exchangeRates.value).sort()
 })
+
+// Initialize on mount
+onMounted(async () => {
+  await initializeUserCurrency()
+  updateConvertedPrice()
+})
+
+// Watch for currency changes
+watch([userCurrency, exchangeRates], () => {
+  updateConvertedPrice()
+})
+
+// Update converted price when user currency or exchange rates change
+const updateConvertedPrice = () => {
+  if (userCurrency.value && Object.keys(exchangeRates.value).length > 0) {
+    convertedPrice.value = convertFromUSD(100) // Example conversion
+  }
+}
+
+// Retry initialization on error
+const retryInitialization = async () => {
+  await initializeUserCurrency()
+  updateConvertedPrice()
+}
 
 const emit = defineEmits(['close'])
 

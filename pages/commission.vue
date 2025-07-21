@@ -641,11 +641,14 @@
         </div>
       </div>
     </transition>
+
+    <TestimonialsCarousel />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import TestimonialsCarousel from '../components/TestimonialsCarousel.vue'
 
 // Types
 interface Country {

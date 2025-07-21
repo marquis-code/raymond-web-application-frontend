@@ -8,12 +8,12 @@ export const ShippingFaq = defineComponent({
         },
         {
           question: 'Do you ship internationally?',
-          answer: 'Yes, we offer free standard flat rate worldwide shipping for prints.',
+          answer: 'Yes, we do.',
           isOpen: false
         },
         {
           question: 'Are there any additional fees?',
-          answer: 'While shipping is free, you may be responsible for local tax duties outside of the UK and EU.',
+          answer: 'No, however, You may be required to pay local tax duties on some rare occasions',
           isOpen: false
         },
         {

@@ -47,7 +47,8 @@ const { products, loading } = useFetchProducts() -->
                   Important Information
                 </h3>
                 <p class="text-gray-700">
-                  Standard Flat Rate worldwide shipping is <span class="font-bold text-indigo-600">free of charge</span> for prints. Please note that while shipping is free of charge, although rare, you will be responsible for any local tax duties outside of the UK and EU.
+                  Standard flat shipping rate ranges from $30 - $50 while multiple print orders are shipped for free
+                  <!-- Standard Flat Rate worldwide shipping is <span class="font-bold text-indigo-600">free of charge</span> for prints. Please note that while shipping is free of charge, although rare, you will be responsible for any local tax duties outside of the UK and EU. -->
                 </p>
               </div>
               
@@ -82,7 +83,7 @@ const { products, loading } = useFetchProducts() -->
           <!-- Contact Support Section -->
           <div class="mt-12 text-center animate-fade-in">
             <p class="text-gray-600 mb-4">Have questions about your shipping?</p>
-            <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 flex items-center mx-auto">
+            <button @click="router.push('/contact')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300 flex items-center mx-auto">
               <MailIcon class="w-5 h-5 mr-2" />
               Contact Support
             </button>
@@ -103,6 +104,7 @@ const { products, loading } = useFetchProducts() -->
   import { SustainableIcon } from "@/assets/illustrations/sustainable-icon"
   import { RecyclableIcon } from "@/assets/illustrations/recycle-icon"
   import { CarbonNeutralIcon } from  "@/assets/illustrations/carbon-neutral"
+
 
   //   // Add Nuxt app plugin for animations
   // const defineComponent = (options: any) => options;
@@ -162,6 +164,8 @@ const { products, loading } = useFetchProducts() -->
   onMounted(() => {
     document.head.appendChild(style);
   });
+
+  const router = useRouter()
   </script>
   
   <style>

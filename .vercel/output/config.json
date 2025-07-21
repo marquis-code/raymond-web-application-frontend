@@ -25,26 +25,26 @@
     "commission/index.html": {
       "path": "commission"
     },
-    "test-price/index.html": {
-      "path": "test-price"
-    },
     "contact-us/index.html": {
       "path": "contact-us"
+    },
+    "test-price/index.html": {
+      "path": "test-price"
     },
     "prints/index.html": {
       "path": "prints"
     },
-    "academy/index.html": {
-      "path": "academy"
-    },
     "order-success/index.html": {
       "path": "order-success"
     },
-    "refund-policy/index.html": {
-      "path": "refund-policy"
+    "academy/index.html": {
+      "path": "academy"
     },
     "artworks/index.html": {
       "path": "artworks"
+    },
+    "refund-policy/index.html": {
+      "path": "refund-policy"
     },
     "privacy-policy/index.html": {
       "path": "privacy-policy"

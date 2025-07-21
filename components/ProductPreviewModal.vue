@@ -12,16 +12,16 @@
         class="fixed inset-0 z-50 flex flex-col overflow-hidden bg-white"
       >
         <!-- Header with Close Button -->
-        <div class="sticky top-0 z-20 flex items-center justify-between p-4 md:p-6 bg-white/95 backdrop-blur-md border-b border-gray-100">
-          <div class="flex items-center space-x-4">
-            <h2 class="text-xl md:text-2xl font-medium text-gray-900 truncate">{{ product.name }}</h2>
+        <div class="sticky top-0 z-20 flex items-center justify-between p-3 md:p-4 bg-white/95 backdrop-blur-md border-b border-gray-100">
+          <div class="flex items-center space-x-3">
+            <h2 class="text-lg md:text-xl font-medium text-gray-900 truncate">{{ product.name }}</h2>
             <div class="hidden md:flex items-center space-x-2">
-              <span class="text-sm text-gray-500">{{ currentImageIndex + 1 }} of {{ product.images.length }}</span>
+              <span class="text-xs text-gray-500">{{ currentImageIndex + 1 }} of {{ product.images.length }}</span>
               <div class="flex space-x-1">
                 <div 
                   v-for="(_, index) in product.images" 
                   :key="index"
-                  class="w-2 h-2 rounded-full transition-all duration-300"
+                  class="w-1.5 h-1.5 rounded-full transition-all duration-300"
                   :class="currentImageIndex === index ? 'bg-gray-800' : 'bg-gray-300'"
                 ></div>
               </div>
@@ -32,176 +32,204 @@
             class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-300 hover:scale-110"
             aria-label="Close preview"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700">
               <path d="m18 6-12 12"/>
               <path d="m6 6 12 12"/>
             </svg>
           </button>
         </div>
 
-        <!-- Full Width Image Section -->
-        <div class="relative flex-1 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
-          <!-- Main Image Container -->
-          <div class="relative w-full h-full flex items-center justify-center p-4 md:p-8">
-            <!-- Image Carousel -->
-            <div class="relative w-full max-w-4xl h-full flex items-center justify-center">
-              <div class="relative w-full h-full overflow-hidden rounded-2xl shadow-2xl bg-white">
-                <!-- Image Stack with 3D Effect -->
-                <div class="relative w-full h-full">
-                  <transition-group 
-                    name="image-slide" 
-                    tag="div" 
-                    class="relative w-full h-full"
-                  >
-                    <div
-                      v-for="(image, index) in product.images"
-                      :key="`image-${index}`"
-                      v-show="index === currentImageIndex"
-                      class="absolute inset-0 flex items-center justify-center p-4"
-                      :style="{ 
-                        transform: getImageTransform(index),
-                        zIndex: index === currentImageIndex ? 10 : 1
-                      }"
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col lg:flex-row overflow-hidden lg:overflow-visible">
+          <!-- Large Image Section - Takes up 70% of viewport height on mobile, 100% width on desktop -->
+          <div class="relative flex-1 bg-gradient-to-br from-gray-50 to-gray-100 overflow-y-auto lg:overflow-hidden min-h-[70vh] lg:min-h-full">
+            <!-- Main Image Container -->
+            <div class="relative w-full h-full flex items-center justify-center p-2 md:p-4">
+              <!-- Image Carousel -->
+              <div class="relative w-full max-w-5xl h-full flex items-center justify-center">
+                <div class="relative w-full h-full overflow-hidden rounded-xl shadow-2xl bg-white">
+                  <!-- Image Stack with 3D Effect -->
+                  <div class="relative w-full h-full">
+                    <transition-group 
+                      name="image-slide" 
+                      tag="div" 
+                      class="relative w-full h-full"
                     >
-                      <img 
-                        :src="image"
-                        :alt="`${product.name} - view ${index + 1}`" 
-                        class="max-w-full max-h-full object-contain transition-all duration-700 hover:scale-105"
-                        :class="{ 'animate-zoom-in': index === currentImageIndex }"
-                      />
+                      <div
+                        v-for="(image, index) in product.images"
+                        :key="`image-${index}`"
+                        v-show="index === currentImageIndex"
+                        class="absolute inset-0 flex items-center justify-center p-2"
+                        :style="{ 
+                          transform: getImageTransform(index),
+                          zIndex: index === currentImageIndex ? 10 : 1
+                        }"
+                      >
+                        <img 
+                          :src="image"
+                          :alt="`${product.name} - view ${index + 1}`" 
+                          class="max-w-full max-h-full object-contain transition-all duration-700 hover:scale-105"
+                          :class="{ 'animate-zoom-in': index === currentImageIndex }"
+                        />
+                      </div>
+                    </transition-group>
+                  </div>
+
+                  <!-- Navigation Arrows -->
+                  <div v-if="product.images.length > 1" class="absolute inset-y-0 left-0 right-0 flex items-center justify-between pointer-events-none">
+                    <button 
+                      @click.stop="previousImage" 
+                      class="ml-2 p-2 rounded-full bg-white/90 hover:bg-white shadow-lg transition-all duration-300 transform hover:scale-110 hover:-translate-x-1 pointer-events-auto group"
+                      aria-label="Previous image"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700 group-hover:text-gray-900 transition-colors">
+                        <path d="m15 18-6-6 6-6"/>
+                      </svg>
+                    </button>
+                    <button 
+                      @click.stop="nextImage" 
+                      class="mr-2 p-2 rounded-full bg-white/90 hover:bg-white shadow-lg transition-all duration-300 transform hover:scale-110 hover:translate-x-1 pointer-events-auto group"
+                      aria-label="Next image"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700 group-hover:text-gray-900 transition-colors">
+                        <path d="m9 18 6-6-6-6"/>
+                      </svg>
+                    </button>
+                  </div>
+
+                  <!-- Image Counter (Mobile) -->
+                  <div class="lg:hidden absolute top-3 right-3 bg-black/50 text-white px-2 py-1 rounded-full text-xs backdrop-blur-sm">
+                    {{ currentImageIndex + 1 }} / {{ product.images.length }}
+                  </div>
+
+                  <!-- Zoom Indicator -->
+                  <div class="hidden lg:block absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg shadow-lg opacity-0 hover:opacity-100 transition-opacity duration-300">
+                    <div class="flex items-center space-x-1 text-xs text-gray-700">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                        <path d="M11 8v6"/>
+                        <path d="M8 11h6"/>
+                      </svg>
+                      <span>Hover to zoom</span>
                     </div>
-                  </transition-group>
-                </div>
-
-                <!-- Navigation Arrows -->
-                <div v-if="product.images.length > 1" class="absolute inset-y-0 left-0 right-0 flex items-center justify-between pointer-events-none">
-                  <button 
-                    @click.stop="previousImage" 
-                    class="ml-4 p-3 rounded-full bg-white/90 hover:bg-white shadow-lg transition-all duration-300 transform hover:scale-110 hover:-translate-x-1 pointer-events-auto group"
-                    aria-label="Previous image"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700 group-hover:text-gray-900 transition-colors">
-                      <path d="m15 18-6-6 6-6"/>
-                    </svg>
-                  </button>
-                  <button 
-                    @click.stop="nextImage" 
-                    class="mr-4 p-3 rounded-full bg-white/90 hover:bg-white shadow-lg transition-all duration-300 transform hover:scale-110 hover:translate-x-1 pointer-events-auto group"
-                    aria-label="Next image"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-700 group-hover:text-gray-900 transition-colors">
-                      <path d="m9 18 6-6-6-6"/>
-                    </svg>
-                  </button>
-                </div>
-
-                <!-- Image Counter (Mobile) -->
-                <div class="md:hidden absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm backdrop-blur-sm">
-                  {{ currentImageIndex + 1 }} / {{ product.images.length }}
-                </div>
-
-                <!-- Zoom Indicator -->
-                <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow-lg opacity-0 hover:opacity-100 transition-opacity duration-300">
-                  <div class="flex items-center space-x-2 text-sm text-gray-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="11" cy="11" r="8"/>
-                      <path d="m21 21-4.35-4.35"/>
-                      <path d="M11 8v6"/>
-                      <path d="M8 11h6"/>
-                    </svg>
-                    <span>Hover to zoom</span>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Floating Thumbnail Navigation -->
-          <div v-if="product?.images?.length > 1" class="absolute bottom-6 left-1/2 transform -translate-x-1/2">
-            <div class="flex space-x-3 bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-gray-200">
-              <button
-                v-for="(image, index) in product.images"
-                :key="`thumb-${index}`"
-                @click.stop="setCurrentImage(index)"
-                class="relative w-16 h-16 md:w-20 md:h-20 rounded-xl overflow-hidden border-2 transition-all duration-300 group"
-                :class="currentImageIndex === index ? 
-                  'border-gray-800 scale-110 shadow-lg' : 
-                  'border-transparent hover:border-gray-400 hover:scale-105'"
-                :aria-label="`View image ${index + 1}`"
-              >
-                <img 
-                  :src="image" 
-                  :alt="`${product.name} - thumbnail ${index + 1}`" 
-                  class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                />
-                <!-- Active Indicator -->
-                <div 
-                  v-if="currentImageIndex === index"
-                  class="absolute inset-0 bg-gray-800/20 flex items-center justify-center"
+            <!-- Desktop Thumbnail Navigation - Vertical on Right Side -->
+            <div v-if="product?.images?.length > 1" class="hidden lg:block absolute right-4 top-1/2 transform -translate-y-1/2">
+              <div class="flex flex-col space-y-2 bg-white/90 backdrop-blur-md p-2 rounded-xl shadow-xl border border-gray-200 max-h-96 overflow-y-auto">
+                <button
+                  v-for="(image, index) in product.images"
+                  :key="`thumb-${index}`"
+                  @click.stop="setCurrentImage(index)"
+                  class="relative w-12 h-12 rounded-lg overflow-hidden border-2 transition-all duration-300 group flex-shrink-0"
+                  :class="currentImageIndex === index ? 
+                    'border-gray-800 scale-110 shadow-lg' : 
+                    'border-transparent hover:border-gray-400 hover:scale-105'"
+                  :aria-label="`View image ${index + 1}`"
                 >
-                  <div class="w-3 h-3 bg-white rounded-full shadow-lg"></div>
-                </div>
-              </button>
+                  <img 
+                    :src="image" 
+                    :alt="`${product.name} - thumbnail ${index + 1}`" 
+                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <!-- Active Indicator -->
+                  <div 
+                    v-if="currentImageIndex === index"
+                    class="absolute inset-0 bg-gray-800/20 flex items-center justify-center"
+                  >
+                    <div class="w-2 h-2 bg-white rounded-full shadow-lg"></div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Mobile Thumbnail Navigation - Bottom -->
+            <div v-if="product?.images?.length > 1" class="lg:hidden absolute bottom-4 left-1/2 transform -translate-x-1/2">
+              <div class="flex space-x-2 bg-white/90 backdrop-blur-md p-2 rounded-xl shadow-xl border border-gray-200 max-w-xs overflow-x-auto">
+                <button
+                  v-for="(image, index) in product.images"
+                  :key="`thumb-mobile-${index}`"
+                  @click.stop="setCurrentImage(index)"
+                  class="relative w-12 h-12 rounded-lg overflow-hidden border-2 transition-all duration-300 group flex-shrink-0"
+                  :class="currentImageIndex === index ? 
+                    'border-gray-800 scale-110 shadow-lg' : 
+                    'border-transparent hover:border-gray-400 hover:scale-105'"
+                  :aria-label="`View image ${index + 1}`"
+                >
+                  <img 
+                    :src="image" 
+                    :alt="`${product.name} - thumbnail ${index + 1}`" 
+                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <!-- Active Indicator -->
+                  <div 
+                    v-if="currentImageIndex === index"
+                    class="absolute inset-0 bg-gray-800/20 flex items-center justify-center"
+                  >
+                    <div class="w-2 h-2 bg-white rounded-full shadow-lg"></div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- Swipe Indicators (Mobile) -->
+            <div class="lg:hidden absolute bottom-16 left-1/2 transform -translate-x-1/2 flex items-center space-x-2 text-white/70">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-pulse">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+              </svg>
+              <span class="text-xs">Swipe to navigate</span>
             </div>
           </div>
 
-          <!-- Swipe Indicators (Mobile) -->
-          <div class="md:hidden absolute bottom-20 left-1/2 transform -translate-x-1/2 flex items-center space-x-2 text-white/70">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="animate-pulse">
-              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-            </svg>
-            <span class="text-sm">Swipe to navigate</span>
-          </div>
-        </div>
-
-        <!-- Product Details Section -->
-        <div class="bg-white border-t border-gray-200 max-h-[50vh] overflow-y-auto">
-          <div class="max-w-4xl mx-auto p-6 md:p-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <!-- Product Info -->
-              <div class="space-y-6">
-                <!-- Price Section -->
+          <!-- Compact Product Details Section -->
+          <div class="bg-white border-t lg:border-t-0 lg:border-l border-gray-200 lg:w-96 lg:max-w-md overflow-y-auto lg:overflow-y-auto">
+            <div class="p-4 md:p-6">
+              <div class="space-y-4">
+                <!-- Compact Price Section -->
                 <div class="animate-item">
-                  <p class="text-2xl md:text-3xl font-medium text-gray-800">
+                  <p class="text-xl md:text-2xl font-medium text-gray-800">
                     <span v-if="!selectedSize">From {{ convertFromUSD(getMinPrice(product))?.formattedAmount }}</span>
                     <span v-else>{{ convertFromUSD(getSelectedSizePrice())?.formattedAmount }}</span>
                   </p>
-                  <!-- <p class="text-gray-600 mt-1">{{ product.category || 'Art Print' }}</p> -->
                 </div>
 
-                <!-- Size Selection -->
+                <!-- Compact Size Selection -->
                 <div class="animate-item">
-                  <label class="block text-sm font-medium mb-3 text-gray-700">Size Selection</label>
-                  <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <label class="block text-sm font-medium mb-2 text-gray-700">Size Selection</label>
+                  <div class="grid grid-cols-2 gap-2">
                     <button
                       v-for="size in product.sizes"
                       :key="size._id"
                       @click="selectedSize = size._id"
-                      class="p-4 border rounded-xl text-center transition-all duration-300 group hover:shadow-md"
+                      class="p-2 border rounded-lg text-center transition-all duration-300 group hover:shadow-md"
                       :class="selectedSize === size._id ? 
                         'border-gray-800 bg-gray-800 text-white shadow-lg transform scale-105' : 
                         'border-gray-200 hover:border-gray-400 text-gray-700'"
                     >
-                      <div class="font-medium">{{ size.size.charAt(0).toUpperCase() + size.size.slice(1) }}</div>
-                      <div class="text-sm mt-1 opacity-75">
+                      <div class="font-medium text-sm">{{ size.size.charAt(0).toUpperCase() + size.size.slice(1) }}</div>
+                      <div class="text-xs mt-0.5 opacity-75">
                         {{ convertFromUSD(size.price)?.formattedAmount }}
                       </div>
                     </button>
                   </div>
                 </div>
 
-                <!-- Quantity Selection -->
+                <!-- Compact Quantity Selection -->
                 <div class="animate-item">
-                  <label class="block text-sm font-medium mb-3 text-gray-700">Quantity</label>
-                  <div class="flex items-center space-x-4">
-                    <div class="flex items-center border border-gray-200 rounded-xl overflow-hidden">
+                  <label class="block text-sm font-medium mb-2 text-gray-700">Quantity</label>
+                  <div class="flex items-center space-x-3">
+                    <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
                       <button 
                         @click.stop="decrementQuantity" 
-                        class="px-4 py-3 hover:bg-gray-50 transition-colors duration-300 text-gray-600 disabled:opacity-50"
+                        class="px-3 py-2 hover:bg-gray-50 transition-colors duration-300 text-gray-600 disabled:opacity-50"
                         :disabled="quantity <= 1"
                         aria-label="Decrease quantity"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="M5 12h14"/>
                         </svg>
                       </button>
@@ -209,35 +237,32 @@
                         v-model.number="quantity" 
                         type="number" 
                         min="1" 
-                        class="w-16 py-3 text-center border-0 bg-white text-gray-900 focus:ring-0 focus:outline-none"
+                        class="w-12 py-2 text-center border-0 bg-white text-gray-900 focus:ring-0 focus:outline-none text-sm"
                         aria-label="Quantity"
                       />
                       <button 
                         @click.stop="incrementQuantity" 
-                        class="px-4 py-3 hover:bg-gray-50 transition-colors duration-300 text-gray-600"
+                        class="px-3 py-2 hover:bg-gray-50 transition-colors duration-300 text-gray-600"
                         aria-label="Increase quantity"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="M12 5v14m-7-7h14"/>
                         </svg>
                       </button>
                     </div>
                     
                     <!-- Total Price -->
-                    <div v-if="selectedSize && quantity > 1" class="text-lg font-medium text-gray-700">
+                    <div v-if="selectedSize && quantity > 1" class="text-sm font-medium text-gray-700">
                       Total: <span class="text-gray-900">{{ convertFromUSD(getTotalPrice())?.formattedAmount }}</span>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Actions & Details -->
-              <div class="space-y-6">
                 <!-- Add to Cart Button -->
                 <div class="animate-item">
                   <button 
                     @click.stop="handleAddToCart" 
-                    class="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white py-4 px-6 font-medium rounded-xl hover:from-gray-900 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    class="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white py-3 px-4 font-medium rounded-lg hover:from-gray-900 hover:to-black transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm"
                     :disabled="!selectedSize"
                   >
                     <span v-if="!selectedSize">Select Size to Continue</span>
@@ -245,44 +270,44 @@
                   </button>
                 </div>
 
-                <!-- Product Info Accordion -->
-                <div class="space-y-3 animate-item">
-                  <div v-if="product.productInfo" class="border border-gray-200 rounded-xl overflow-hidden">
+                <!-- Compact Product Info Accordion -->
+                <div class="space-y-2 animate-item">
+                  <div v-if="product.productInfo" class="border border-gray-200 rounded-lg overflow-hidden">
                     <button 
                       @click.stop="toggleSection('productInfo')"
-                      class="flex justify-between items-center w-full text-left p-4 hover:bg-gray-50 transition-all duration-300"
+                      class="flex justify-between items-center w-full text-left p-3 hover:bg-gray-50 transition-all duration-300"
                       :aria-expanded="expandedSections.productInfo"
                     >
-                      <h3 class="font-medium text-gray-800">Product Details</h3>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300" :class="{'rotate-45': expandedSections.productInfo}">
+                      <h3 class="font-medium text-gray-800 text-sm">Product Details</h3>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300" :class="{'rotate-45': expandedSections.productInfo}">
                         <path d="M12 5v14m-7-7h14"/>
                       </svg>
                     </button>
                     <div 
                       class="overflow-hidden transition-all duration-300"
-                      :class="expandedSections.productInfo ? 'max-h-96 p-4 pt-0' : 'max-h-0'"
+                      :class="expandedSections.productInfo ? 'max-h-64 p-3 pt-0' : 'max-h-0'"
                     >
-                      <div class="text-gray-600 text-sm" v-html="product.productInfo"></div>
+                      <div class="text-gray-600 text-xs" v-html="product.productInfo"></div>
                     </div>
                   </div>
 
-                  <!-- Shipping Info Accordion -->
-                  <div v-if="product.shippingInfo" class="border border-gray-200 rounded-xl overflow-hidden">
+                  <!-- Compact Shipping Info Accordion -->
+                  <div v-if="product.shippingInfo" class="border border-gray-200 rounded-lg overflow-hidden">
                     <button 
                       @click.stop="toggleSection('shippingInfo')"
-                      class="flex justify-between items-center w-full text-left p-4 hover:bg-gray-50 transition-all duration-300"
+                      class="flex justify-between items-center w-full text-left p-3 hover:bg-gray-50 transition-all duration-300"
                       :aria-expanded="expandedSections.shippingInfo"
                     >
-                      <h3 class="font-medium text-gray-800">Shipping Information</h3>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300" :class="{'rotate-45': expandedSections.shippingInfo}">
+                      <h3 class="font-medium text-gray-800 text-sm">Shipping Information</h3>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300" :class="{'rotate-45': expandedSections.shippingInfo}">
                         <path d="M12 5v14m-7-7h14"/>
                       </svg>
                     </button>
                     <div 
                       class="overflow-hidden transition-all duration-300"
-                      :class="expandedSections.shippingInfo ? 'max-h-96 p-4 pt-0' : 'max-h-0'"
+                      :class="expandedSections.shippingInfo ? 'max-h-64 p-3 pt-0' : 'max-h-0'"
                     >
-                      <div class="text-gray-600 text-sm" v-html="product.shippingInfo"></div>
+                      <div class="text-gray-600 text-xs" v-html="product.shippingInfo"></div>
                     </div>
                   </div>
                 </div>
@@ -366,30 +391,6 @@ watch(userCurrency, (newCurrency) => {
   toCurrency.value = newCurrency
 })
 
-
-// const {
-//   countryCode,
-//   currency,
-//   isLoading,
-//   error,
-//   currencyCode,
-//   currencySymbol,
-//   currencyName,
-//   detectCountry,
-//   convertFromUSD,
-//   setCurrency,
-//   setCountry,
-//   getSupportedCurrencies,
-//   getSupportedCountries
-// } = useCurrencyConverter()
-
-// const fixedInstallmentPayment = ref(50)
-
-
-// Auto-detect country on mount
-// onMounted(() => {
-//   detectCountry()
-// })
 
 interface Props {
   isOpen: boolean
@@ -552,7 +553,13 @@ const getImageTransform = (index: number) => {
 }
 
 const toggleSection = (section: keyof typeof expandedSections) => {
-  expandedSections[section] = !expandedSections[section]
+  // Close all sections first
+  Object.keys(expandedSections).forEach(key => {
+    expandedSections[key as keyof typeof expandedSections] = false
+  })
+  
+  // Then open the selected section
+  expandedSections[section] = true
 }
 
 const hasInstallmentOption = (size: any) => {
@@ -752,7 +759,7 @@ const leave = (el: HTMLElement, done: () => void) => {
 
 /* Custom scrollbar */
 .overflow-y-auto::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-track {
@@ -761,7 +768,7 @@ const leave = (el: HTMLElement, done: () => void) => {
 
 .overflow-y-auto::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
+  border-radius: 2px;
 }
 
 .overflow-y-auto::-webkit-scrollbar-thumb:hover {
@@ -799,64 +806,10 @@ img {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Floating thumbnail animation */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-.floating-thumbnails {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Pulse animation for indicators */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Gradient background animation */
-@keyframes gradient-shift {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-.gradient-bg {
-  background: linear-gradient(-45deg, #f8fafc, #f1f5f9, #e2e8f0, #cbd5e1);
-  background-size: 400% 400%;
-  animation: gradient-shift 8s ease infinite;
-}
-
-/* 3D transform effects */
-.transform-3d {
-  transform-style: preserve-3d;
-  perspective: 1000px;
-}
-
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .aspect-square {
     aspect-ratio: 1/1;
-  }
-  
-  .floating-thumbnails {
-    animation: none;
   }
 }
 
@@ -865,6 +818,13 @@ img {
   button:active {
     transform: scale(0.95);
     transition: transform 0.1s;
+  }
+}
+
+/* Ensure proper spacing on mobile */
+@media (max-width: 768px) {
+  .min-h-[70vh] {
+    min-height: 70vh;
   }
 }
 </style>
