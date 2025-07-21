@@ -208,12 +208,12 @@
                   </button>
                 </div>
               </div>
-              <h3 class="text-center font-medium text-sm text-lg mb-1">
+              <h3 class="text-center font-semibold text-lg mb-1">
                 {{ product?.name }}
               </h3>
-              <p class="text-center font-medium text-sm text-gray-700 mb-1">
-                From {{ formatCurrency(product.price, { showSymbol: true }) }} or {{ formatCurrency(fixedInstallmentPayment, { showSymbol: true }) }}/month
-                <!-- From ${{ product.price }} or $50/month fixedInstallmentPayment -->
+              <p class="text-center font-semibold text-sm text-gray-700 mb-1">
+               From  {{ getConvertedMinPrice(product) }} 
+                or {{ getConvertedInstallmentPayment() }}/month
               </p>
             </div>
           </div>
@@ -296,29 +296,86 @@ import hero1 from "@/assets/img/commission-art1.jpg";
 import hero2 from "@/assets/img/raymond-hero.png";
 import { useFetchProducts } from "@/composables/modules/products/useFetchProducts";
 import { useFetchPromosale } from "@/composables/modules/promosale/useFetchPromosale";
-import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter"
+
+// Initialize currency converter
 const {
-  countryCode,
-  currency,
-  isLoading,
-  error,
-  currencyCode,
-  currencySymbol,
-  currencyName,
-  detectCountry,
-  formatCurrency,
-  setCurrency,
-  setCountry,
-  getSupportedCurrencies,
-  getSupportedCountries
+  userCountry,
+  userCurrency,
+  exchangeRates,
+  isLoading: currencyLoading,
+  error: currencyError,
+  lastUpdated,
+  initializeUserCurrency,
+  convertFromUSD,
+  convertCurrency,
 } = useCurrencyConverter()
 
-const fixedInstallmentPayment = ref(50)
+// import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+// const {
+//   countryCode,
+//   currency,
+//   isLoading,
+//   error,
+//   currencyCode,
+//   currencySymbol,
+//   currencyName,
+//   detectCountry,
+//   formatCurrency,
+//   setCurrency,
+//   setCountry,
+//   getSupportedCurrencies,
+//   getSupportedCountries
+// } = useCurrencyConverter()
+
+// const fixedInstallmentPayment = ref(50)
+
+const fixedInstallmentPayment = ref(50) // USD base amount
+
+const convertedPrice = ref<any>({})
+const fromCurrency = ref<string>('USD')
+const toCurrency = ref<string>('NGN')
+const manualConversionResult = ref<any>(null)
 
 
-// Auto-detect country on mount
-onMounted(() => {
-  detectCountry()
+// // Auto-detect country on mount
+// onMounted(() => {
+//   detectCountry()
+// })
+
+
+// Available currencies for dropdown
+const availableCurrencies = computed(() => {
+  return Object.keys(exchangeRates.value).sort()
+})
+
+// Initialize on mount
+onMounted(async () => {
+  await initializeUserCurrency()
+  updateConvertedPrice()
+})
+
+// Watch for currency changes
+watch([userCurrency, exchangeRates], () => {
+  updateConvertedPrice()
+})
+
+// Update converted price when user currency or exchange rates change
+const updateConvertedPrice = () => {
+  if (userCurrency.value && Object.keys(exchangeRates.value).length > 0) {
+    convertedPrice.value = convertFromUSD(100) // Example conversion
+  }
+}
+
+// Retry initialization on error
+const retryInitialization = async () => {
+  await initializeUserCurrency()
+  updateConvertedPrice()
+}
+
+// Set default target currency to user currency when it changes
+watch(userCurrency, (newCurrency) => {
+  toCurrency.value = newCurrency
 })
 
 const { products, loading } = useFetchProducts();
@@ -377,6 +434,30 @@ const handleScroll = () => {
     }
   }
 };
+
+// Updated function to get converted installment payment
+const getConvertedInstallmentPayment = () => {
+  const converted = convertFromUSD(fixedInstallmentPayment.value)
+  return converted.formattedAmount || fixedInstallmentPayment.value
+}
+
+// Updated function to get converted minimum price for each product
+const getConvertedMinPrice = (product: any) => {
+  let minUSDPrice = 0
+  
+  if (product.sizes && product.sizes.length > 0) {
+    minUSDPrice = Math.min(...product.sizes.map((size: any) => size.price))
+  } else {
+    minUSDPrice = product.price || 0
+  }
+  
+  // Convert from USD to user's currency using the composable
+  const converted = convertFromUSD(minUSDPrice)
+  return converted.formattedAmount || minUSDPrice
+  // const converted = convertFromUSD(100, 'NGN')
+  // return converted
+}
+
 
 // Product slider drag functionality
 const startDrag = (e: MouseEvent) => {

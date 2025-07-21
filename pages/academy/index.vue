@@ -281,11 +281,11 @@
                 <div class="flex items-center justify-between">
                   <div class="flex items-center space-x-2">
                     <span class="text-2xl font-bold text-purple-600">
-                      ${{ (course.discountPrice || course.salePrice || course.regularPrice || course.price || 49)?.toFixed(2) }}
+                      {{ convertFromUSD(course.discountPrice || course.salePrice || course.regularPrice || course.price || 49)?.formattedAmount }}
                     </span>
                     <span v-if="course.regularPrice && course.regularPrice > (course.discountPrice || course.salePrice)" 
                           class="text-gray-400 text-lg line-through">
-                      ${{ course.regularPrice?.toFixed(2) }}
+                      {{ convertFromUSD(course.regularPrice)?.formattedAmount }}
                     </span>
                   </div>
                   
@@ -416,11 +416,11 @@
                 <div class="flex items-center justify-between">
                   <div class="flex items-center space-x-2">
                     <span class="text-2xl font-bold text-purple-600">
-                      ${{ (course.discountPrice || course.salePrice || course.regularPrice || course.price || 39)?.toFixed(2) }}
+                      {{ convertFromUSD(course.discountPrice || course.salePrice || course.regularPrice || course.price || 39)?.formattedAmount }}
                     </span>
                     <span v-if="course.regularPrice && course.regularPrice > (course.discountPrice || course.salePrice)" 
                           class="text-gray-400 text-lg line-through">
-                      ${{ course.regularPrice?.toFixed(2) }}
+                      {{ convertFromUSD(course.regularPrice)?.formattedAmount }}
                     </span>
                   </div>
                   
@@ -604,8 +604,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useGetCourses } from "@/composables/modules/courses/useGetCourses"
-
+import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter"
 const { courses, loading, getCourses } = useGetCourses()
+
 
 // Interface for course data structure
 interface Instructor {
@@ -671,6 +672,60 @@ interface Course {
   updatedAt: string
   __v: number
 }
+
+// Initialize currency converter
+const {
+  userCountry,
+  userCurrency,
+  exchangeRates,
+  isLoading: currencyLoading,
+  error: currencyError,
+  lastUpdated,
+  initializeUserCurrency,
+  convertFromUSD,
+  convertCurrency,
+} = useCurrencyConverter()
+
+const fixedInstallmentPayment = ref(50) // USD base amount
+
+const convertedPrice = ref<any>({})
+const fromCurrency = ref<string>('USD')
+const toCurrency = ref<string>('NGN')
+const manualConversionResult = ref<any>(null)
+
+// Available currencies for dropdown
+const availableCurrencies = computed(() => {
+  return Object.keys(exchangeRates.value).sort()
+})
+
+// Initialize on mount
+onMounted(async () => {
+  await initializeUserCurrency()
+  updateConvertedPrice()
+})
+
+// Watch for currency changes
+watch([userCurrency, exchangeRates], () => {
+  updateConvertedPrice()
+})
+
+// Update converted price when user currency or exchange rates change
+const updateConvertedPrice = () => {
+  if (userCurrency.value && Object.keys(exchangeRates.value).length > 0) {
+    convertedPrice.value = convertFromUSD(100) // Example conversion
+  }
+}
+
+// Retry initialization on error
+const retryInitialization = async () => {
+  await initializeUserCurrency()
+  updateConvertedPrice()
+}
+
+// Set default target currency to user currency when it changes
+watch(userCurrency, (newCurrency) => {
+  toCurrency.value = newCurrency
+})
 
 // // Mock composable for demo purposes
 // const useGetCourses = () => {

@@ -28,7 +28,7 @@
 
     <!-- Artwork Gallery -->
     <div v-else class="container mx-auto px-6 pt-10">
-      <div class="text-center mb-16">
+      <div class="text-center my-10">
         <h3 class="text-3xl font-light text-gray-800 mb-4 animate-fade-in-up">Featured Artworks</h3>
         <div class="w-24 h-1 bg-gradient-to-r from-gray-400 to-gray-600 mx-auto animate-scale-in animation-delay-300"></div>
       </div>
@@ -320,75 +320,6 @@
               <div v-if="selectedArtwork.description" class="animate-slide-in-right animation-delay-200">
                 <h3 class="text-lg font-semibold mb-3 text-gray-900">About This Piece</h3>
                 <div v-html="selectedArtwork.description" class="text-gray-700 leading-relaxed text-sm prose prose-gray max-w-none"></div>
-              </div>
-
-              <!-- Expandable Sections -->
-              <div class="space-y-3 animate-slide-in-right animation-delay-300">
-                <!-- <div v-if="selectedArtwork.productInfo" class="border border-gray-300 rounded-xl overflow-hidden bg-gray-50/80 backdrop-blur-sm">
-                  <button 
-                    @click="toggleSection('productInfo')"
-                    class="flex justify-between items-center w-full text-left p-4 hover:bg-gray-100/50 transition-all duration-300"
-                    :aria-expanded="expandedSections.productInfo"
-                  >
-                    <h3 class="font-semibold text-gray-900 text-sm">ARTWORK DETAILS</h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 transition-transform duration-300" :class="{'rotate-45': expandedSections.productInfo}">
-                      <path d="M12 5v14m-7-7h14"/>
-                    </svg>
-                  </button>
-                  <Transition
-                    enter-active-class="transition-all duration-300 ease-out"
-                    enter-from-class="max-h-0 opacity-0"
-                    enter-to-class="max-h-96 opacity-100"
-                    leave-active-class="transition-all duration-300 ease-in"
-                    leave-from-class="max-h-96 opacity-100"
-                    leave-to-class="max-h-0 opacity-0"
-                  >
-                    <div v-if="expandedSections.productInfo" class="overflow-hidden p-4 pt-0">
-                      <div class="text-gray-700 text-sm leading-relaxed prose prose-gray max-w-none" v-html="selectedArtwork.productInfo"></div>
-                    </div>
-                  </Transition>
-                </div> -->
-
-                <!-- Shipping Info -->
-                <!-- <div class="border border-gray-300 rounded-xl overflow-hidden bg-gray-50/80 backdrop-blur-sm">
-                  <button 
-                    @click="toggleSection('shippingInfo')"
-                    class="flex justify-between items-center w-full text-left p-4 hover:bg-gray-100/50 transition-all duration-300"
-                    :aria-expanded="expandedSections.shippingInfo"
-                  >
-                    <h3 class="font-semibold text-gray-900 text-sm">SHIPPING & DELIVERY</h3>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 transition-transform duration-300" :class="{'rotate-45': expandedSections.shippingInfo}">
-                      <path d="M12 5v14m-7-7h14"/>
-                    </svg>
-                  </button>
-                  <Transition
-                    enter-active-class="transition-all duration-300 ease-out"
-                    enter-from-class="max-h-0 opacity-0"
-                    enter-to-class="max-h-96 opacity-100"
-                    leave-active-class="transition-all duration-300 ease-in"
-                    leave-from-class="max-h-96 opacity-100"
-                    leave-to-class="max-h-0 opacity-0"
-                  >
-                    <div v-if="expandedSections.shippingInfo" class="overflow-hidden p-4 pt-0">
-                      <div class="text-gray-700 text-sm leading-relaxed">
-                        <div class="space-y-2">
-                          <div class="flex items-center space-x-2">
-                            <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
-                            <span>Worldwide shipping available</span>
-                          </div>
-                          <div class="flex items-center space-x-2">
-                            <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
-                            <span>Professional packaging and handling</span>
-                          </div>
-                          <div class="flex items-center space-x-2">
-                            <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
-                            <span>Estimated delivery: 7-14 business days</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </Transition>
-                </div> -->
               </div>
 
               <!-- Contact Section -->

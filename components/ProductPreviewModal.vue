@@ -163,8 +163,8 @@
                 <!-- Price Section -->
                 <div class="animate-item">
                   <p class="text-2xl md:text-3xl font-medium text-gray-800">
-                    <span v-if="!selectedSize">From {{ formatCurrency(getMinPrice(product), { showSymbol: true }) }}</span>
-                    <span v-else>${{ formatPrice(getSelectedSizePrice()) }}</span>
+                    <span v-if="!selectedSize">From {{ convertFromUSD(getMinPrice(product))?.formattedAmount }}</span>
+                    <span v-else>{{ convertFromUSD(getSelectedSizePrice())?.formattedAmount }}</span>
                   </p>
                   <!-- <p class="text-gray-600 mt-1">{{ product.category || 'Art Print' }}</p> -->
                 </div>
@@ -184,7 +184,7 @@
                     >
                       <div class="font-medium">{{ size.size.charAt(0).toUpperCase() + size.size.slice(1) }}</div>
                       <div class="text-sm mt-1 opacity-75">
-                        {{ formatCurrency(size.price, { showSymbol: true }) }}
+                        {{ convertFromUSD(size.price)?.formattedAmount }}
                       </div>
                     </button>
                   </div>
@@ -225,7 +225,7 @@
                     
                     <!-- Total Price -->
                     <div v-if="selectedSize && quantity > 1" class="text-lg font-medium text-gray-700">
-                      Total: <span class="text-gray-900">{{ formatCurrency(getTotalPrice(), { showSymbol: true }) }}</span>
+                      Total: <span class="text-gray-900">{{ convertFromUSD(getTotalPrice())?.formattedAmount }}</span>
                     </div>
                   </div>
                 </div>
@@ -241,7 +241,7 @@
                     :disabled="!selectedSize"
                   >
                     <span v-if="!selectedSize">Select Size to Continue</span>
-                    <span v-else>Add to Cart - {{ formatCurrency(getTotalPrice(), { showSymbol: true }) }}</span>
+                    <span v-else>Add to Cart - {{ convertFromUSD(getTotalPrice())?.formattedAmount }}</span>
                   </button>
                 </div>
 
@@ -309,30 +309,87 @@ import { useFetchProduct } from "@/composables/modules/products/useFetchProduct"
 import { useCartStore } from '@/composables/useCartStore'
 import { useCustomToast } from '@/composables/core/useCustomToast'
 import PaymentSelectionModal from './PaymentSelectionModal.vue'
-import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+// import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter"
+
+// Initialize currency converter
 const {
-  countryCode,
-  currency,
-  isLoading,
-  error,
-  currencyCode,
-  currencySymbol,
-  currencyName,
-  detectCountry,
-  formatCurrency,
-  setCurrency,
-  setCountry,
-  getSupportedCurrencies,
-  getSupportedCountries
+  userCountry,
+  userCurrency,
+  exchangeRates,
+  isLoading: currencyLoading,
+  error: currencyError,
+  lastUpdated,
+  initializeUserCurrency,
+  convertFromUSD,
+  convertCurrency,
 } = useCurrencyConverter()
 
-const fixedInstallmentPayment = ref(50)
+const fixedInstallmentPayment = ref(50) // USD base amount
+
+const convertedPrice = ref<any>({})
+const fromCurrency = ref<string>('USD')
+const toCurrency = ref<string>('NGN')
+const manualConversionResult = ref<any>(null)
+
+// Available currencies for dropdown
+const availableCurrencies = computed(() => {
+  return Object.keys(exchangeRates.value).sort()
+})
+
+// Initialize on mount
+onMounted(async () => {
+  await initializeUserCurrency()
+  updateConvertedPrice()
+})
+
+// Watch for currency changes
+watch([userCurrency, exchangeRates], () => {
+  updateConvertedPrice()
+})
+
+// Update converted price when user currency or exchange rates change
+const updateConvertedPrice = () => {
+  if (userCurrency.value && Object.keys(exchangeRates.value).length > 0) {
+    convertedPrice.value = convertFromUSD(100) // Example conversion
+  }
+}
+
+// Retry initialization on error
+const retryInitialization = async () => {
+  await initializeUserCurrency()
+  updateConvertedPrice()
+}
+
+// Set default target currency to user currency when it changes
+watch(userCurrency, (newCurrency) => {
+  toCurrency.value = newCurrency
+})
+
+
+// const {
+//   countryCode,
+//   currency,
+//   isLoading,
+//   error,
+//   currencyCode,
+//   currencySymbol,
+//   currencyName,
+//   detectCountry,
+//   convertFromUSD,
+//   setCurrency,
+//   setCountry,
+//   getSupportedCurrencies,
+//   getSupportedCountries
+// } = useCurrencyConverter()
+
+// const fixedInstallmentPayment = ref(50)
 
 
 // Auto-detect country on mount
-onMounted(() => {
-  detectCountry()
-})
+// onMounted(() => {
+//   detectCountry()
+// })
 
 interface Props {
   isOpen: boolean
