@@ -128,13 +128,13 @@ export interface CurrencyConversionResult {
     const getUserLocation = async (): Promise<LocationResponse> => {
       try {
         // Using a free IP geolocation service
-        const response = await fetch('http://ip-api.com/json/')
+        const response = await fetch('https://ipinfo.io/json/')
         const data = await response.json()
-        console.log(data, 'json response here')
+        console.log(data, 'json response here up[dated')
         
         return {
           country: data.country || 'United States',
-          countryCode: data.countryCode || 'US',
+          countryCode: data.country || data.countryCode || 'US',
           currency: data.currency || 'USD'
         }
       } catch (err) {
