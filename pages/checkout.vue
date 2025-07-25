@@ -46,11 +46,11 @@
           </div>
           <div v-if="selectedPaymentType === 'installment'" class="flex justify-between items-center mb-3">
             <span class="text-slate-600 font-medium">Down Payment</span>
-            <span class="font-bold text-emerald-600">{{ formatCurrency(installmentSummary.downPayment) }}</span>
+            <span class="font-bold text-emerald-600">{{ convertFromUSD(installmentSummary.downPayment).formattedAmount }}</span>
           </div>
           <div class="flex justify-between items-center">
             <span class="text-slate-600 font-medium">{{ selectedPaymentType === 'installment' ? 'Total Order Value' : 'Total Amount' }}</span>
-            <span class="font-bold text-xl text-slate-800">{{ formatCurrency(calculateTotal()) }}</span>
+            <span class="font-bold text-xl text-slate-800">{{ convertFromUSD(calculateTotal()).formattedAmount }}</span>
           </div>
         </div>
         
@@ -296,7 +296,7 @@
                     <div class="flex-1">
                       <div class="flex justify-between items-center mb-1">
                         <span class="font-semibold text-slate-800">Express Shipping</span>
-                        <span class="font-bold text-slate-800">{{ formatCurrency(currentShippingFee) }}</span>
+                        <span class="font-bold text-slate-800">{{ convertFromUSD(currentShippingFee).formattedAmount }}</span>
                       </div>
                       <p class="text-sm text-slate-600">Delivery within 5-7 business days</p>
                     </div>
@@ -349,7 +349,7 @@
                       <div class="flex-1">
                         <div class="flex justify-between items-center mb-1">
                           <span class="font-semibold text-slate-800">Pay Full Amount</span>
-                          <span class="font-bold text-emerald-600">{{ formatCurrency(calculateTotal()) }}</span>
+                          <span class="font-bold text-emerald-600">{{ convertFromUSD(calculateTotal()) }}</span>
                         </div>
                         <p class="text-sm text-slate-600">Complete payment now with no additional fees</p>
                       </div>
@@ -374,7 +374,7 @@
                       <div class="flex-1">
                         <div class="flex justify-between items-center mb-1">
                           <span class="font-semibold text-slate-800">Installment Plan</span>
-                          <span class="font-bold text-blue-600">From {{ formatCurrency(getMinimumInstallmentAmount()) }}/month</span>
+                          <span class="font-bold text-blue-600">From {{ convertFromUSD(getMinimumInstallmentAmount()).formattedAmount }}/month</span>
                         </div>
                         <p class="text-sm text-slate-600">Split your payment into manageable installments</p>
                       </div>
@@ -411,7 +411,7 @@
                     <div class="bg-white p-4 rounded-lg border border-blue-200">
                       <div class="flex justify-between items-center mb-2">
                         <span class="text-sm font-medium text-slate-600">Total Amount Agreed</span>
-                        <span class="text-lg font-bold text-slate-800">{{ formatCurrency(calculateTotal()) }}</span>
+                        <span class="text-lg font-bold text-slate-800">{{ convertFromUSD(calculateTotal()).formattedAmount }}</span>
                       </div>
                       <p class="text-xs text-slate-500">This is the total amount you agree to pay including interest</p>
                     </div>
@@ -433,7 +433,7 @@
                           :key="term"
                           :value="term"
                         >
-                          {{ term }} months (Est. {{ formatCurrency(calculateEstimatedMonthlyPayment(term)) }}/month)
+                          {{ term }} months (Est. {{ convertFromUSD(calculateEstimatedMonthlyPayment(term)).formattedAmount }}/month)
                         </option>
                       </select>
                     </div>
@@ -476,8 +476,8 @@
                         />
                       </div>
                       <div class="flex justify-between text-xs text-slate-500">
-                        <span>Min: {{ formatCurrency(getMinimumDownPayment()) }}</span>
-                        <span>Max: {{ formatCurrency(getMaximumDownPayment()) }}</span>
+                        <span>Min: {{ convertFromUSD(getMinimumDownPayment()).formattedAmount }}</span>
+                        <span>Max: {{ convertFromUSD(getMaximumDownPayment()).formattedAmount }}</span>
                       </div>
                     </div>
 
@@ -544,11 +544,11 @@
                       <div class="space-y-3">
                         <div class="flex justify-between">
                           <span class="text-sm text-slate-600">Down Payment (Today)</span>
-                          <span class="font-semibold">{{ formatCurrency(installmentSummary.downPayment) }}</span>
+                          <span class="font-semibold">{{ convertFromUSD(installmentSummary.downPayment).formattedAmount }}</span>
                         </div>
                         <div class="flex justify-between">
                           <span class="text-sm text-slate-600">Installment Amount</span>
-                          <span class="font-semibold">{{ formatCurrency(installmentSummary.installmentAmount) }}</span>
+                          <span class="font-semibold">{{ convertFromUSD(installmentSummary.installmentAmount).formattedAmount }}</span>
                         </div>
                         <div class="flex justify-between">
                           <span class="text-sm text-slate-600">Number of Payments</span>
@@ -560,12 +560,12 @@
                         </div>
                         <div class="flex justify-between">
                           <span class="text-sm text-slate-600">Total Interest</span>
-                          <span class="font-semibold">{{ formatCurrency(installmentSummary.totalInterest) }}</span>
+                          <span class="font-semibold">{{ convertFromUSD(installmentSummary.totalInterest).formattedAmount }}</span>
                         </div>
                         <div class="border-t pt-3">
                           <div class="flex justify-between">
                             <span class="font-semibold text-slate-800">Total Payable</span>
-                            <span class="font-bold text-lg">{{ formatCurrency(installmentSummary.totalPayable) }}</span>
+                            <span class="font-bold text-lg">{{ convertFromUSD(installmentSummary.totalPayable).formattedAmount }}</span>
                           </div>
                         </div>
                       </div>
@@ -628,7 +628,7 @@
               <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
                 <ShoppingCart class="w-5 h-5 text-slate-600" />
               </div>
-              <h2 class="text-lg lg:text-xl font-bold text-slate-800">Order Summary</h2>
+              <h2 class="text-lg lg:text-xl font-bold text-slate-800">Order Summary sssss</h2>
             </div>
             
             <!-- Cart Items -->
@@ -650,12 +650,41 @@
                   <h4 class="font-semibold text-slate-800 text-sm truncate">{{ item.title }}</h4>
                   <p class="text-sm text-slate-600">{{ convertFromUSD(item.price).formattedAmount }}</p>
                   <div class="flex items-center gap-2 mt-1">
-                    <span v-if="item.size" class="text-xs px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.size }}</span>
-                    <span v-if="item.color" class="text-xs px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.color }}</span>
-                    <span v-if="item.hasInstallmentOption" class="text-xs px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full">💳 Installments</span>
+                    <span v-if="item.size" class="text-xs block px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.size }}</span>
+                    <span v-if="item.color" class="text-xs block px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.color }}</span>
+                    <span v-if="item.hasInstallmentOption" class="text-xs px-2 py-1 block bg-emerald-100 text-emerald-700 rounded-full">Installments</span>
                   </div>
+
+                  <div class="flex flex-wrap items-center gap-3 mt-2">
+  <div class="flex items-center gap-2">
+    <button 
+      @click="updateItemQuantity(item.id, Math.max(1, item.quantity - 1))"
+      class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition-colors"
+      :disabled="item.quantity <= 1"
+    >
+      <Minus class="w-4 h-4" />
+    </button>
+
+    <span class="text-sm font-semibold text-center min-w-[2rem]">{{ item.quantity }}</span>
+
+    <button 
+      @click="updateItemQuantity(item.id, item.quantity + 1)"
+      class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition-colors"
+    >
+      <Plus class="w-4 h-4" />
+    </button>
+  </div>
+
+  <button 
+    @click="removeItem(item.id)"
+    class="ml-auto w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
+  >
+    <Trash2 class="w-4 h-4" />
+  </button>
+</div>
+
                   
-                  <div class="flex items-center mt-2">
+                  <!-- <div class="flex items-center mt-2">
                     <button 
                       @click="updateItemQuantity(item.id, Math.max(1, item.quantity - 1))"
                       class="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition-colors"
@@ -677,7 +706,7 @@
                     >
                       <Trash2 class="w-3 h-3" />
                     </button>
-                  </div>
+                  </div> -->
                 </div>
                 <div class="text-right">
                   <span class="font-semibold text-slate-800">{{ convertFromUSD(item.price * item.quantity).formattedAmount }}</span>
@@ -707,15 +736,15 @@
                 <div class="text-xs font-semibold text-blue-800 mb-2">Installment Plan</div>
                 <div class="flex justify-between text-xs text-blue-700 mb-1">
                   <span>Down Payment</span>
-                  <span>{{ formatCurrency(installmentSummary.downPayment) }}</span>
+                  <span>{{ convertFromUSD(installmentSummary.downPayment) }}</span>
                 </div>
                 <div class="flex justify-between text-xs text-blue-700 mb-1">
-                  <span>{{ installmentConfig.numberOfInstallments }} × {{ formatCurrency(installmentSummary.installmentAmount) }}</span>
-                  <span>{{ formatCurrency(installmentSummary.installmentAmount * installmentConfig.numberOfInstallments) }}</span>
+                  <span>{{ installmentConfig.numberOfInstallments }} × {{ convertFromUSD(installmentSummary.installmentAmount) }}</span>
+                  <span>{{ convertFromUSD(installmentSummary.installmentAmount * installmentConfig.numberOfInstallments) }}</span>
                 </div>
                 <div class="flex justify-between text-xs text-blue-700">
                   <span>Total Interest</span>
-                  <span>{{ formatCurrency(installmentSummary.totalInterest) }}</span>
+                  <span>{{ convertFromUSD(installmentSummary.totalInterest) }}</span>
                 </div>
               </div>
               
@@ -730,7 +759,7 @@
                   {{ selectedPaymentType === 'installment' ? 'Total Payable' : 'Total' }}
                 </span>
                 <span class="text-slate-800">
-                  {{ formatCurrency(selectedPaymentType === 'installment' && installmentSummary.totalPayable > 0 ? installmentSummary.totalPayable : calculateTotal()) }}
+                  {{ (selectedPaymentType === 'installment' && installmentSummary.totalPayable > 0 ? convertFromUSD(installmentSummary.totalPayable).formattedAmount : convertFromUSD(calculateTotal()).formattedAmount) }}
                 </span>
               </div>
 
@@ -738,7 +767,7 @@
               <div v-if="selectedPaymentType === 'installment' && installmentSummary.downPayment > 0" class="bg-emerald-50 p-3 rounded-lg border border-emerald-200">
                 <div class="flex justify-between font-semibold text-emerald-800">
                   <span>Today's Payment</span>
-                  <span>{{ formatCurrency(installmentSummary.downPayment) }}</span>
+                  <span>{{ convertFromUSD(installmentSummary.downPayment).formattedAmount }}</span>
                 </div>
                 <p class="text-xs text-emerald-600 mt-1">Down payment due now</p>
               </div>
@@ -993,7 +1022,7 @@ import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter"
 //   currencySymbol,
 //   currencyName,
 //   detectCountry,
-//   formatCurrency,
+//   convertFromUSD,
 //   setCurrency,
 //   setCountry,
 //   getSupportedCurrencies,
@@ -1045,7 +1074,7 @@ watch([userCurrency, exchangeRates], () => {
 // Update converted price when user currency or exchange rates change
 const updateConvertedPrice = () => {
   if (userCurrency.value && Object.keys(exchangeRates.value).length > 0) {
-    convertedPrice.value = convertFromUSD(100) // Example conversion
+    convertedPrice.value = convertFromUSD(100).formattedAmount // Example conversion
   }
 }
 
@@ -1462,9 +1491,9 @@ const getPaymentButtonText = () => {
   if (isProcessing.value) return 'Processing...'
   
   if (selectedPaymentType.value === 'installment') {
-    return `Pay Down Payment - ${formatCurrency(installmentSummary.value.downPayment)}`
+    return `Pay Down Payment - ${convertFromUSD(installmentSummary.value.downPayment).formattedAmount}`
   } else {
-    return `Complete Order - ${formatCurrency(calculateTotal())}`
+    return `Complete Order - ${convertFromUSD(calculateTotal().formattedAmount)}`
   }
 }
 

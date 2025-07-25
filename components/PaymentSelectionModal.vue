@@ -30,7 +30,7 @@
           </button>
   
           <!-- Modal Content -->
-          <div class="p-6">
+          <div class="lg:p-6 p-3">
             <!-- Header -->
             <div class="text-center mb-6">
               <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center">
@@ -57,7 +57,7 @@
                 <div class="flex-1 min-w-0">
                   <h3 class="font-semibold text-gray-900 text-sm truncate">{{ cartItem.title }}</h3>
                   <p class="text-sm text-gray-600">{{ cartItem.size }} • Qty: {{ cartItem.quantity }}</p>
-                  <p class="text-lg font-bold text-gray-900">{{ formatCurrency(cartItem.price * cartItem.quantity, { showSymbol: true }) }}</p>
+                  <p class="text-lg font-bold text-gray-900">{{ convertFromUSD(cartItem.price * cartItem.quantity).formattedAmount }}</p>
                 </div>
               </div>
             </div>
@@ -78,9 +78,9 @@
                     <div v-if="selectedPaymentType === 'full'" class="w-3 h-3 rounded-full bg-white"></div>
                   </div>
                   <div class="flex-1">
-                    <div class="flex justify-between items-center mb-1">
-                      <span class="font-semibold text-gray-800">Pay Full Amount</span>
-                      <span class="font-bold text-emerald-600">{{ formatCurrency(getTotalAmount(), { showSymbol: true }) }}</span>
+                    <div class="lg:flex justify-between items-center mb-1">
+                      <span class="font-semibold block lg:inline text-gray-800">Pay Full Amount</span>
+                      <span class="font-bold block lg:inline text-emerald-600">{{ convertFromUSD(getTotalAmount()).formattedAmount }}</span>
                     </div>
                     <p class="text-sm text-gray-600">Complete payment now with no additional fees</p>
                   </div>
@@ -108,9 +108,9 @@
                     <div v-if="selectedPaymentType === 'installment'" class="w-3 h-3 rounded-full bg-white"></div>
                   </div>
                   <div class="flex-1">
-                    <div class="flex justify-between items-center mb-1">
-                      <span class="font-semibold text-gray-800">Installment Plan</span>
-                      <span class="font-bold text-blue-600">From {{ formatCurrency(getMinimumInstallmentAmount(), { showSymbol: true }) }}/month</span>
+                    <div class="lg:flex justify-between items-center mb-1">
+                      <span class="font-semibold block lg:inline text-gray-800">Installment Plan</span>
+                      <span class="font-bold block lg:inline text-blue-600">From {{ convertFromUSD(getMinimumInstallmentAmount()).formattedAmount }}/month</span>
                     </div>
                     <p class="text-sm text-gray-600">Split your payment into manageable installments</p>
                   </div>
@@ -163,30 +163,83 @@
   <script setup lang="ts">
   import { ref, computed } from 'vue'
   import { navigateTo } from '#app'
-  import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+  import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter"
+  // import { useCurrencyConverter } from "@/composables/useConvertCurrency"
+// const {
+//   countryCode,
+//   currency,
+//   isLoading,
+//   error,
+//   currencyCode,
+//   currencySymbol,
+//   currencyName,
+//   detectCountry,
+//   formatCurrency,
+//   setCurrency,
+//   setCountry,
+//   getSupportedCurrencies,
+//   getSupportedCountries
+// } = useCurrencyConverter()
 const {
-  countryCode,
-  currency,
-  isLoading,
-  error,
-  currencyCode,
-  currencySymbol,
-  currencyName,
-  detectCountry,
-  formatCurrency,
-  setCurrency,
-  setCountry,
-  getSupportedCurrencies,
-  getSupportedCountries
+  userCountry,
+  userCurrency,
+  exchangeRates,
+  isLoading: currencyLoading,
+  error: currencyError,
+  lastUpdated,
+  initializeUserCurrency,
+  convertFromUSD,
+  convertCurrency,
 } = useCurrencyConverter()
 
 const fixedInstallmentPayment = ref(50)
 
 
-// Auto-detect country on mount
-onMounted(() => {
-  detectCountry()
+
+const convertedPrice = ref<any>({})
+const fromCurrency = ref<string>('USD')
+const toCurrency = ref<string>('NGN')
+const manualConversionResult = ref<any>(null)
+
+// Available currencies for dropdown
+const availableCurrencies = computed(() => {
+  return Object.keys(exchangeRates.value).sort()
 })
+
+// Initialize on mount
+onMounted(async () => {
+  await initializeUserCurrency()
+  updateConvertedPrice()
+})
+
+// Watch for currency changes
+watch([userCurrency, exchangeRates], () => {
+  updateConvertedPrice()
+})
+
+// Update converted price when user currency or exchange rates change
+const updateConvertedPrice = () => {
+  if (userCurrency.value && Object.keys(exchangeRates.value).length > 0) {
+    convertedPrice.value = convertFromUSD(100).formattedAmount // Example conversion
+  }
+}
+
+// Retry initialization on error
+const retryInitialization = async () => {
+  await initializeUserCurrency()
+  updateConvertedPrice()
+}
+
+// Set default target currency to user currency when it changes
+watch(userCurrency, (newCurrency) => {
+  toCurrency.value = newCurrency
+})
+
+
+// // Auto-detect country on mount
+// onMounted(() => {
+//   detectCountry()
+// })
   
   interface CartItem {
     id: string

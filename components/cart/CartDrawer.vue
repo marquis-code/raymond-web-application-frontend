@@ -1,340 +1,877 @@
 <template>
-    <Transition name="fade">
-      <div v-if="isOpen" class="fixed inset-0 z-50">
-        <!-- Backdrop overlay -->
-        <div 
-          class="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
-          @click="onClose"
-          v-motion
-          :initial="{ opacity: 0 }"
-          :enter="{ opacity: 1 }"
-          :leave="{ opacity: 0 }"
-        ></div>
-  
-        <!-- Cart drawer -->
-        <div 
-          class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white shadow-2xl z-50 flex flex-col"
-          v-motion
-          :initial="{ x: '100%' }"
-          :enter="{ x: 0, transition: { type: 'spring', stiffness: 300, damping: 30 } }"
-          :leave="{ x: '100%', transition: { duration: 300 } }"
-        >
-          <div class="h-full flex flex-col">
-            <!-- Cart Header -->
-            <div 
-              class="p-4 border-b border-gray-200 flex justify-between items-center"
-              v-motion
-              :initial="{ opacity: 0, y: -10 }"
-              :enter="{ opacity: 1, y: 0, transition: { delay: 100 } }"
-            >
-              <h2 class="text-xl font-bold">Your Cart ({{ cartItemCount }})</h2>
-              <button 
-                @click="onClose" 
-                class="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 transition-all duration-300"
-              >
-                <XIcon class="w-5 h-5" />
-              </button>
-            </div>
-  
-            <!-- Empty Cart State -->
-            <div 
-              v-if="cartItemCount === 0" 
-              class="flex-grow flex flex-col items-center justify-center p-6 text-center"
-              v-motion
-              :initial="{ opacity: 0, scale: 0.9 }"
-              :enter="{ opacity: 1, scale: 1, transition: { delay: 200 } }"
-            >
-              <div 
-                class="w-24 h-24 mb-4 text-gray-300"
-                v-motion
-                :initial="{ opacity: 0, scale: 0.5 }"
-                :enter="{ opacity: 1, scale: 1, transition: { delay: 300, type: 'spring', stiffness: 260, damping: 20 } }"
-              >
-                <ShoppingBagIcon class="w-24 h-24" />
-              </div>
-              <h3 
-                class="text-lg font-medium text-gray-900 mb-2"
-                v-motion
-                :initial="{ opacity: 0, y: 10 }"
-                :enter="{ opacity: 1, y: 0, transition: { delay: 400 } }"
-              >
-                Your cart is empty
-              </h3>
-              <p 
-                class="text-gray-600 mb-6"
-                v-motion
-                :initial="{ opacity: 0, y: 10 }"
-                :enter="{ opacity: 1, y: 0, transition: { delay: 500 } }"
-              >
-                Looks like you haven't added any artwork to your cart yet.
-              </p>
-              <button 
-                @click="onClose"
-                class="px-6 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-all duration-300 transform hover:scale-105"
-                v-motion
-                :initial="{ opacity: 0, y: 10 }"
-                :enter="{ opacity: 1, y: 0, transition: { delay: 600 } }"
-              >
-                Continue Shopping
-              </button>
-            </div>
-  
-            <!-- Cart Items -->
-            <div 
-              v-else 
-              class="flex-grow overflow-y-auto p-4 custom-scrollbar"
-              v-motion
-              :initial="{ opacity: 0 }"
-              :enter="{ opacity: 1, transition: { delay: 200 } }"
-            >
-              <TransitionGroup 
-                name="cart-item" 
-                tag="ul" 
-                class="space-y-4"
-              >
-                <li 
-                  v-for="(item, index) in cart" 
-                  :key="item.id"
-                  class="flex gap-4 py-4 border-b border-gray-100 last:border-0"
-                  v-motion
-                  :initial="{ opacity: 0, x: 20 }"
-                  :enter="{ opacity: 1, x: 0, transition: { delay: 100 * (index + 1) } }"
+  <Teleport to="body">
+    <!-- Full Screen Modal -->
+    <transition name="modal-fade" @before-enter="beforeEnter" @enter="enter" @leave="leave">
+      <div v-if="isOpen && product" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm">
+        <!-- Modal Container -->
+        <div class="h-full w-full flex flex-col bg-white">
+          <!-- Header -->
+          <div class="sticky top-0 z-40 bg-white border-b border-gray-200 px-4 py-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3 flex-1 min-w-0">
+                <button 
+                  @click="onClose" 
+                  class="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors"
+                  aria-label="Close modal"
                 >
-                  <!-- Item Image -->
-                  <div 
-                    class="w-20 h-20 bg-gray-100 rounded-md overflow-hidden flex-shrink-0 hover:shadow-md transition-shadow duration-300"
-                    v-motion:hover="{ scale: 1.05 }"
-                  >
-                    <img 
-                      :src="item.image || '/placeholder.svg'" 
-                      :alt="item.title" 
-                      class="w-full h-full object-cover"
-                    />
+                  <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                </button>
+                <div class="min-w-0 flex-1">
+                  <h1 class="text-lg font-semibold text-gray-900 truncate">{{ product.name }}</h1>
+                  <p class="text-xs text-gray-600 hidden md:block">{{ product.category }}</p>
+                </div>
+              </div>
+              <!-- Image Counter -->
+              <div class="flex items-center space-x-2 text-sm text-gray-600">
+                <span class="text-xs">{{ currentImageIndex + 1 }} / {{ product.images.length }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Content Area -->
+          <div class="flex-1 overflow-hidden">
+            <!-- Mobile Layout -->
+            <div class="lg:hidden h-full overflow-y-auto">
+              <div class="pb-6">
+                <!-- Image Section -->
+                <div class="bg-gray-50 p-4">
+                  <div class="aspect-square bg-white rounded-xl shadow-sm overflow-hidden relative">
+                    <!-- Main Image -->
+                    <div class="absolute inset-0 flex items-center justify-center p-4">
+                      <transition-group name="image-fade" tag="div" class="relative w-full h-full">
+                        <div
+                          v-for="(image, index) in product.images"
+                          :key="`image-${index}`"
+                          v-show="index === currentImageIndex"
+                          class="absolute inset-0 flex items-center justify-center"
+                        >
+                          <img
+                            :src="image"
+                            :alt="`${product.name} - view ${index + 1}`"
+                            class="max-w-full max-h-full object-contain"
+                          />
+                        </div>
+                      </transition-group>
+                    </div>
+
+                    <!-- Navigation Arrows -->
+                    <div v-if="product.images.length > 1" class="absolute inset-y-0 left-0 right-0 flex items-center justify-between pointer-events-none">
+                      <button
+                        @click="previousImage"
+                        class="ml-2 p-2 rounded-full bg-white/90 shadow-md transition-all duration-200 pointer-events-auto"
+                        aria-label="Previous image"
+                      >
+                        <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                      </button>
+                      <button
+                        @click="nextImage"
+                        class="mr-2 p-2 rounded-full bg-white/90 shadow-md transition-all duration-200 pointer-events-auto"
+                        aria-label="Next image"
+                      >
+                        <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                      </button>
+                    </div>
+
+                    <!-- Touch Areas -->
+                    <div class="absolute inset-0" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
+                      <div class="absolute inset-y-0 left-0 w-1/3" @click="previousImage"></div>
+                      <div class="absolute inset-y-0 right-0 w-1/3" @click="nextImage"></div>
+                    </div>
                   </div>
-  
-                  <!-- Item Details -->
-                  <div class="flex-grow">
-                    <h4 class="font-medium text-gray-900">{{ item.title }}</h4>
-                    <p class="text-sm text-gray-600 mb-2">Qty: {{ item.quantity }}</p>
-                    <div class="flex justify-between">
-                      <span class="font-medium text-primary">${{ formatPrice(item.price * item.quantity) }}</span>
-                      <div class="flex gap-2">
-                        <button 
-                          @click="updateQuantity(item.id, item.quantity - 1)"
-                          class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors duration-300"
-                          :disabled="item.quantity <= 1"
-                          :class="{ 'opacity-50 cursor-not-allowed': item.quantity <= 1 }"
+
+                  <!-- Thumbnails -->
+                  <div v-if="product.images.length > 1" class="mt-3">
+                    <div class="flex space-x-2 overflow-x-auto pb-2">
+                      <button
+                        v-for="(image, index) in product.images"
+                        :key="`thumb-${index}`"
+                        @click="setCurrentImage(index)"
+                        class="flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-all duration-200"
+                        :class="currentImageIndex === index ? 'border-blue-500 scale-105' : 'border-gray-200'"
+                      >
+                        <img :src="image" :alt="`Thumbnail ${index + 1}`" class="w-full h-full object-cover" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Product Details -->
+                <div class="p-4 space-y-5">
+                  <!-- Price -->
+                  <div class="animate-item">
+                    <div class="flex items-baseline space-x-2">
+                      <span class="text-2xl font-bold text-gray-900">
+                        <span v-if="!selectedSize">From {{ convertFromUSD(getMinPrice(product))?.formattedAmount }}</span>
+                        <span v-else>{{ convertFromUSD(getSelectedSizePrice())?.formattedAmount }}</span>
+                      </span>
+                      <span v-if="selectedSize && quantity > 1" class="text-lg text-gray-600">
+                        × {{ quantity }}
+                      </span>
+                    </div>
+                    <div v-if="selectedSize && quantity > 1" class="text-sm text-gray-600 mt-1">
+                      Total: {{ convertFromUSD(getTotalPrice())?.formattedAmount }}
+                    </div>
+                  </div>
+
+                  <!-- Size Selection -->
+                  <div class="animate-item">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Select Size</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                      <button
+                        v-for="size in product.sizes"
+                        :key="size._id"
+                        @click="selectedSize = size._id"
+                        class="relative p-3 border-2 rounded-xl transition-all duration-200"
+                        :class="selectedSize === size._id 
+                          ? 'border-blue-500 bg-blue-50 shadow-md' 
+                          : 'border-gray-200 hover:border-gray-300'"
+                      >
+                        <div class="text-center">
+                          <div class="text-sm font-semibold text-gray-900">{{ size.size.toUpperCase() }}</div>
+                          <div class="text-xs text-gray-600 mt-1">{{ convertFromUSD(size.price)?.formattedAmount }}</div>
+                        </div>
+                        <div v-if="selectedSize === size._id" class="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                          <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                          </svg>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Quantity -->
+                  <div class="animate-item">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Quantity</h3>
+                    <div class="flex items-center justify-center">
+                      <div class="flex items-center bg-gray-100 rounded-xl p-1">
+                        <button
+                          @click="decrementQuantity"
+                          :disabled="quantity <= 1"
+                          class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center disabled:opacity-50 hover:bg-gray-50 transition-colors"
                         >
-                          <MinusIcon class="w-4 h-4" />
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                          </svg>
                         </button>
-                        <button 
-                          @click="updateQuantity(item.id, item.quantity + 1)"
-                          class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors duration-300"
+                        <div class="w-16 text-center font-bold text-xl text-gray-900">{{ quantity }}</div>
+                        <button
+                          @click="incrementQuantity"
+                          class="w-10 h-10 rounded-lg bg-white shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors"
                         >
-                          <PlusIcon class="w-4 h-4" />
-                        </button>
-                        <button 
-                          @click="removeItem(item.id)"
-                          class="text-gray-400 hover:text-rose-500 p-1 rounded-full hover:bg-rose-50 transition-colors duration-300"
-                        >
-                          <Trash2Icon class="w-4 h-4" />
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                          </svg>
                         </button>
                       </div>
                     </div>
                   </div>
-                </li>
-              </TransitionGroup>
+
+                  <!-- Add to Cart -->
+                  <div class="animate-item">
+                    <button
+                      @click="handleAddToCart"
+                      :disabled="!selectedSize"
+                      class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-xl font-semibold text-base shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all duration-200"
+                    >
+                      <span v-if="!selectedSize">Select Size to Continue</span>
+                      <span v-else>Add to Cart • {{ convertFromUSD(getTotalPrice())?.formattedAmount }}</span>
+                    </button>
+                  </div>
+
+                  <!-- Product Info Accordions -->
+                  <div class="space-y-3 animate-item">
+                    <div v-if="product.productInfo" class="border border-gray-200 rounded-xl overflow-hidden">
+                      <button
+                        @click="toggleSection('productInfo')"
+                        class="flex justify-between items-center w-full text-left p-4 hover:bg-gray-50 transition-colors"
+                      >
+                        <h3 class="text-base font-semibold text-gray-900">Product Details</h3>
+                        <svg
+                          class="w-5 h-5 text-gray-500 transition-transform duration-200"
+                          :class="{ 'rotate-180': expandedSections.productInfo }"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                      </button>
+                      <div
+                        class="overflow-hidden transition-all duration-300"
+                        :class="expandedSections.productInfo ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'"
+                      >
+                        <div class="px-4 pb-4">
+                          <div class="text-sm text-gray-700 leading-relaxed" v-html="product.productInfo"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div v-if="product.shippingInfo" class="border border-gray-200 rounded-xl overflow-hidden">
+                      <button
+                        @click="toggleSection('shippingInfo')"
+                        class="flex justify-between items-center w-full text-left p-4 hover:bg-gray-50 transition-colors"
+                      >
+                        <h3 class="text-base font-semibold text-gray-900">Shipping Information</h3>
+                        <svg
+                          class="w-5 h-5 text-gray-500 transition-transform duration-200"
+                          :class="{ 'rotate-180': expandedSections.shippingInfo }"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                      </button>
+                      <div
+                        class="overflow-hidden transition-all duration-300"
+                        :class="expandedSections.shippingInfo ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'"
+                      >
+                        <div class="px-4 pb-4">
+                          <div class="text-sm text-gray-700 leading-relaxed" v-html="product.shippingInfo"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-  
-            <!-- Cart Summary -->
-            <div 
-              v-if="cartItemCount > 0" 
-              class="border-t border-gray-200 p-4 bg-gray-50"
-              v-motion
-              :initial="{ opacity: 0, y: 20 }"
-              :enter="{ opacity: 1, y: 0, transition: { delay: 300 } }"
-            >
-              <div class="space-y-2 mb-4">
-                <div class="flex justify-between text-gray-600">
-                  <span>Subtotal</span>
-                  <span>${{ formatPrice(subtotal) }}</span>
+
+            <!-- Desktop Layout -->
+            <div class="hidden lg:flex h-full">
+              <!-- Image Section -->
+              <div class="flex-[2] bg-gray-50 relative">
+                <div class="absolute inset-0 flex items-center justify-center p-6">
+                  <div class="relative w-full h-full max-w-3xl">
+                    <div class="relative w-full h-full bg-white rounded-2xl shadow-lg overflow-hidden">
+                      <transition-group name="image-fade" tag="div" class="relative w-full h-full">
+                        <div
+                          v-for="(image, index) in product.images"
+                          :key="`desktop-image-${index}`"
+                          v-show="index === currentImageIndex"
+                          class="absolute inset-0 flex items-center justify-center p-8"
+                        >
+                          <img
+                            :src="image"
+                            :alt="`${product.name} - view ${index + 1}`"
+                            class="max-w-full max-h-full object-contain hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      </transition-group>
+                    </div>
+
+                    <!-- Desktop Navigation -->
+                    <div v-if="product.images.length > 1" class="absolute inset-y-0 left-0 right-0 flex items-center justify-between pointer-events-none">
+                      <button
+                        @click="previousImage"
+                        class="ml-4 p-3 rounded-full bg-white/90 shadow-lg transition-all duration-200 pointer-events-auto hover:scale-110"
+                      >
+                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                      </button>
+                      <button
+                        @click="nextImage"
+                        class="mr-4 p-3 rounded-full bg-white/90 shadow-lg transition-all duration-200 pointer-events-auto hover:scale-110"
+                      >
+                        <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <!-- <div class="flex justify-between text-gray-600">
-                  <span>Shipping</span>
-                  <span>{{ subtotal > 100 ? 'Free' : '$10.00' }}</span>
-                </div> -->
-                <div 
-                  class="flex justify-between font-bold text-gray-900 pt-2 border-t border-gray-200"
-                  v-motion
-                  :initial="{ opacity: 0, y: 5 }"
-                  :enter="{ opacity: 1, y: 0, transition: { delay: 400 } }"
-                >
-                  <span>Total</span>
-                  <span>${{ formatPrice(total) }}</span>
+
+                <!-- Desktop Thumbnails -->
+                <div v-if="product.images.length > 1" class="absolute bottom-6 left-1/2 transform -translate-x-1/2">
+                  <div class="flex space-x-3 bg-white/90 backdrop-blur-sm p-3 rounded-2xl shadow-lg">
+                    <button
+                      v-for="(image, index) in product.images"
+                      :key="`desktop-thumb-${index}`"
+                      @click="setCurrentImage(index)"
+                      class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200"
+                      :class="currentImageIndex === index ? 'border-blue-500 scale-110' : 'border-gray-200 hover:border-gray-300'"
+                    >
+                      <img :src="image" :alt="`Thumbnail ${index + 1}`" class="w-full h-full object-cover" />
+                    </button>
+                  </div>
                 </div>
               </div>
-  
-              <div v-motion:hover="{ scale: 1.02 }" v-motion:tap="{ scale: 0.98 }">
-                <button 
-                  @click="proceedToCheckout"
-                  class="w-full py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-md flex items-center justify-center gap-2"
-                >
-                  <CreditCardIcon class="w-5 h-5" />
-                  Proceed to Checkout
-                </button>
-              </div>
-  
-              <div v-motion:initial="{ opacity: 0 }" v-motion:enter="{ opacity: 1, transition: { delay: 500 } }">
-                <button 
-                  @click="onClose"
-                  class="w-full py-3 mt-2 text-gray-600 hover:text-gray-900 transition-colors duration-300"
-                >
-                  Continue Shopping
-                </button>
+
+              <!-- Details Section -->
+              <div class="w-96 bg-white border-l border-gray-200 overflow-y-auto">
+                <div class="p-6 space-y-6">
+                  <!-- Price -->
+                  <div class="animate-item">
+                    <div class="flex items-baseline space-x-3">
+                      <span class="text-3xl font-bold text-gray-900">
+                        <span v-if="!selectedSize">From {{ convertFromUSD(getMinPrice(product))?.formattedAmount }}</span>
+                        <span v-else>{{ convertFromUSD(getSelectedSizePrice())?.formattedAmount }}</span>
+                      </span>
+                      <span v-if="selectedSize && quantity > 1" class="text-xl text-gray-600">
+                        × {{ quantity }}
+                      </span>
+                    </div>
+                    <div v-if="selectedSize && quantity > 1" class="text-lg text-gray-600 mt-2">
+                      Total: {{ convertFromUSD(getTotalPrice())?.formattedAmount }}
+                    </div>
+                  </div>
+
+                  <!-- Size Selection -->
+                  <div class="animate-item">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Select Size</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                      <button
+                        v-for="size in product.sizes"
+                        :key="size._id"
+                        @click="selectedSize = size._id"
+                        class="relative p-4 border-2 rounded-xl transition-all duration-200"
+                        :class="selectedSize === size._id 
+                          ? 'border-blue-500 bg-blue-50 shadow-md' 
+                          : 'border-gray-200 hover:border-gray-300'"
+                      >
+                        <div class="text-center">
+                          <div class="text-base font-semibold text-gray-900">{{ size.size.toUpperCase() }}</div>
+                          <div class="text-sm text-gray-600 mt-1">{{ convertFromUSD(size.price)?.formattedAmount }}</div>
+                        </div>
+                        <div v-if="selectedSize === size._id" class="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                          <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                          </svg>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Quantity -->
+                  <div class="animate-item">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Quantity</h3>
+                    <div class="flex items-center justify-center">
+                      <div class="flex items-center bg-gray-100 rounded-xl p-1">
+                        <button
+                          @click="decrementQuantity"
+                          :disabled="quantity <= 1"
+                          class="w-12 h-12 rounded-lg bg-white shadow-sm flex items-center justify-center disabled:opacity-50 hover:bg-gray-50 transition-colors"
+                        >
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                          </svg>
+                        </button>
+                        <div class="w-20 text-center font-bold text-2xl text-gray-900">{{ quantity }}</div>
+                        <button
+                          @click="incrementQuantity"
+                          class="w-12 h-12 rounded-lg bg-white shadow-sm flex items-center justify-center hover:bg-gray-50 transition-colors"
+                        >
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Add to Cart -->
+                  <div class="animate-item">
+                    <button
+                      @click="handleAddToCart"
+                      :disabled="!selectedSize"
+                      class="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 px-6 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all duration-200"
+                    >
+                      <span v-if="!selectedSize">Select Size to Continue</span>
+                      <span v-else>Add to Cart • {{ convertFromUSD(getTotalPrice())?.formattedAmount }}</span>
+                    </button>
+                  </div>
+
+                  <!-- Product Info -->
+                  <div class="space-y-4 animate-item">
+                    <div v-if="product.productInfo" class="border border-gray-200 rounded-xl overflow-hidden">
+                      <button
+                        @click="toggleSection('productInfo')"
+                        class="flex justify-between items-center w-full text-left p-4 hover:bg-gray-50 transition-colors"
+                      >
+                        <h3 class="text-lg font-semibold text-gray-900">Product Details</h3>
+                        <svg
+                          class="w-5 h-5 text-gray-500 transition-transform duration-200"
+                          :class="{ 'rotate-180': expandedSections.productInfo }"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                      </button>
+                      <div
+                        class="overflow-hidden transition-all duration-300"
+                        :class="expandedSections.productInfo ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'"
+                      >
+                        <div class="px-4 pb-4">
+                          <div class="text-base text-gray-700 leading-relaxed" v-html="product.productInfo"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div v-if="product.shippingInfo" class="border border-gray-200 rounded-xl overflow-hidden">
+                      <button
+                        @click="toggleSection('shippingInfo')"
+                        class="flex justify-between items-center w-full text-left p-4 hover:bg-gray-50 transition-colors"
+                      >
+                        <h3 class="text-lg font-semibold text-gray-900">Shipping Information</h3>
+                        <svg
+                          class="w-5 h-5 text-gray-500 transition-transform duration-200"
+                          :class="{ 'rotate-180': expandedSections.shippingInfo }"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                      </button>
+                      <div
+                        class="overflow-hidden transition-all duration-300"
+                        :class="expandedSections.shippingInfo ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'"
+                      >
+                        <div class="px-4 pb-4">
+                          <div class="text-base text-gray-700 leading-relaxed" v-html="product.shippingInfo"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </Transition>
-  </template>
-  
-  <script setup lang="ts">
-  import { computed, watch, ref } from 'vue'
-  import { useCartStore } from '@/composables/useCartStore'
-  import { useCheckoutStore } from '@/composables/useCheckoutStore'
-  import { useRouter } from 'vue-router'
-  import { 
-    XIcon, 
-    ShoppingBagIcon, 
-    MinusIcon, 
-    PlusIcon, 
-    Trash2Icon, 
-    CreditCardIcon 
-  } from 'lucide-vue-next'
-  
-  const props = defineProps({
-    isOpen: {
-      type: Boolean,
-      default: false
-    }
-  })
-  
-  const emit = defineEmits(['close'])
-  
-  const router = useRouter()
-  const { cart, removeFromCart, updateCartItemQuantity } = useCartStore()
-  const { initializeCheckout } = useCheckoutStore()
-  
-  // Lock body scroll when drawer is open
-  const bodyOverflow = ref(document.body.style.overflow);
-  
-  watch(() => props.isOpen, (isOpen) => {
-    if (isOpen) {
-      bodyOverflow.value = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
+    </transition>
+
+    <!-- Payment Modal -->
+    <PaymentSelectionModal
+      :is-open="showPaymentModal"
+      :cart-item="pendingCartItem"
+      :on-close="closePaymentModal"
+      :on-proceed="handlePaymentSelection"
+    />
+  </Teleport>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { useFetchProduct } from "@/composables/modules/products/useFetchProduct"
+import { useCartStore } from '@/composables/useCartStore'
+import { useCustomToast } from '@/composables/core/useCustomToast'
+import PaymentSelectionModal from './PaymentSelectionModal.vue'
+import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter"
+
+// Types
+interface ProductSize {
+  _id: string
+  size: string
+  price: number
+  color?: string
+  installmentConfig?: {
+    enabled: boolean
+    [key: string]: any
+  } | null
+}
+
+interface Product {
+  _id: string
+  name: string
+  images: string[]
+  category?: string
+  price?: number
+  sizes: ProductSize[]
+  productInfo?: string
+  shippingInfo?: string
+  weight?: number
+  width?: number
+  height?: number
+  length?: number
+}
+
+interface CartItem {
+  id: string
+  productId: string
+  title: string
+  image: string
+  price: number
+  quantity: number
+  size: string
+  color?: string
+  installmentConfig: any | null
+  hasInstallmentOption: boolean
+  category?: string
+  weight?: number
+  dimensions: {
+    width?: number
+    height?: number
+    length?: number
+  }
+}
+
+interface Props {
+  isOpen: boolean
+  productId: string | null
+  onClose: () => void
+  onAddToCart?: (item: CartItem) => void
+}
+
+const props = defineProps<Props>()
+
+// Composables
+const {
+  initializeUserCurrency,
+  convertFromUSD,
+} = useCurrencyConverter()
+
+const { product, loading, fetchProduct } = useFetchProduct()
+const { addToCart: addItemToCart } = useCartStore()
+const { showToast } = useCustomToast()
+
+// State
+const selectedSize = ref('')
+const quantity = ref(1)
+const currentImageIndex = ref(0)
+const showPaymentModal = ref(false)
+const pendingCartItem = ref<CartItem | null>(null)
+const isTransitioning = ref(false)
+const touchStartX = ref(0)
+const touchEndX = ref(0)
+
+const expandedSections = reactive({
+  productInfo: false,
+  shippingInfo: false
+})
+
+// Lifecycle
+onMounted(async () => {
+  await initializeUserCurrency()
+  window.addEventListener('keydown', handleKeyDown)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', handleKeyDown)
+})
+
+// Methods
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (!props.isOpen) return
+  if (event.key === 'Escape') {
+    props.onClose()
+  } else if (event.key === 'ArrowRight') {
+    nextImage()
+  } else if (event.key === 'ArrowLeft') {
+    previousImage()
+  }
+}
+
+const handleTouchStart = (event: TouchEvent) => {
+  touchStartX.value = event.changedTouches[0].screenX
+}
+
+const handleTouchEnd = (event: TouchEvent) => {
+  touchEndX.value = event.changedTouches[0].screenX
+  handleSwipe()
+}
+
+const handleSwipe = () => {
+  const swipeThreshold = 50
+  const diff = touchStartX.value - touchEndX.value
+  if (Math.abs(diff) > swipeThreshold) {
+    if (diff > 0) {
+      nextImage()
     } else {
-      document.body.style.overflow = bodyOverflow.value;
+      previousImage()
     }
-  }, { immediate: true })
-  
-  const cartItemCount = computed(() => cart.value.length)
-  
-  const subtotal = computed(() => {
-    return cart.value.reduce((total, item) => total + (item.price * item.quantity), 0)
-  })
-  
-  const shipping = computed(() => {
-    return subtotal.value > 100 ? 0 : 10
-  })
-  
-  const total = computed(() => {
-    return subtotal.value + shipping.value
-  })
-  
-  const removeItem = (id: number) => {
-    removeFromCart(id)
   }
-  
-  const updateQuantity = (id: number, quantity: number) => {
-    if (quantity < 1) return
-    updateCartItemQuantity(id, quantity)
+}
+
+const getMinPrice = (product: Product) => {
+  if (product.sizes && product.sizes.length > 0) {
+    return Math.min(...product.sizes.map((size: ProductSize) => size.price))
   }
-  
-  const proceedToCheckout = () => {
-    // Initialize checkout with cart data
-    initializeCheckout({
-      items: cart.value,
-      subtotal: subtotal.value,
-      shipping: shipping.value,
-      total: total.value
+  return product.price || 0
+}
+
+const getSelectedSizePrice = () => {
+  if (!product.value || !selectedSize.value) return 0
+  const size = product.value.sizes.find((s: ProductSize) => s._id === selectedSize.value)
+  return size ? size.price : getMinPrice(product.value)
+}
+
+const getTotalPrice = () => {
+  return getSelectedSizePrice() * quantity.value
+}
+
+const incrementQuantity = () => {
+  quantity.value++
+}
+
+const decrementQuantity = () => {
+  if (quantity.value > 1) {
+    quantity.value--
+  }
+}
+
+const setCurrentImage = (index: number) => {
+  if (isTransitioning.value) return
+  isTransitioning.value = true
+  currentImageIndex.value = index
+  setTimeout(() => {
+    isTransitioning.value = false
+  }, 300)
+}
+
+const nextImage = () => {
+  if (product.value && product.value.images.length > 1 && !isTransitioning.value) {
+    setCurrentImage((currentImageIndex.value + 1) % product.value.images.length)
+  }
+}
+
+const previousImage = () => {
+  if (product.value && product.value.images.length > 1 && !isTransitioning.value) {
+    setCurrentImage(currentImageIndex.value === 0 ? product.value.images.length - 1 : currentImageIndex.value - 1)
+  }
+}
+
+const toggleSection = (section: keyof typeof expandedSections) => {
+  // Close all sections first
+  Object.keys(expandedSections).forEach(key => {
+    expandedSections[key as keyof typeof expandedSections] = false
+  })
+  // Then open the selected section
+  expandedSections[section] = true
+}
+
+const hasInstallmentOption = (size: ProductSize) => {
+  return size.installmentConfig && size.installmentConfig.enabled
+}
+
+const handleAddToCart = () => {
+  try {
+    if (!product.value || !selectedSize.value) {
+      showToast({
+        title: "Selection Required",
+        message: "Please select a size before adding to cart",
+        toastType: "warning",
+        duration: 3000
+      })
+      return
+    }
+
+    const size = product.value.sizes.find((s: ProductSize) => s._id === selectedSize.value)
+    if (!size) {
+      showToast({
+        title: "Invalid Selection",
+        message: "Selected size is not available",
+        toastType: "error",
+        duration: 3000
+      })
+      return
+    }
+
+    const cartItem: CartItem = {
+      id: `${product.value._id}-${size.size}-${Date.now()}`,
+      productId: product.value._id,
+      title: product.value.name,
+      image: product.value.images?.[0] || '/placeholder.svg?height=300&width=300',
+      price: size.price,
+      quantity: quantity.value,
+      size: size.size,
+      color: size.color,
+      installmentConfig: size.installmentConfig || null,
+      hasInstallmentOption: hasInstallmentOption(size),
+      category: product.value.category,
+      weight: product.value.weight,
+      dimensions: {
+        width: product.value.width,
+        height: product.value.height,
+        length: product.value.length
+      }
+    }
+
+    pendingCartItem.value = cartItem
+    showPaymentModal.value = true
+  } catch (error) {
+    console.error('Error adding to cart:', error)
+    showToast({
+      title: "Error",
+      message: "Failed to add item to cart. Please try again.",
+      toastType: "error",
+      duration: 3000
     })
+  }
+}
+
+const closePaymentModal = () => {
+  showPaymentModal.value = false
+  pendingCartItem.value = null
+}
+
+const handlePaymentSelection = (paymentType: string, cartItem: CartItem) => {
+  addItemToCart(cartItem)
+  showToast({
+    title: "Added to Cart",
+    message: `${cartItem.quantity} × ${cartItem.title} (${cartItem.size}) added to cart`,
+    toastType: "success",
+    duration: 3000
+  })
+  closePaymentModal()
+  props.onClose()
+  if (props.onAddToCart) {
+    props.onAddToCart(cartItem)
+  }
+}
+
+// Animation hooks
+const beforeEnter = (el: HTMLElement) => {
+  document.body.style.overflow = 'hidden'
+  el.style.opacity = '0'
+}
+
+const enter = (el: HTMLElement, done: () => void) => {
+  el.offsetHeight
+  el.style.transition = 'opacity 0.3s ease-out'
+  el.style.opacity = '1'
+  
+  const animateItems = el.querySelectorAll('.animate-item')
+  animateItems.forEach((item, index) => {
+    const element = item as HTMLElement
+    element.style.opacity = '0'
+    element.style.transform = 'translateY(20px)'
+    element.style.transition = 'all 0.5s ease-out'
+    element.style.transitionDelay = `${index * 0.1}s`
     
-    // Close the drawer
-    emit('close')
-    
-    // Navigate to checkout page
-    router.push('/checkout')
-  }
+    setTimeout(() => {
+      element.style.opacity = '1'
+      element.style.transform = 'translateY(0)'
+    }, 100)
+  })
   
-  const onClose = () => {
-    emit('close')
+  setTimeout(done, 300)
+}
+
+const leave = (el: HTMLElement, done: () => void) => {
+  el.style.transition = 'opacity 0.2s ease-in'
+  el.style.opacity = '0'
+  setTimeout(() => {
+    document.body.style.overflow = ''
+    done()
+  }, 200)
+}
+
+// Watchers
+watch(() => props.productId, (newProductId) => {
+  if (newProductId && props.isOpen) {
+    fetchProduct(newProductId)
+    selectedSize.value = ''
+    quantity.value = 1
+    currentImageIndex.value = 0
+    Object.keys(expandedSections).forEach(key => {
+      expandedSections[key as keyof typeof expandedSections] = false
+    })
   }
-  
-  const formatPrice = (price: number) => {
-    return price.toFixed(2)
+}, { immediate: true })
+
+watch(() => props.isOpen, (isOpen) => {
+  if (!isOpen) {
+    selectedSize.value = ''
+    quantity.value = 1
+    currentImageIndex.value = 0
+    showPaymentModal.value = false
+    pendingCartItem.value = null
+    Object.keys(expandedSections).forEach(key => {
+      expandedSections[key as keyof typeof expandedSections] = false
+    })
   }
-  </script>
-  
-  <style scoped>
-  /* Fade transition for overlay */
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.3s ease;
+})
+</script>
+
+<style scoped>
+.modal-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.modal-fade-leave-active {
+  transition: all 0.2s ease-in;
+}
+
+.modal-fade-enter-from {
+  opacity: 0;
+}
+
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.image-fade-enter-active {
+  transition: all 0.4s ease-out;
+}
+
+.image-fade-leave-active {
+  transition: all 0.4s ease-out;
+}
+
+.image-fade-enter-from {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.image-fade-leave-to {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.animate-item {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.5s ease-out;
+}
+
+button {
+  transition: all 0.2s ease-out;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+img {
+  transition: transform 0.3s ease-out;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  button:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
   }
-  
-  .fade-enter-from,
-  .fade-leave-to {
-    opacity: 0;
-  }
-  
-  /* Cart item transitions */
-  .cart-item-enter-active,
-  .cart-item-leave-active {
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-  
-  .cart-item-enter-from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  
-  .cart-item-leave-to {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  
-  .cart-item-move {
-    transition: transform 0.5s ease;
-  }
-  
-  /* Custom scrollbar */
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 4px;
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #d1d1d1;
-    border-radius: 10px;
-  }
-  
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #b1b1b1;
-  }
-  </style>
-  
+}
+</style>
