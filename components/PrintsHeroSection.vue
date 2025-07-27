@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, nextTick } from 'vue';
-import shop1 from '@/assets/img/print2.jpg'
-import shop2 from "@/assets/img/print3.png"
-import shop3 from "@/assets/img/print4.png"
-import shop4 from "@/assets/img/print1.jpg"
 
 interface ArtPrint {
   id: number;
@@ -14,11 +10,12 @@ interface ArtPrint {
 
 // Props to receive images from parent component
 const props = defineProps<{
-  images?: ArtPrint[];
+  images?: string[];
+  content?: Object;
+  loading?: Boolean;
 }>();
 
 // State management
-const isLoading = ref(true);
 const loadedImages = ref<number[]>([]);
 const activeImageIndex = ref(0);
 const isHovering = ref(false);
@@ -26,16 +23,19 @@ const hoverImageIndex = ref(-1);
 const galleryReady = ref(false);
 const mousePosition = ref({ x: 0, y: 0 });
 
-// Default images in case none are provided through props
-const defaultImages: ArtPrint[] = [
-  { id: 1, src: shop1, alt: 'Featured artwork', aspectRatio: '7/5' },
-  { id: 2, src: shop2, alt: 'Gallery piece', aspectRatio: '4/3' },
-  { id: 3, src: shop3, alt: 'Art collection', aspectRatio: '7/5' },
-  { id: 4, src: shop4, alt: 'Artistic work', aspectRatio: '4/3' },
-];
-
-// Use provided images or fallback to defaults
-const artPrints = computed(() => props.images || defaultImages);
+// Transform URL array to ArtPrint objects
+const artPrints = computed((): ArtPrint[] => {
+  if (!props?.images || !Array.isArray(props.images)) {
+    return [];
+  }
+  
+  return props.images.map((url, index) => ({
+    id: index,
+    src: url,
+    alt: `Art print ${index + 1}`,
+    aspectRatio: '4:3'
+  }));
+});
 
 // Handle image load events
 const handleImageLoaded = (imageId: number) => {
@@ -44,9 +44,9 @@ const handleImageLoaded = (imageId: number) => {
   }
   
   // When all images are loaded, set loading to false and trigger gallery animation
-  if (loadedImages.value.length === artPrints.value.length) {
+  if (loadedImages.value.length === artPrints.value.length && artPrints.value.length > 0) {
     setTimeout(() => {
-      isLoading.value = false;
+      // Note: we can't modify props directly, so we'll just proceed with the animation
       nextTick(() => {
         setTimeout(() => {
           galleryReady.value = true;
@@ -58,8 +58,10 @@ const handleImageLoaded = (imageId: number) => {
 
 // Rotate active image every 4 seconds
 const startImageRotation = () => {
+  if (artPrints.value.length === 0) return;
+  
   setInterval(() => {
-    if (!isHovering.value) {
+    if (!isHovering.value && artPrints.value.length > 0) {
       activeImageIndex.value = (activeImageIndex.value + 1) % artPrints.value.length;
     }
   }, 4000);
@@ -88,16 +90,12 @@ const handleMouseMove = (event: MouseEvent) => {
 
 // Initialize component
 onMounted(() => {
-  startImageRotation();
-  
-  // Simulate image loading if no real images are provided
-  if (!props.images) {
-    setTimeout(() => {
-      artPrints.value.forEach(image => {
-        handleImageLoaded(image.id);
-      });
-    }, 1000);
-  }
+  // Wait for artPrints to be computed before starting rotation
+  nextTick(() => {
+    if (artPrints.value.length > 0) {
+      startImageRotation();
+    }
+  });
 });
 
 // Computed styles for parallax effect
@@ -120,7 +118,7 @@ const getParallaxStyle = (index: number) => {
   >
     <!-- Loading overlay -->
     <Transition name="fade">
-      <div v-if="isLoading" class="loading-overlay">
+      <div v-if="loading" class="loading-overlay">
         <div class="loader">
           <div class="loader-circle">
             <div class="circle-path"></div>
@@ -135,30 +133,22 @@ const getParallaxStyle = (index: number) => {
         <!-- Text content -->
         <div 
           class="lg:col-span-5 lg:pb-8 content-section"
-          :class="{ 'animate-content': !isLoading }"
+          :class="{ 'animate-content': !loading }"
         >
           <h2 class="text-5xl font-light tracking-tight text-gray-900 sm:text-6xl mb-8">
-            <span class="block text-reveal" style="--delay: 0.2s">SHOP PRINTS</span>
-            <!-- <span class="block text-gray-600 text-reveal" style="--delay: 0.4s">PRINTS</span> -->
+            <span class="block text-reveal" style="--delay: 0.2s">{{ content?.title || 'Art Gallery' }}</span>
           </h2>
 
           <div class="space-y-6 text-gray-600 leading-relaxed">
-            <p class="text-base text-reveal" style="--delay: 0.6s">
-              Limited edition prints on premium Hahnemühle German etching paper (310 gsm). 
-              Each piece is carefully crafted in editions of 10 to 20.
-            </p>
-            <p class="text-base text-reveal" style="--delay: 0.8s">
-              Every print includes a Certificate of Authenticity and arrives professionally 
-              packaged in protective tubes.
-            </p>
-            <p class="text-base text-reveal" style="--delay: 1s">
-              Available in multiple sizes to suit any space.
+            <p class="text-lg leading-loose text-reveal" style="--delay: 0.6s">
+              {{ content?.description || 'Discover our curated collection of stunning art prints.' }}
             </p>
           </div>
         </div>
 
         <!-- Gallery section -->
         <div 
+          v-if="artPrints.length > 0"
           class="lg:col-span-7 gallery-container" 
           :class="{ 'gallery-ready': galleryReady }"
         >
@@ -178,6 +168,7 @@ const getParallaxStyle = (index: number) => {
                   :src="image.src" 
                   :alt="image.alt"
                   @load="handleImageLoaded(image.id)"
+                  @error="console.warn('Failed to load image:', image.src)"
                   class="rounded-3xl object-cover shadow-2xl transition-all duration-700 hover:shadow-3xl hover:scale-105"
                 />
                 <div class="image-overlay"></div>
@@ -210,6 +201,11 @@ const getParallaxStyle = (index: number) => {
             <div class="floating-element element-2"></div>
             <div class="floating-element element-3"></div>
           </div>
+        </div>
+
+        <!-- Fallback when no images -->
+        <div v-else class="lg:col-span-7 flex items-center justify-center h-96 bg-gray-100 rounded-3xl">
+          <p class="text-gray-500">No images available</p>
         </div>
       </div>
     </div>

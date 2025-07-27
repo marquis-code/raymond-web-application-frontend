@@ -1,19 +1,8 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
     <!-- Hero Section -->
-    <PrintsHeroSection class="mb-10" :images="artPrints" />
-    <!-- {{ exchangeRates }} -->
-
-    <div v-if="fetchingPromoSale" class="flex justify-center items-center py-20">
-      <div class="relative">
-        <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-200"></div>
-        <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"></div>
-      </div>
-    </div>
-
-    <!-- <PromoSection v-else :promosale="promosale" :loading="fetchingPromoSale" /> -->
-
-    <!-- Products Gallery Section -->
+     <!-- {{ content }} -->
+    <PrintsHeroSection class="mb-10" :loading="fetchingContent" :content="content" :images="content?.images" />
     <div class="container mx-auto px-6">
       <div class="text-center mb-16 animate-fade-in-up">
         <h2 class="text-4xl font-light text-gray-900 mb-4">Curated Collection</h2>
@@ -126,6 +115,8 @@ import { useCustomToast } from '@/composables/core/useCustomToast'
 import { useFetchPromosale } from "@/composables/modules/promosale/useFetchPromosale"
 import ProductPreviewModal from '@/components/ProductPreviewModal.vue'
 import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter"
+import { useFetchContentByType } from "@/composables/modules/content/useFetchContentByType"
+const { fetchContentByType, loading: fetchingContent, content } = useFetchContentByType()
 
 // Initialize currency converter
 const {
@@ -154,6 +145,7 @@ const availableCurrencies = computed(() => {
 
 // Initialize on mount
 onMounted(async () => {
+  await fetchContentByType("shop_prints_hero")
   await initializeUserCurrency()
   updateConvertedPrice()
 })
@@ -186,10 +178,10 @@ const { addToCart: addItemToCart } = useCartStore()
 const { showToast } = useCustomToast()
 const { promosale, loading: fetchingPromoSale } = useFetchPromosale()
 
-import shop1 from '@/assets/img/print2.jpg'
-import shop2 from "@/assets/img/print3.png"
-import shop3 from "@/assets/img/print4.png"
-import shop4 from "@/assets/img/print1.jpg"
+// import shop1 from '@/assets/img/print2.jpg'
+// import shop2 from "@/assets/img/print3.png"
+// import shop3 from "@/assets/img/print4.png"
+// import shop4 from "@/assets/img/print1.jpg"
 
 const router = useRouter()
 
@@ -231,21 +223,21 @@ const hoveredProducts = reactive<Record<number, boolean>>({})
 const { products, loading } = useFetchProducts()
 
 // Simulate fetching images from backend
-const fetchArtPrints = async () => {
-  try {
-    await new Promise(resolve => setTimeout(resolve, 100))
-    artPrints.value = [
-      { id: 1, src: shop1, alt: 'Abstract Composition #1', aspectRatio: '7/5' },
-      { id: 2, src: shop2, alt: 'Minimalist Study', aspectRatio: '4/3' },
-      { id: 3, src: shop3, alt: 'Color Field Exploration', aspectRatio: '7/5' },
-      { id: 4, src: shop4, alt: 'Geometric Harmony', aspectRatio: '4/3' },
-    ]
-  } catch (error) {
-    console.error('Error fetching art prints:', error)
-  } finally {
-    isLoading.value = false
-  }
-}
+// const fetchArtPrints = async () => {
+//   try {
+//     await new Promise(resolve => setTimeout(resolve, 100))
+//     artPrints.value = [
+//       { id: 1, src: shop1, alt: 'Abstract Composition #1', aspectRatio: '7/5' },
+//       { id: 2, src: shop2, alt: 'Minimalist Study', aspectRatio: '4/3' },
+//       { id: 3, src: shop3, alt: 'Color Field Exploration', aspectRatio: '7/5' },
+//       { id: 4, src: shop4, alt: 'Geometric Harmony', aspectRatio: '4/3' },
+//     ]
+//   } catch (error) {
+//     console.error('Error fetching art prints:', error)
+//   } finally {
+//     isLoading.value = false
+//   }
+// }
 
 const openProductModal = (productId: string) => {
   console.log(productId, 'opening modal for product')
@@ -389,9 +381,9 @@ watch(() => products.value, (newProducts) => {
   }
 }, { immediate: true })
 
-onMounted(() => {
-  fetchArtPrints()
-})
+// onMounted(() => {
+//   fetchArtPrints()
+// })
 </script>
 
 <style scoped>

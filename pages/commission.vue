@@ -24,42 +24,7 @@
       <transition :name="slideDirection" mode="out-in">
         <!-- Step 1: Hero Section -->
         <section v-if="currentStep === 1" key="step1" class="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8">
-          <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div class="order-1 lg:order-1 animate-slide-up">
-                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-6 relative">
-                  <span class="relative inline-block">
-                    COMMISSION 
-                    <span class="absolute -bottom-2 left-0 w-full h-1 bg-rose-400 transform -skew-x-12 animate-grow-line"></span>
-                  </span>
-                  <span class="block mt-2">AN ARTWORK</span>
-                  <span class="block text-xl md:text-2xl lg:text-3xl font-medium mt-2">FULLY HAND-MADE WITH</span>
-                  <span class="block text-xl md:text-2xl lg:text-3xl font-medium">CHARCOAL, PASTELS & ACRYLIC</span>
-                </h1>
-                <p class="text-lg md:text-xl text-gray-600 mb-8">Custom artwork, a special piece made for you...</p>
-                <p class="text-gray-700 mb-6 text-sm md:text-base">
-                  Would you like to order a portrait of your loved one, pet, a sentimental gift
-                  for a special occasion or memorial portrait?
-                </p>
-                <div class="relative inline-block group">
-                  <button 
-                    @click="nextStep" 
-                    class="relative z-10 inline-flex items-center px-6 md:px-8 py-3 bg-emerald-600 text-white font-medium rounded-md transition-transform duration-300 transform group-hover:translate-x-1 group-hover:-translate-y-1 text-sm md:text-base">
-                    LEARN MORE
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 animate-bounce-x" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                  </button>
-                  <div class="absolute inset-0 bg-emerald-800 rounded-md transform transition-transform duration-300 translate-x-1 -translate-y-1 group-hover:translate-x-2 group-hover:-translate-y-2"></div>
-                </div>
-              </div>
-              <div class="order-2 lg:order-2 relative animate-fade-in">
-                <div class="relative">
-                  <img src="@/assets/img/commission1.jpg"  alt="Commission artwork example" class="relative z-10 rounded-lg shadow-xl w-full h-auto" />
-                </div>
-              </div>
-            </div>
-          </div>
+         <ComissionHero />
         </section>
 
         <!-- Step 2: Information Section -->
@@ -83,82 +48,22 @@
               <p class="mb-6 text-gray-700 text-sm md:text-base">I offer the following sizes:</p>
               <!-- Size Grid -->
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                <div class="bg-gray-50 p-4 rounded-lg border hover:shadow-md transition-shadow">
-                  <h4 class="font-bold text-emerald-600 text-sm md:text-base">Small Size</h4>
-                  <p class="text-gray-600 text-sm">16 x 20 Inches</p>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg border hover:shadow-md transition-shadow">
-                  <h4 class="font-bold text-emerald-600 text-sm md:text-base">Basic Size</h4>
-                  <p class="text-gray-600 text-sm">20 x 24 Inches</p>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg border hover:shadow-md transition-shadow">
-                  <h4 class="font-bold text-emerald-600 text-sm md:text-base">Medium Size</h4>
-                  <p class="text-gray-600 text-sm">24 x 30 / 24 x36 Inches</p>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg border hover:shadow-md transition-shadow">
-                  <h4 class="font-bold text-emerald-600 text-sm md:text-base">Large Size</h4>
-                  <p class="text-gray-600 text-sm">36 x 42 Inches</p>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg border hover:shadow-md transition-shadow">
-                  <h4 class="font-bold text-emerald-600 text-sm md:text-base">Extra Large Size</h4>
-                  <p class="text-gray-600 text-sm">40 x 46 Inches</p>
+                <div v-for="size in content?.metadata.sizes" class="bg-gray-50 p-4 rounded-lg border hover:shadow-md transition-shadow">
+                  <h4 class="font-bold text-emerald-600 text-sm md:text-base">{{ size?.name }}</h4>
+                  <p class="text-gray-600 text-sm">{{ size?.dimensions }}</p>
                 </div>
               </div>
             </div>
 
             <!-- Other information sections... (keeping original content) -->
             <!-- 2. REFERENCE PHOTO -->
-            <div class="mb-12 animate-slide-up bg-white rounded-xl shadow-lg p-6 md:p-8 border-l-4 border-blue-500" style="animation-delay: 0.2s;">
+            <div v-for="section in content?.metadata?.sections" class="mb-12 animate-slide-up bg-white rounded-xl shadow-lg p-6 md:p-8 border-l-4 border-blue-500" style="animation-delay: 0.2s;">
               <h3 class="text-xl md:text-2xl font-bold mb-6 text-blue-600 flex items-center">
                 <span class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
-                REFERENCE PHOTO
+                {{section?.title}}
               </h3>
-              <div class="space-y-4 text-gray-700 text-sm md:text-base">
-                <p>To create your drawing, you have to choose a reference photo. It is important to be able to determine which photo will allow for the best possible reference material, the clearer the photo, the better the portrait. That way I am able to achieve the desired final result.</p>
-                <p>I draw portraits, preferably a head and shoulder portraits. But also pets or landscapes.</p>
-                <p>Do you want to combine separate photos in one drawing? I can make that possible depending on the photos you have. I will present you with a mock-up (With different compositions, backgrounds etc.) to give you an idea of what the drawing can look like.</p>
-                <p>Once you have submitted your commission form, I will contact you to discuss further details. If you are unsure of what photo to choose, I can help you in making the right decision for best results.</p>
-              </div>
-            </div>
-
-            <!-- 3. CONTRACT & PAYMENT -->
-            <div class="mb-12 animate-slide-up bg-white rounded-xl shadow-lg p-6 md:p-8 border-l-4 border-purple-500" style="animation-delay: 0.4s;">
-              <h3 class="text-xl md:text-2xl font-bold mb-6 text-purple-600 flex items-center">
-                <span class="bg-purple-100 text-purple-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
-                CONTRACT & PAYMENT
-              </h3>
-              <div class="space-y-4 text-gray-700 text-sm md:text-base">
-                <p>Commissions require an initial deposit and contractual agreement.</p>
-                <p>Once you have your chosen the portrait size and reference photo, simply submit your commission through the submission form.</p>
-                <p>We will then discuss further details of your drawing.</p>
-                <p>Once you are happy with the idea and you are ready to place your order. You will receive the contract and invoice.</p>
-                <p>Payment can be made securely through Card, bank transfer, Western Union, Ria, Money Gram.</p>
-              </div>
-            </div>
-
-            <!-- 4. TIME OF CREATION -->
-            <div class="mb-12 animate-slide-up bg-white rounded-xl shadow-lg p-6 md:p-8 border-l-4 border-orange-500" style="animation-delay: 0.6s;">
-              <h3 class="text-xl md:text-2xl font-bold mb-6 text-orange-600 flex items-center">
-                <span class="bg-orange-100 text-orange-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">4</span>
-                TIME OF CREATION
-              </h3>
-              <div class="space-y-4 text-gray-700 text-sm md:text-base">
-                <p>After your deposit has been successfully received, I will start working on your drawing. It is important to allow enough time for creation of the artwork. I will inform you on time needed depending on your choice of size and photo (At least 2-4 weeks).</p>
-                <p>During this process you will receive updates of your drawing. That way you get to watch your artwork come together until it is completed.</p>
-                <p>I will present you with final result photos. Once this is approved by you, I will start preparing the shipment.</p>
-              </div>
-            </div>
-
-            <!-- 5. SHIPPING -->
-            <div class="mb-12 animate-slide-up bg-white rounded-xl shadow-lg p-6 md:p-8 border-l-4 border-red-500" style="animation-delay: 0.8s;">
-              <h3 class="text-xl md:text-2xl font-bold mb-6 text-red-600 flex items-center">
-                <span class="bg-red-100 text-red-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">5</span>
-                SHIPPING
-              </h3>
-              <div class="space-y-4 text-gray-700 text-sm md:text-base">
-                <p>The most exciting part! Your drawing has been approved by you and will now be prepared for shipment. I ship with DHL Express Fed Ex, and USPS worldwide. Estimated delivery time is 4-7 business days worldwide.</p>
-                <p>Artworks are shipped rolled in a protective tube. All packages are well protected and insured for a guaranteed safe arrival of your artwork. Your portrait will arrive with a thank you note and certificate of authenticity.</p>
-                <p>Your package is sent securely, tracked and will require a signature upon arrival. I am not responsible for expenses or delays that may occur depending on the regulations in your country.</p>
+              <div class="space-y-4 text-gray-700 leading-loose text-sm md:text-base">
+                <p> {{section?.content}}</p>
               </div>
             </div>
           </div>
@@ -649,6 +554,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import TestimonialsCarousel from '../components/TestimonialsCarousel.vue'
+import { useFetchContentByType } from "@/composables/modules/content/useFetchContentByType"
+const { fetchContentByType, loading: fetchingContent, content } = useFetchContentByType()
 
 // Types
 interface Country {
@@ -1194,6 +1101,8 @@ const getConfettiColor = (index: number) => {
 // Set minimum date on component mount
 onMounted(() => {
   // Set minimum date for deadline input
+  fetchContentByType("commission_info")
+  // fetchContentByType("commission_hero")
   const today = new Date()
   const minDate = new Date(today.getTime() + (14 * 24 * 60 * 60 * 1000))
   form.value.deadline = minDate.toISOString().split('T')[0]

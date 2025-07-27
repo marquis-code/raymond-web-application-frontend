@@ -13,7 +13,7 @@
     <Transition name="drawer">
       <div 
         v-if="true"
-        class="fixed inset-y-0 right-0 w-1/2 min-w-[500px] bg-gradient-to-br from-white via-gray-50 to-white z-50 shadow-2xl flex flex-col h-full border-l border-gray-200/50"
+        class="fixed inset-y-0 right-0 w-96 min-w-2xl bg-gradient-to-br from-white via-gray-50 to-white z-50 shadow-2xl flex flex-col h-full border-l border-gray-200/50"
       >
         <!-- Animated Header with Gradient -->
         <div class="relative p-6 border-b border-gray-200/50 bg-gradient-to-r from-white to-gray-50 sticky top-0 z-10 backdrop-blur-sm">

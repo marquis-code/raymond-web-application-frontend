@@ -2,6 +2,7 @@
   <section class="relative">
     <div class="grid grid-cols-1 md:grid-cols-2">
       <!-- Left side with artist image carousel -->
+       <!-- {{content}} -->
       <div class="relative h-screen overflow-hidden md:block hidden">
         <div
           v-for="(image, index) in heroImages"
@@ -13,7 +14,7 @@
           }"
         >
           <img
-            :src="image"
+            :src="content?.images[0]"
             alt="Artist with artwork"
             class="w-full h-full object-cover"
           />
@@ -49,17 +50,18 @@
               class="text-3xl font-bold mb-4 text-white animate-fade-in-up"
               :class="{ 'animate-active': isVisible }"
             >
-              RAYMOND AWORO ART
+              {{content?.title}}
             </h1>
             <p 
               class="text-lg text-zinc-200 italic mb-8 animate-fade-in-up delay-300"
               :class="{ 'animate-active': isVisible }"
             >
-              Creating Art; Exploring Life at the Intersection of Faith and Creativity
+            {{content?.description}}
             </p>
 
             <!-- Mobile social media icons -->
-            <div class="flex justify-center gap-4">
+             <Socials />
+            <!-- <div class="flex justify-center gap-4">
               <a
                 v-for="(social, index) in socialLinks"
                 :key="social.name"
@@ -71,7 +73,7 @@
                 <span class="sr-only">{{ social.name }}</span>
                 <img :src="social.icon" class="h-5 w-5 text-zinc-800" />
               </a>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -82,17 +84,18 @@
           class="text-2xl md:text-4xl font-bold mb-4 animate-slide-up"
           :class="{ 'animate-active': isVisible }"
         >
-          RAYMOND AWORO ART
+            {{content?.title}}
         </h1>
         <p 
           class="text-base md:text-xl text-zinc-300 italic mb-8 animate-fade-in-up delay-300"
           :class="{ 'animate-active': isVisible }"
         >
-          Creating Art; Exploring Life at the Intersection of Faith and Creativity
+            {{content?.description}}
         </p>
 
         <!-- Desktop social media icons -->
-        <div class="flex justify-center gap-6">
+         <Socials />
+        <!-- <div class="flex justify-center gap-6">
           <a
             v-for="(social, index) in socialLinks"
             :key="social.name"
@@ -104,7 +107,7 @@
             <span class="sr-only">{{ social.name }}</span>
             <img :src="social.icon" class="h-5 w-5 text-zinc-800" />
           </a>
-        </div>
+        </div> -->
       </div>
     </div>
   </section>
@@ -112,12 +115,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useFetchContentByType } from "@/composables/modules/content/useFetchContentByType"
 import instagram from "@/assets/icons/instagram.svg"
 import facebook from "@/assets/icons/facebook.svg"
 import twitter from "@/assets/icons/logo-black.png"
 import tiktok from "@/assets/icons/tiktok.svg"
 import youtube from "@/assets/icons/youtube.svg"
 import hero2 from "@/assets/img/raymond-hero.png";
+const { fetchContentByType, loading: fetchingContent, content } = useFetchContentByType()
 
 // Define types
 interface SocialLink {
@@ -135,6 +140,12 @@ const titleRef = ref<HTMLElement | null>(null)
 const heroImages = ref<string[]>([
   hero2
 ])
+
+onMounted(async () => {
+  await fetchContentByType("home_hero")
+  // await fetchContentByType("portrait_hero")
+  // await fetchContentByType("gallery_hero")
+})
 
 // Social media links
 const socialLinks = ref<SocialLink[]>([

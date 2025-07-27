@@ -778,12 +778,13 @@
                   <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
                 </div>
                 <input
-                  ref="fileInput"
-                  type="file"
-                  multiple
-                  accept="image/*,video/*"
-                  @change="handleFileSelect"
-                  class="hidden"
+                ref="fileInput"
+    type="file"
+    multiple
+    accept="image/*,video/*"
+    @change="handleFileSelect"
+    class="hidden"
+    :disabled="uploadingFile"
                 />
 
                       <!-- Success Indicator -->
@@ -793,6 +794,51 @@
                 
                 <!-- Uploaded Images Preview -->
                 <div v-if="uploadedImages.length > 0" class="mt-4 grid grid-cols-3 gap-3">
+    <div
+      v-for="(image, index) in uploadedImages"
+      :key="index"
+      class="relative group aspect-square bg-gray-100 rounded-lg overflow-hidden"
+    >
+      <!-- Image Preview -->
+      <img :src="image.preview" :alt="`Upload ${index + 1}`" class="w-full h-full object-cover" />
+      
+      <!-- Loading Overlay -->
+      <div 
+        v-if="image.uploading"
+        class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+      >
+        <div class="text-white text-center">
+          <svg class="animate-spin w-8 h-8 mx-auto mb-2" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span class="text-xs">Uploading...</span>
+        </div>
+      </div>
+
+      <!-- Success Indicator -->
+      <div 
+        v-if="image.uploaded"
+        class="absolute top-2 left-2 p-1 bg-green-500 text-white rounded-full"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+      </div>
+      
+      <!-- Remove Button -->
+      <button
+        @click="removeImage(index)"
+        :disabled="image.uploading"
+        class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+                <!-- <div v-if="uploadedImages.length > 0" class="mt-4 grid grid-cols-3 gap-3">
                   <div
                     v-for="(image, index) in uploadedImages"
                     :key="index"
@@ -809,7 +855,7 @@
                       </svg>
                     </button>
                   </div>
-                </div>
+                </div> -->
               </div>
 
               <!-- Form Actions -->
@@ -857,6 +903,7 @@
       :on-close="closePaymentModal"
       :on-proceed="handlePaymentSelection"
     />
+
   </Teleport>
 </template>
 

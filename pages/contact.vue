@@ -1,16 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
-    <!-- Enhanced Decorative Elements -->
-    <!-- <div class="absolute top-10 left-5 w-32 h-32 md:w-64 md:h-64 bg-gradient-to-br from-rose-200 to-pink-300 rounded-full mix-blend-multiply opacity-40 blur-3xl animate-float"></div>
-    <div class="absolute top-40 right-10 w-24 h-24 md:w-48 md:h-48 bg-gradient-to-br from-amber-200 to-orange-300 rounded-full mix-blend-multiply opacity-40 blur-2xl animate-float-slow"></div>
-    <div class="absolute bottom-20 left-20 w-20 h-20 md:w-40 md:h-40 bg-gradient-to-br from-emerald-200 to-teal-300 rounded-full mix-blend-multiply opacity-40 blur-2xl animate-float-reverse"></div>
-    <div class="absolute bottom-40 right-5 w-28 h-28 md:w-56 md:h-56 bg-gradient-to-br from-purple-200 to-violet-300 rounded-full mix-blend-multiply opacity-40 blur-3xl animate-pulse-slow"></div> -->
-
-    <!-- Animated Background Pattern -->
-    <!-- <div class="absolute inset-0 opacity-5">
-      <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-transparent via-gray-900 to-transparent transform rotate-12 scale-150"></div>
-    </div> -->
-
+  <div class="min-h-screen mt-16 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
       <!-- Enhanced Header Section -->
       <div class="text-center mb-12 md:mb-20 animate-slide-up">
@@ -244,8 +233,8 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h2 class="text-xl font-semibold bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-transparent">Contact Information</h2>
-              <p class="text-gray-600 text-base mt-2">Get in touch through these channels</p>
+              <h2 class="text-xl font-semibold bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-transparent">{{ content?.title }}</h2>
+              <p class="text-gray-600 text-base mt-2">{{ content?.description }}</p>
             </div>
 
             <div class="space-y-6">
@@ -259,12 +248,12 @@
                 <div class="ml-4 flex-1">
                   <h3 class="text-base font-semibold text-gray-900 mb-1">Email</h3>
                   <a 
-                    href="mailto:hello@raymondaworoart.com" 
+                    :href="`mailto:${content?.metadata?.contactInfo?.email?.address}`" 
                     class="text-rose-600 hover:text-rose-700 transition-colors duration-300 font-medium hover:underline text-sm md:text-base"
                   >
-                    hello@raymondaworoart.com
+                  {{ content?.metadata?.contactInfo?.email?.address }}
                   </a>
-                  <p class="text-xs text-gray-500 mt-1">I'll respond within 24 hours</p>
+                  <p class="text-xs text-gray-500 mt-1">{{ content?.metadata?.contactInfo?.email?.responseTime }}</p>
                 </div>
               </div>
 
@@ -277,21 +266,21 @@
                 </div>
                 <div class="ml-4 flex-1">
                   <h3 class="text-base font-semibold text-gray-900 mb-1">Location</h3>
-                  <p class="text-gray-600 text-sm md:text-base leading-relaxed">
-                    Nigeria Office:<br>
-                    Flat 1, 15a Livingstone Road, Lekki Phase 1, Lagos<br>
-                    +2348119963202
+                  <p v-for="location in content?.metadata?.contactInfo?.locations" class="text-gray-600 text-sm md:text-base leading-relaxed">
+                    {{ location?.name }}:<br>
+                    {{ location?.address }}<br>
+                    {{ location?.phone }}
                   </p>
-                  <p class="text-gray-600 text-sm md:text-base leading-relaxed">
+                  <!-- <p class="text-gray-600 text-sm md:text-base leading-relaxed">
                     U.S. Office:<br>
                     1234 Main Street, Suite 100, Wilmington, DE 19801<br>
                     +1 (559) 859-5124
-                  </p>
+                  </p> -->
                 </div>
               </div>
 
               <!-- Response Time -->
-              <div class="flex items-start group animate-slide-up" style="animation-delay: 0.3s;">
+              <!-- <div class="flex items-start group animate-slide-up" style="animation-delay: 0.3s;">
                 <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-amber-100 to-orange-200 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -302,7 +291,7 @@
                   <p class="text-gray-600 text-sm md:text-base">Usually within 24 hours</p>
                   <p class="text-xs text-gray-500 mt-1">Monday - Friday, 9 AM - 6 PM WAT</p>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
 
@@ -319,74 +308,38 @@
             </div>
 
             <div class="grid grid-cols-3 md:grid-cols-5 gap-4 mb-8">
-              <a 
-                href="https://www.facebook.com/people/raymondaworo/100067199633701/?mibextid=LQQJ4d" 
+              <a v-for="social in content?.metadata?.contactInfo?.socialMedia"
+                :href="social.url" 
                 class="group flex flex-col items-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl hover:from-blue-100 hover:to-blue-200 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:animate-bounce">
+                <div v-if="social?.platform === 'Facebook'" class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center mb-2 group-hover:animate-bounce">
                   <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                   </svg>
                 </div>
-                <span class="text-xs font-medium text-gray-700 group-hover:text-blue-700">Facebook</span>
-              </a>
-
-              <a 
-                href="https://www.instagram.com/raymondaworo/?igshid=OGQ5ZDc2ODk2ZA%3D%3D" 
-                class="group flex flex-col items-center p-4 bg-gradient-to-br from-pink-50 to-rose-100 rounded-2xl hover:from-pink-100 hover:to-rose-200 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-2 group-hover:animate-bounce">
+                <div v-if="social?.platform === 'Instagram'" class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-2 group-hover:animate-bounce">
                   <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987 6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.611-3.132-1.551-.684-.94-.684-2.126 0-3.066.684-.94 1.835-1.551 3.132-1.551s2.448.611 3.132 1.551c.684.94.684 2.126 0 3.066-.684.94-1.835 1.551-3.132 1.551zm7.718 0c-1.297 0-2.448-.611-3.132-1.551-.684-.94-.684-2.126 0-3.066.684-.94 1.835-1.551 3.132-1.551s2.448.611 3.132 1.551c.684.94.684 2.126 0 3.066-.684.94-1.835 1.551-3.132 1.551z"/>
                   </svg>
                 </div>
-                <span class="text-xs font-medium text-gray-700 group-hover:text-pink-700">Instagram</span>
-              </a>
-
-              <a 
-                href="https://x.com/raymondaworo/status/1546911697776115714?s=46&t=wja9T8NIysGx2Vtni1WECQ" 
-                class="group flex flex-col items-center p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl hover:from-gray-100 hover:to-gray-200 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div class="w-10 h-10 bg-black rounded-xl flex items-center justify-center mb-2 group-hover:animate-bounce">
+                <div v-if="social?.platform === 'Twitter'" class="w-10 h-10 bg-black rounded-xl flex items-center justify-center mb-2 group-hover:animate-bounce">
                   <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                   </svg>
                 </div>
-                <span class="text-xs font-medium text-gray-700 group-hover:text-gray-900">Twitter</span>
-              </a>
-
-              <a 
-                href="https://www.tiktok.com/@raymondaworo?_t=8fvTbrYZSA1&_r=1" 
-                class="group flex flex-col items-center p-4 bg-gradient-to-br from-red-50 to-pink-100 rounded-2xl hover:from-red-100 hover:to-pink-200 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div class="w-10 h-10 bg-black rounded-xl flex items-center justify-center mb-2 group-hover:animate-bounce">
+                <div v-if="social?.platform === 'TikTok'" class="w-10 h-10 bg-black rounded-xl flex items-center justify-center mb-2 group-hover:animate-bounce">
                   <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
                   </svg>
                 </div>
-                <span class="text-xs font-medium text-gray-700 group-hover:text-red-700">TikTok</span>
-              </a>
-
-              <a 
-                href="https://www.youtube.com/@raymondaworo" 
-                class="group flex flex-col items-center p-4 bg-gradient-to-br from-red-50 to-red-100 rounded-2xl hover:from-red-100 hover:to-red-200 transition-all duration-300 transform hover:scale-110 hover:-translate-y-1"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center mb-2 group-hover:animate-bounce">
+                <div v-if="social?.platform === 'YouTube'" class="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center mb-2 group-hover:animate-bounce">
                   <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                   </svg>
                 </div>
-                <span class="text-xs font-medium text-gray-700 group-hover:text-red-700">YouTube</span>
+                <span class="text-xs font-medium text-gray-700 group-hover:text-blue-700">{{ social?.platform }}</span>
               </a>
             </div>
 
@@ -401,10 +354,10 @@
                   <p class="text-gray-700 text-sm leading-relaxed">
                     For business inquiries or collaborations, please email me directly at 
                     <a 
-                      href="mailto:hello@raymondaworoart.com" 
+                      :href="`mailto:${content?.metadata?.contactInfo?.email?.address}`" 
                       class="text-rose-600 font-semibold hover:text-rose-700 hover:underline transition-colors duration-300"
                     >
-                      hello@raymondaworoart.com
+                     {{ content?.metadata?.contactInfo?.email?.address }}
                     </a>
                   </p>
                 </div>
@@ -449,8 +402,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useFetchContentByType } from "@/composables/modules/content/useFetchContentByType"
 import { useCreateEnquires } from "@/composables/modules/enquires/useCreateEnquires"
-
+const { fetchContentByType, loading: fetchingContent, content } = useFetchContentByType()
 // Types
 interface Country {
   name: string
@@ -537,6 +491,10 @@ const contactForm = ref<ContactFormData>({
   phone: '',
   subject: '',
   message: ''
+})
+
+onMounted(() => {
+  fetchContentByType('contact_info')
 })
 
 // Phone input states
