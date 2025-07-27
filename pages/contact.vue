@@ -1,21 +1,21 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
     <!-- Enhanced Decorative Elements -->
-    <div class="absolute top-10 left-5 w-32 h-32 md:w-64 md:h-64 bg-gradient-to-br from-rose-200 to-pink-300 rounded-full mix-blend-multiply opacity-40 blur-3xl animate-float"></div>
+    <!-- <div class="absolute top-10 left-5 w-32 h-32 md:w-64 md:h-64 bg-gradient-to-br from-rose-200 to-pink-300 rounded-full mix-blend-multiply opacity-40 blur-3xl animate-float"></div>
     <div class="absolute top-40 right-10 w-24 h-24 md:w-48 md:h-48 bg-gradient-to-br from-amber-200 to-orange-300 rounded-full mix-blend-multiply opacity-40 blur-2xl animate-float-slow"></div>
     <div class="absolute bottom-20 left-20 w-20 h-20 md:w-40 md:h-40 bg-gradient-to-br from-emerald-200 to-teal-300 rounded-full mix-blend-multiply opacity-40 blur-2xl animate-float-reverse"></div>
-    <div class="absolute bottom-40 right-5 w-28 h-28 md:w-56 md:h-56 bg-gradient-to-br from-purple-200 to-violet-300 rounded-full mix-blend-multiply opacity-40 blur-3xl animate-pulse-slow"></div>
+    <div class="absolute bottom-40 right-5 w-28 h-28 md:w-56 md:h-56 bg-gradient-to-br from-purple-200 to-violet-300 rounded-full mix-blend-multiply opacity-40 blur-3xl animate-pulse-slow"></div> -->
 
     <!-- Animated Background Pattern -->
-    <div class="absolute inset-0 opacity-5">
+    <!-- <div class="absolute inset-0 opacity-5">
       <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-transparent via-gray-900 to-transparent transform rotate-12 scale-150"></div>
-    </div>
+    </div> -->
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10 mt-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
       <!-- Enhanced Header Section -->
       <div class="text-center mb-12 md:mb-20 animate-slide-up">
         <div class="inline-block relative mb-6">
-          <h1 class="text- md:text-3xl  font-bold bg-gradient-to-r from-gray-800 via-gray-900 to-black bg-clip-text text-transparent relative">
+          <h1 class="text-xl  font-bold bg-gradient-to-r from-gray-800 via-gray-900 to-black bg-clip-text text-transparent relative">
             CONTACT
             <span class="absolute -bottom-3 left-0 w-full h-1 bg-gradient-to-r from-rose-400 via-pink-500 to-rose-600 transform -skew-x-12 animate-grow-line"></span>
           </h1>
@@ -39,12 +39,12 @@
         <div class="order-2 lg:order-1 animate-slide-up" style="animation-delay: 0.4s;">
           <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-6 md:p-10 transform transition-all duration-500 hover:shadow-3xl hover:scale-[1.02] border border-white/20">
             <div class="text-center mb-8">
-              <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl mb-4 animate-pulse-slow">
+              <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl mb-4 animate-pulse-slow">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                 </svg>
               </div>
-              <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-transparent">Get in Touch</h2>
+              <h2 class="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-transparent">Get in Touch</h2>
               <p class="text-gray-600 mt-2">Let's start a conversation</p>
             </div>
 
@@ -58,7 +58,7 @@
                     v-model="contactForm.name" 
                     type="text" 
                     required
-                    class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all duration-300 hover:border-rose-300 bg-white/50 backdrop-blur-sm text-sm md:text-base"
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all duration-300 hover:border-rose-300 bg-white/50 backdrop-blur-sm text-sm md:text-base"
                     placeholder="Enter your full name"
                   />
                   <div class="absolute inset-y-0 right-0 flex items-center pr-4">
@@ -78,7 +78,7 @@
                     v-model="contactForm.email" 
                     type="email" 
                     required
-                    class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all duration-300 hover:border-rose-300 bg-white/50 backdrop-blur-sm text-sm md:text-base"
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all duration-300 hover:border-rose-300 bg-white/50 backdrop-blur-sm text-sm md:text-base"
                     placeholder="your.email@example.com"
                   />
                   <div class="absolute inset-y-0 right-0 flex items-center pr-4">
@@ -97,7 +97,7 @@
                     id="country" 
                     v-model="contactForm.country" 
                     @change="onCountryChange"
-                    class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all duration-300 hover:border-rose-300 bg-white/50 backdrop-blur-sm text-sm md:text-base appearance-none"
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all duration-300 hover:border-rose-300 bg-white/50 backdrop-blur-sm text-sm md:text-base appearance-none"
                   >
                     <option value="">Select a country</option>
                     <option 
@@ -122,7 +122,7 @@
                 <div class="relative">
                   <div class="flex">
                     <!-- Country Code Display -->
-                    <div class="flex items-center px-4 py-4 bg-gray-50/80 border-2 border-r-0 border-gray-200 rounded-l-xl text-sm text-gray-600 min-w-[80px]">
+                    <div class="flex items-center px-4 py-3 bg-gray-50/80 border-2 border-r-0 border-gray-200 rounded-l-xl text-sm text-gray-600 min-w-[80px]">
                       <span v-if="selectedCountry">+{{ selectedCountry.dialCode }}</span>
                       <span v-else>+</span>
                     </div>
@@ -133,7 +133,7 @@
                       type="tel"
                       :placeholder="selectedCountry?.placeholder || 'Enter phone number'"
                       :disabled="!selectedCountry"
-                      class="flex-1 px-4 py-4 border-2 border-gray-200 rounded-r-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all duration-300 hover:border-rose-300 bg-white/50 backdrop-blur-sm text-sm md:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-r-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all duration-300 hover:border-rose-300 bg-white/50 backdrop-blur-sm text-sm md:text-base disabled:bg-gray-100 disabled:cursor-not-allowed"
                       @input="handlePhoneInput"
                     />
                   </div>
@@ -176,7 +176,7 @@
                     id="contactSubject" 
                     v-model="contactForm.subject" 
                     type="text"
-                    class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all duration-300 hover:border-rose-300 bg-white/50 backdrop-blur-sm text-sm md:text-base"
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 transition-all duration-300 hover:border-rose-300 bg-white/50 backdrop-blur-sm text-sm md:text-base"
                     placeholder="What's this about?"
                   />
                   <div class="absolute inset-y-0 right-0 flex items-center pr-4">
@@ -196,7 +196,7 @@
                     v-model="contactForm.message" 
                     rows="5" 
                     required
-                    class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 bg-gradient-to-br from-rose-50/50 to-pink-50/50 backdrop-blur-sm transition-all duration-300 hover:border-rose-300 text-sm md:text-base resize-none"
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 bg-gradient-to-br from-rose-50/50 to-pink-50/50 backdrop-blur-sm transition-all duration-300 hover:border-rose-300 text-sm md:text-base resize-none"
                     placeholder="Tell me about your project, questions, or just say hello..."
                   ></textarea>
                   <div class="absolute bottom-4 right-4">
@@ -212,7 +212,7 @@
                 <button 
                   type="submit"
                   :disabled="loading"
-                  class="group relative w-full py-4 px-8 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white font-semibold rounded-xl hover:from-rose-600 hover:via-pink-600 hover:to-rose-700 focus:outline-none focus:ring-4 focus:ring-rose-300 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl text-sm md:text-base"
+                  class="group relative w-full py-3 px-8 bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 text-white font-semibold rounded-xl hover:from-rose-600 hover:via-pink-600 hover:to-rose-700 focus:outline-none focus:ring-4 focus:ring-rose-300 transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-xl text-sm md:text-base"
                 >
                   <div v-if="loading" class="flex items-center justify-center">
                     <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -239,25 +239,25 @@
           <!-- Contact Info Card -->
           <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-6 md:p-8 transform transition-all duration-500 hover:shadow-3xl hover:scale-[1.02] border border-white/20">
             <div class="text-center mb-8">
-              <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl mb-4 animate-pulse-slow">
+              <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl mb-4 animate-pulse-slow">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-transparent">Contact Information</h2>
-              <p class="text-gray-600 mt-2">Get in touch through these channels</p>
+              <h2 class="text-xl font-semibold bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-transparent">Contact Information</h2>
+              <p class="text-gray-600 text-base mt-2">Get in touch through these channels</p>
             </div>
 
             <div class="space-y-6">
               <!-- Email -->
               <div class="flex items-start group animate-slide-up" style="animation-delay: 0.1s;">
-                <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-rose-100 to-pink-200 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-rose-100 to-pink-200 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-600" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M14.243 5.757a6 6 0 10-.986 9.284 1 1 0 111.087 1.678A8 8 0 1118 10a3 3 0 01-4.8 2.401A4 4 0 1114 10a1 1 0 102 0c0-1.537-.586-3.07-1.757-4.243zM12 10a2 2 0 10-4 0 2 2 0 004 0z" clip-rule="evenodd" />
                   </svg>
                 </div>
                 <div class="ml-4 flex-1">
-                  <h3 class="text-lg font-semibold text-gray-900 mb-1">Email</h3>
+                  <h3 class="text-base font-semibold text-gray-900 mb-1">Email</h3>
                   <a 
                     href="mailto:hello@raymondaworoart.com" 
                     class="text-rose-600 hover:text-rose-700 transition-colors duration-300 font-medium hover:underline text-sm md:text-base"
@@ -270,13 +270,13 @@
 
               <!-- Location -->
               <div class="flex items-start group animate-slide-up" style="animation-delay: 0.2s;">
-                <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-emerald-100 to-teal-200 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-emerald-100 to-teal-200 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
                   </svg>
                 </div>
                 <div class="ml-4 flex-1">
-                  <h3 class="text-lg font-semibold text-gray-900 mb-1">Location</h3>
+                  <h3 class="text-base font-semibold text-gray-900 mb-1">Location</h3>
                   <p class="text-gray-600 text-sm md:text-base leading-relaxed">
                     Nigeria Office:<br>
                     Flat 1, 15a Livingstone Road, Lekki Phase 1, Lagos<br>
@@ -292,13 +292,13 @@
 
               <!-- Response Time -->
               <div class="flex items-start group animate-slide-up" style="animation-delay: 0.3s;">
-                <div class="flex-shrink-0 h-12 w-12 bg-gradient-to-br from-amber-100 to-orange-200 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <div class="flex-shrink-0 h-10 w-10 bg-gradient-to-br from-amber-100 to-orange-200 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div class="ml-4 flex-1">
-                  <h3 class="text-lg font-semibold text-gray-900 mb-1">Response Time</h3>
+                  <h3 class="text-base font-semibold text-gray-900 mb-1">Response Time</h3>
                   <p class="text-gray-600 text-sm md:text-base">Usually within 24 hours</p>
                   <p class="text-xs text-gray-500 mt-1">Monday - Friday, 9 AM - 6 PM WAT</p>
                 </div>
@@ -314,8 +314,8 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <h2 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-transparent">Follow My Journey</h2>
-              <p class="text-gray-600 mt-2">Stay connected on social media</p>
+              <h2 class="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-900 bg-clip-text text-transparent">Follow My Journey</h2>
+              <p class="text-gray-600 text-sm mt-2">Stay connected on social media</p>
             </div>
 
             <div class="grid grid-cols-3 md:grid-cols-5 gap-4 mb-8">

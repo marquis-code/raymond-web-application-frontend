@@ -81,11 +81,18 @@
           <!-- Product Info -->
           <div class="pt-6 text-center space-y-3">
             <h3 class="text-lg font-medium text-gray-900 tracking-wide group-hover:text-gray-700 transition-colors">
-              <!-- {{ product }} -->
+              {{ product?.name ?? 'Nil' }}
             </h3>
-            <p class="text-gray-600 font-light">From 
+            <!-- <p class="text-gray-600 font-light">From 
               {{ getConvertedMinPrice(product) }} 
-              or {{ getConvertedInstallmentPayment() }}/month
+              or {{ getConvertedInstallmentPayment(product) }}/month
+            </p> -->
+
+            <p class="text-gray-600 font-light">
+              From {{ getConvertedMinPrice(product) }}
+              <span v-if="hasInstallmentOptions(product)">
+                or {{ getConvertedInstallmentPayment(product) }}/month
+              </span>
             </p>
 
             <div class="pt-4 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
@@ -133,7 +140,7 @@ const {
   convertCurrency,
 } = useCurrencyConverter()
 
-const fixedInstallmentPayment = ref(50) // USD base amount
+// const fixedInstallmentPayment = ref(50) // USD base amount
 
 const convertedPrice = ref<any>({})
 const fromCurrency = ref<string>('USD')
@@ -291,47 +298,64 @@ const getConvertedMinPrice = (product: any) => {
   // return converted
 }
 
-// Updated function to get converted installment payment
-const getConvertedInstallmentPayment = () => {
-  const converted = convertFromUSD(fixedInstallmentPayment.value)
-  return converted.formattedAmount || fixedInstallmentPayment.value
+// New function to check if product has installment options
+const hasInstallmentOptions = (product: any) => {
+  if (!product.sizes || product.sizes.length === 0) return false
+  
+  return product.sizes.some((size: any) => 
+    size.installmentConfig && 
+    size.installmentConfig.enabled && 
+    size.price >= (size.installmentConfig.minimumAmount || 0)
+  )
 }
 
-// // Format currency helper function
-// const formatCurrency = (amount: number, options: { showSymbol?: boolean } = {}) => {
-//   if (!userCurrency.value || currencyLoading.value) {
-//     // Fallback to USD formatting while loading
-//     return options.showSymbol ? `$${amount.toFixed(2)}` : amount.toFixed(2)
-//   }
-
-//   try {
-//     const formatter = new Intl.NumberFormat('en-US', {
-//       style: 'currency',
-//       currency: userCurrency.value,
-//       minimumFractionDigits: 2,
-//       maximumFractionDigits: 2,
-//     })
-    
-//     if (options.showSymbol) {
-//       return formatter.format(amount)
-//     } else {
-//       return amount.toFixed(2)
-//     }
-//   } catch (error) {
-//     // Fallback formatting if currency is not supported by Intl.NumberFormat
-//     const currencySymbols: Record<string, string> = {
-//       'USD': '$',
-//       'NGN': '₦',
-//       'EUR': '€',
-//       'GBP': '£',
-//       'CAD': 'C$',
-//       'AUD': 'A$',
-//     }
-    
-//     const symbol = currencySymbols[userCurrency.value] || userCurrency.value
-//     return options.showSymbol ? `${symbol}${amount.toFixed(2)}` : amount.toFixed(2)
-//   }
+// Updated function to get converted installment payment
+// const getConvertedInstallmentPayment = () => {
+//   const converted = convertFromUSD(fixedInstallmentPayment.value)
+//   return converted.formattedAmount || fixedInstallmentPayment.value
 // }
+
+const getConvertedInstallmentPayment = (product: any) => {
+  if (!product.sizes || product.sizes.length === 0) return '0'
+  
+  // Find the size with the lowest price that has installment enabled
+  const eligibleSizes = product.sizes.filter((size: any) => 
+    size.installmentConfig && 
+    size.installmentConfig.enabled && 
+    size.price >= (size.installmentConfig.minimumAmount || 0)
+  )
+  
+  if (eligibleSizes.length === 0) return '0'
+  
+  // Get the size with minimum price
+  const minPriceSize = eligibleSizes.reduce((min: any, current: any) => 
+    current.price < min.price ? current : min
+  )
+  
+  const config = minPriceSize.installmentConfig
+  const price = minPriceSize.price
+  
+  // Use the minimum available term for calculation
+  const term = Math.min(...config.availableTerms)
+  
+  // Calculate monthly payment with interest
+  const monthlyInterestRate = (config.interestRate / 100) / 12
+  let monthlyPayment
+  
+  if (monthlyInterestRate > 0) {
+    // Calculate with compound interest
+    monthlyPayment = (price * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, term)) / 
+                    (Math.pow(1 + monthlyInterestRate, term) - 1)
+  } else {
+    // Simple division if no interest
+    monthlyPayment = price / term
+  }
+  
+  // Convert from USD to user's currency
+  const converted = convertFromUSD(monthlyPayment)
+  return converted.formattedAmount || Math.round(monthlyPayment).toString()
+}
+
 
 const getProductImage = (product: any, index: number) => {
   if (!product || !product.images || product.images.length === 0) {

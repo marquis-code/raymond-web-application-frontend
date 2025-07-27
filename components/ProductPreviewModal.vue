@@ -9,8 +9,8 @@
           <div class="sticky top-0 z-40 bg-white border-b border-gray-200 px-4 py-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-3 flex-1 min-w-0">
-                <button 
-                  @click="onClose" 
+                <button
+                  @click="onClose"
                   class="p-2 -ml-2 rounded-full hover:bg-gray-100 transition-colors"
                   aria-label="Close modal"
                 >
@@ -20,7 +20,6 @@
                 </button>
                 <div class="min-w-0 flex-1">
                   <h1 class="text-base font-semibold text-gray-900 truncate">{{ product.name }}</h1>
-                  <!-- <p class="text-xs text-gray-600 hidden md:block">{{ product.category }}</p> -->
                 </div>
               </div>
               <!-- Image Counter -->
@@ -55,7 +54,6 @@
                         </div>
                       </transition-group>
                     </div>
-
                     <!-- Navigation Arrows -->
                     <div v-if="product.images.length > 1" class="absolute inset-y-0 left-0 right-0 flex items-center justify-between pointer-events-none">
                       <button
@@ -77,14 +75,12 @@
                         </svg>
                       </button>
                     </div>
-
                     <!-- Touch Areas -->
                     <div class="absolute inset-0" @touchstart="handleTouchStart" @touchend="handleTouchEnd">
                       <div class="absolute inset-y-0 left-0 w-1/3" @click="previousImage"></div>
                       <div class="absolute inset-y-0 right-0 w-1/3" @click="nextImage"></div>
                     </div>
                   </div>
-
                   <!-- Thumbnails -->
                   <div v-if="product.images.length > 1" class="mt-3">
                     <div class="flex space-x-2 overflow-x-auto pb-2">
@@ -122,24 +118,30 @@
                   <!-- Size Selection -->
                   <div class="animate-item">
                     <h3 class="text-base font-semibold text-gray-900 mb-3">Select Size</h3>
-                    <div class="grid grid-cols-2 gap-3">
+                    <!-- <button @click="openReviewModal">Open review modal</button> -->
+                    <div class="grid grid-cols-1 gap-3">
                       <button
                         v-for="size in product.sizes"
                         :key="size._id"
                         @click="selectedSize = size._id"
-                        class="relative p-3 border-2 rounded-xl transition-all duration-200"
-                        :class="selectedSize === size._id 
-                          ? 'border-blue-500 bg-blue-50 shadow-md' 
-                          : 'border-gray-200 hover:border-gray-300'"
+                        class="relative p-4 border-2 rounded-xl transition-all duration-200"
+                        :class="selectedSize === size._id ? 'border-blue-500 bg-blue-50 shadow-md' : 'border-gray-200 hover:border-gray-300'"
                       >
-                        <div class="text-center">
-                          <div class="text-sm font-semibold text-gray-900">{{ size.size.toUpperCase() }}</div>
-                          <div class="text-xs text-gray-600 mt-1">{{ convertFromUSD(size.price)?.formattedAmount }}</div>
-                        </div>
-                        <div v-if="selectedSize === size._id" class="absolute -top-1 -right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                          <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                          </svg>
+                        <div class="flex justify-between items-center">
+                          <div class="text-left">
+                            <div class="text-sm font-semibold text-gray-900">{{ size.size.toUpperCase() }}</div>
+                            <div class="text-xs text-gray-600 mt-1">
+                              {{ convertFromUSD(size.price)?.formattedAmount }}
+                              <span v-if="hasInstallmentOption(size)" class="text-blue-600">
+                                or {{ getInstallmentPayment(size) }}/mo*
+                              </span>
+                            </div>
+                          </div>
+                          <div v-if="selectedSize === size._id" class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                          </div>
                         </div>
                       </button>
                     </div>
@@ -184,6 +186,98 @@
                     </button>
                   </div>
 
+                  <!-- Reviews Section -->
+                  <div class="animate-item">
+                    <div class="border border-gray-200 rounded-xl overflow-hidden">
+                      <button
+                        @click="toggleSection('reviews')"
+                        class="flex justify-between items-center w-full text-left p-4 hover:bg-gray-50 transition-colors"
+                      >
+                        <div class="flex items-center space-x-3">
+                          <h3 class="text-base font-semibold text-gray-900">Customer Reviews</h3>
+                          <div v-if="product.reviewCount > 0" class="flex items-center space-x-1">
+                            <div class="flex items-center">
+                              <svg
+                                v-for="star in 5"
+                                :key="star"
+                                class="w-4 h-4"
+                                :class="star <= Math.round(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                              </svg>
+                            </div>
+                            <span class="text-sm text-gray-600">({{ product.reviewCount }})</span>
+                          </div>
+                        </div>
+                        <svg
+                          class="w-5 h-5 text-gray-500 transition-transform duration-200"
+                          :class="{ 'rotate-180': expandedSections.reviews }"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                      </button>
+                      <div
+                        class="overflow-hidden transition-all duration-300"
+                        :class="expandedSections.reviews ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'"
+                      >
+                        <div class="px-4 pb-4">
+                          <!-- Reviews List -->
+                          <div v-if="productReviews.length > 0" class="space-y-4">
+                            <div
+                              v-for="review in productReviews.slice(0, 3)"
+                              :key="review.id"
+                              class="border-b border-gray-100 pb-4 last:border-b-0"
+                            >
+                              <div class="flex items-start justify-between mb-2">
+                                <div class="flex items-center space-x-2">
+                                  <div class="flex items-center">
+                                    <svg
+                                      v-for="star in 5"
+                                      :key="star"
+                                      class="w-4 h-4"
+                                      :class="star <= review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                  </div>
+                                  <span class="text-sm font-medium text-gray-900">{{ review.userName.split('@')[0] }}</span>
+                                </div>
+                                <span class="text-xs text-gray-500">{{ formatDate(review.createdAt) }}</span>
+                              </div>
+                              <p class="text-sm text-gray-700 leading-relaxed">{{ review.comment }}</p>
+                            </div>
+                            <div v-if="productReviews.length > 3" class="text-center">
+                              <button class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                                View all {{ productReviews.length }} reviews
+                              </button>
+                            </div>
+                          </div>
+                          <!-- Empty State -->
+                          <div v-else class="text-center py-8">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                              </svg>
+                            </div>
+                            <h4 class="text-base font-medium text-gray-900 mb-2">No reviews yet</h4>
+                            <p class="text-sm text-gray-600 mb-4">Be the first to share your thoughts about this product.</p>
+                            <button
+                              @click="openReviewModal"
+                              class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                              Write a Review
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <!-- Product Info Accordions -->
                   <div class="space-y-3 animate-item">
                     <div v-if="product.productInfo" class="border border-gray-200 rounded-xl overflow-hidden">
@@ -211,7 +305,6 @@
                         </div>
                       </div>
                     </div>
-
                     <div v-if="product.shippingInfo" class="border border-gray-200 rounded-xl overflow-hidden">
                       <button
                         @click="toggleSection('shippingInfo')"
@@ -264,7 +357,6 @@
                         </div>
                       </transition-group>
                     </div>
-
                     <!-- Desktop Navigation -->
                     <div v-if="product.images.length > 1" class="absolute inset-y-0 left-0 right-0 flex items-center justify-between pointer-events-none">
                       <button
@@ -286,7 +378,6 @@
                     </div>
                   </div>
                 </div>
-
                 <!-- Desktop Thumbnails -->
                 <div v-if="product.images.length > 1" class="absolute bottom-6 left-1/2 transform -translate-x-1/2">
                   <div class="flex space-x-3 bg-white/90 backdrop-blur-sm p-3 rounded-2xl shadow-lg">
@@ -325,24 +416,29 @@
                   <!-- Size Selection -->
                   <div class="animate-item">
                     <h3 class="text-base font-semibold text-gray-900 mb-4">Select Size</h3>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 gap-3">
                       <button
                         v-for="size in product.sizes"
                         :key="size._id"
                         @click="selectedSize = size._id"
                         class="relative p-4 border-2 rounded-xl transition-all duration-200"
-                        :class="selectedSize === size._id 
-                          ? 'border-blue-500 bg-blue-50 shadow-md' 
-                          : 'border-gray-200 hover:border-gray-300'"
+                        :class="selectedSize === size._id ? 'border-blue-500 bg-blue-50 shadow-md' : 'border-gray-200 hover:border-gray-300'"
                       >
-                        <div class="text-center">
-                          <div class="text-sm font-semibold text-gray-900">{{ size.size.toUpperCase() }}</div>
-                          <div class="text-sm text-gray-600 mt-1">{{ convertFromUSD(size.price)?.formattedAmount }}</div>
-                        </div>
-                        <div v-if="selectedSize === size._id" class="absolute -top-2 -right-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                          <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                          </svg>
+                        <div class="flex justify-between items-center">
+                          <div class="text-left">
+                            <div class="text-sm font-semibold text-gray-900">{{ size.size.toUpperCase() }}</div>
+                            <div class="text-sm text-gray-600 mt-1">
+                              {{ convertFromUSD(size.price)?.formattedAmount }}
+                              <span v-if="hasInstallmentOption(size)" class="text-blue-600">
+                                or {{ getInstallmentPayment(size) }}/mo*
+                              </span>
+                            </div>
+                          </div>
+                          <div v-if="selectedSize === size._id" class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                            <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                          </div>
                         </div>
                       </button>
                     </div>
@@ -387,6 +483,98 @@
                     </button>
                   </div>
 
+                  <!-- Reviews Section -->
+                  <div class="animate-item">
+                    <div class="border border-gray-200 rounded-xl overflow-hidden">
+                      <button
+                        @click="toggleSection('reviews')"
+                        class="flex justify-between items-center w-full text-left p-4 hover:bg-gray-50 transition-colors"
+                      >
+                        <div class="flex items-center space-x-3">
+                          <h3 class="text-base font-semibold text-gray-900">Customer Reviews</h3>
+                          <div v-if="product.reviewCount > 0" class="flex items-center space-x-1">
+                            <div class="flex items-center">
+                              <svg
+                                v-for="star in 5"
+                                :key="star"
+                                class="w-4 h-4"
+                                :class="star <= Math.round(product.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'"
+                                viewBox="0 0 20 20"
+                              >
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                              </svg>
+                            </div>
+                            <span class="text-sm text-gray-600">({{ product.reviewCount }})</span>
+                          </div>
+                        </div>
+                        <svg
+                          class="w-5 h-5 text-gray-500 transition-transform duration-200"
+                          :class="{ 'rotate-180': expandedSections.reviews }"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                      </button>
+                      <div
+                        class="overflow-hidden transition-all duration-300"
+                        :class="expandedSections.reviews ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'"
+                      >
+                        <div class="px-4 pb-4">
+                          <!-- Reviews List -->
+                          <div v-if="productReviews.length > 0" class="space-y-4">
+                            <div
+                              v-for="review in productReviews.slice(0, 3)"
+                              :key="review.id"
+                              class="border-b border-gray-100 pb-4 last:border-b-0"
+                            >
+                              <div class="flex items-start justify-between mb-2">
+                                <div class="flex items-center space-x-2">
+                                  <div class="flex items-center">
+                                    <svg
+                                      v-for="star in 5"
+                                      :key="star"
+                                      class="w-4 h-4"
+                                      :class="star <= review.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'"
+                                      viewBox="0 0 20 20"
+                                    >
+                                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                  </div>
+                                  <span class="text-sm font-medium text-gray-900">{{ review.userName.split('@')[0] }}</span>
+                                </div>
+                                <span class="text-xs text-gray-500">{{ formatDate(review.createdAt) }}</span>
+                              </div>
+                              <p class="text-sm text-gray-700 leading-relaxed">{{ review.comment }}</p>
+                            </div>
+                            <div v-if="productReviews.length > 3" class="text-center">
+                              <button class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                                View all {{ productReviews.length }} reviews
+                              </button>
+                            </div>
+                          </div>
+                          <!-- Empty State -->
+                          <div v-else class="text-center py-8">
+                            <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                              <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                              </svg>
+                            </div>
+                            <h4 class="text-base font-medium text-gray-900 mb-2">No reviews yet</h4>
+                            <p class="text-sm text-gray-600 mb-4">Be the first to share your thoughts about this product.</p>
+                            <button
+                              @click="openReviewModal"
+                              class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                              Write a Review
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <!-- Product Info -->
                   <div class="space-y-4 animate-item">
                     <div v-if="product.productInfo" class="border border-gray-200 rounded-xl overflow-hidden">
@@ -414,7 +602,6 @@
                         </div>
                       </div>
                     </div>
-
                     <div v-if="product.shippingInfo" class="border border-gray-200 rounded-xl overflow-hidden">
                       <button
                         @click="toggleSection('shippingInfo')"
@@ -449,6 +636,220 @@
       </div>
     </transition>
 
+    <!-- Fixed Review Button -->
+    <transition name="review-button-fade">
+      <div
+        v-if="isOpen && product"
+        class="fixed bottom-6 right-6 z-50"
+      >
+        <button
+          @click="showReviewModal = true"
+          class="group bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white p-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 active:scale-95 transition-all duration-300 animate-bounce-slow"
+        >
+          <svg class="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+          </svg>
+          <div class="absolute -top-2 -right-2 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+        </button>
+        <div class="absolute bottom-full right-0 mb-2 px-3 py-1 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+          Write a Review
+        </div>
+      </div>
+    </transition>
+
+    <!-- Review Modal -->
+    <transition name="review-modal-fade">
+      <div v-if="showReviewModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden transform transition-all duration-300">
+          <!-- Review Modal Header -->
+          <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+            <h2 class="text-xl font-semibold text-gray-900">Write a Review</h2>
+            <button
+              @click="closeReviewModal"
+              class="p-2 rounded-full hover:bg-gray-100 transition-colors"
+              aria-label="Close review modal"
+            >
+              <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Review Form -->
+          <div class="p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
+            <form @submit.prevent="submitReview" class="space-y-6">
+              <!-- Name and Email -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Name* <span class="text-gray-500">(this appears publicly)</span>
+                  </label>
+                  <input
+                    v-model="reviewForm.name"
+                    type="text"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    placeholder="Your name"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Email* <span class="text-gray-500">(this will be kept private)</span>
+                  </label>
+                  <input
+                    v-model="reviewForm.email"
+                    type="email"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    placeholder="your@email.com"
+                  />
+                </div>
+              </div>
+
+              <!-- Rating -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">Add a rating*</label>
+                <div class="flex items-center space-x-1">
+                  <button
+                    v-for="star in 5"
+                    :key="star"
+                    type="button"
+                    @click="setRating(star)"
+                    @mouseover="hoverRating = star"
+                    @mouseleave="hoverRating = 0"
+                    class="p-1 transition-transform duration-200 hover:scale-110"
+                  >
+                    <svg
+                      class="w-8 h-8 transition-colors duration-200"
+                      :class="star <= (hoverRating || reviewForm.rating) ? 'text-yellow-400 fill-current' : 'text-gray-300'"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Review Title -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Review title*</label>
+                <input
+                  v-model="reviewForm.title"
+                  type="text"
+                  required
+                  maxlength="100"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  placeholder="Give your review a title"
+                />
+                <div class="text-right text-xs text-gray-500 mt-1">{{ reviewForm.title.length }}/100</div>
+              </div>
+
+              <!-- Review Text -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Review*</label>
+                <textarea
+                  v-model="reviewForm.comment"
+                  required
+                  rows="6"
+                  maxlength="500"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+                  placeholder="Share your thoughts about this product..."
+                ></textarea>
+                <div class="text-right text-xs text-gray-500 mt-1">{{ reviewForm.comment.length }}/500</div>
+              </div>
+
+              <!-- Image Upload -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">
+                  Add images & videos ({{ uploadedImages.length }}/3)
+                </label>
+                <div
+                  @click="triggerFileUpload"
+                  @dragover.prevent
+                  @drop.prevent="handleFileDrop"
+                  class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all duration-200"
+                >
+                  <div class="w-12 h-12 mx-auto mb-4 text-gray-400">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-full h-full">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                  </div>
+                  <p class="text-sm text-gray-600">Click to upload or drag and drop</p>
+                  <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
+                </div>
+                <input
+                  ref="fileInput"
+                  type="file"
+                  multiple
+                  accept="image/*,video/*"
+                  @change="handleFileSelect"
+                  class="hidden"
+                />
+
+                      <!-- Success Indicator -->
+
+                            <!-- Loading Overlay -->
+
+                
+                <!-- Uploaded Images Preview -->
+                <div v-if="uploadedImages.length > 0" class="mt-4 grid grid-cols-3 gap-3">
+                  <div
+                    v-for="(image, index) in uploadedImages"
+                    :key="index"
+                    class="relative group aspect-square bg-gray-100 rounded-lg overflow-hidden"
+                  >
+                    <img :src="image.preview" :alt="`Upload ${index + 1}`" class="w-full h-full object-cover" />
+                    <button
+                      @click="removeImage(index)"
+                      :disabled="image.uploading"
+                      class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Form Actions -->
+              <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+                <button
+                  type="button"
+                  @click="closeReviewModal"
+                  class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                 :disabled="!isReviewFormValid || isSubmittingReview || uploadingFile || uploadingFiles.size > 0"
+                  class="px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center space-x-2"
+                >
+                  <span v-if="isSubmittingReview">
+                    <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  </span>
+                  <span>
+                    {{ 
+                      uploadingFile || uploadingFiles.size > 0 
+                        ? 'Uploading files...' 
+                        : isSubmittingReview 
+                          ? 'Publishing...' 
+                          : 'Publish' 
+                    }}
+                  </span>
+                  <!-- <span>{{ isSubmittingReview ? 'Publishing...' : 'Publish' }}</span> -->
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </transition>
+
     <!-- Payment Modal -->
     <PaymentSelectionModal
       :is-open="showPaymentModal"
@@ -466,6 +867,10 @@ import { useCartStore } from '@/composables/useCartStore'
 import { useCustomToast } from '@/composables/core/useCustomToast'
 import PaymentSelectionModal from './PaymentSelectionModal.vue'
 import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter"
+import { useSingleUploadFile  } from "@/composables/core/useSingleUpload"
+
+
+const { singleUploadFile, loading: uploadingFile, uploadResponse } = useSingleUploadFile()
 
 // Types
 interface ProductSize {
@@ -475,7 +880,12 @@ interface ProductSize {
   color?: string
   installmentConfig?: {
     enabled: boolean
-    [key: string]: any
+    maxInstallments: number
+    interestRate: number
+    minimumAmount: number
+    availableTerms: number[]
+    minimumDownPaymentPercentage: number
+    maximumDownPaymentPercentage: number
   } | null
 }
 
@@ -492,6 +902,28 @@ interface Product {
   width?: number
   height?: number
   length?: number
+  rating: number
+  reviewCount: number
+  reviews: ProductReview[]
+}
+
+interface ProductReview {
+  _id: string
+  productId: {
+    _id: string
+    name: string
+    discountPercentage: number
+    id: string
+  }
+  userId: string
+  userName: string
+  userRole: string
+  rating: number
+  comment: string
+  status: string
+  createdAt: string
+  updatedAt: string
+  id: string
 }
 
 interface CartItem {
@@ -528,7 +960,6 @@ const {
   initializeUserCurrency,
   convertFromUSD,
 } = useCurrencyConverter()
-
 const { product, loading, fetchProduct } = useFetchProduct()
 const { addToCart: addItemToCart } = useCartStore()
 const { showToast } = useCustomToast()
@@ -542,10 +973,59 @@ const pendingCartItem = ref<CartItem | null>(null)
 const isTransitioning = ref(false)
 const touchStartX = ref(0)
 const touchEndX = ref(0)
-
 const expandedSections = reactive({
   productInfo: false,
-  shippingInfo: false
+  shippingInfo: false,
+  reviews: false
+})
+// Add loading state for individual files
+const uploadingFiles = ref<Set<number>>(new Set())
+
+// Review Modal State
+const showReviewModal = ref(false)
+const isSubmittingReview = ref(false)
+const hoverRating = ref(0)
+const fileInput = ref<HTMLInputElement | null>(null)
+const uploadedImages = ref<Array<{ file: File; preview: string }>>([])
+
+// Review Form
+const reviewForm = reactive({
+  name: '',
+  email: '',
+  rating: 0,
+  title: '',
+  comment: ''
+})
+
+// Mock reviews data (replace with actual API call)
+const productReviews = ref<ProductReview[]>([
+  {
+    _id: "687c9c3451b23dd3ffac0078",
+    productId: {
+      _id: "684aa2c2a1708d756091adbe",
+      name: "Fort Bragg CA 1",
+      discountPercentage: 0,
+      id: "684aa2c2a1708d756091adbe"
+    },
+    userId: "67fa8e31b42b0ed1af9e1a0f",
+    userName: "raymond@gmail.com",
+    userRole: "admin",
+    rating: 5,
+    comment: "Absolutely breathtaking. The colours and detail are so vivid, it feels alive on my wall.",
+    status: "approved",
+    createdAt: "2025-07-20T07:35:16.629Z",
+    updatedAt: "2025-07-20T07:35:16.629Z",
+    id: "687c9c3451b23dd3ffac0078"
+  }
+])
+
+// Computed
+const isReviewFormValid = computed(() => {
+  return reviewForm.name.trim() !== '' &&
+         reviewForm.email.trim() !== '' &&
+         reviewForm.rating > 0 &&
+         reviewForm.title.trim() !== '' &&
+         reviewForm.comment.trim() !== ''
 })
 
 // Lifecycle
@@ -562,7 +1042,11 @@ onBeforeUnmount(() => {
 const handleKeyDown = (event: KeyboardEvent) => {
   if (!props.isOpen) return
   if (event.key === 'Escape') {
-    props.onClose()
+    if (showReviewModal.value) {
+      closeReviewModal()
+    } else {
+      props.onClose()
+    }
   } else if (event.key === 'ArrowRight') {
     nextImage()
   } else if (event.key === 'ArrowLeft') {
@@ -649,7 +1133,34 @@ const toggleSection = (section: keyof typeof expandedSections) => {
 }
 
 const hasInstallmentOption = (size: ProductSize) => {
-  return size.installmentConfig && size.installmentConfig.enabled
+  return size.installmentConfig &&
+         size.installmentConfig.enabled &&
+         size.price >= (size.installmentConfig.minimumAmount || 0)
+}
+
+// New function to calculate installment payment for each size
+const getInstallmentPayment = (size: ProductSize) => {
+  if (!hasInstallmentOption(size) || !size.installmentConfig) {
+    return '0'
+  }
+  const config = size.installmentConfig
+  const price = size.price
+  // Use the minimum available term for calculation
+  const term = Math.min(...config.availableTerms)
+  // Calculate monthly payment with interest
+  const monthlyInterestRate = (config.interestRate / 100) / 12
+  let monthlyPayment
+  if (monthlyInterestRate > 0) {
+    // Calculate with compound interest
+    monthlyPayment = (price * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, term)) /
+                     (Math.pow(1 + monthlyInterestRate, term) - 1)
+  } else {
+    // Simple division if no interest
+    monthlyPayment = price / term
+  }
+  // Convert from USD to user's currency
+  const converted = convertFromUSD(monthlyPayment)
+  return converted.formattedAmount || Math.round(monthlyPayment).toString()
 }
 
 const handleAddToCart = () => {
@@ -728,6 +1239,185 @@ const handlePaymentSelection = (paymentType: string, cartItem: CartItem) => {
   }
 }
 
+// Review Modal Methods
+const openReviewModal = () => {
+  console.log('clicked again')
+  showReviewModal.value = true
+  // Reset form
+  Object.assign(reviewForm, {
+    name: '',
+    email: '',
+    rating: 0,
+    title: '',
+    comment: ''
+  })
+  uploadedImages.value = []
+  hoverRating.value = 0
+}
+
+const closeReviewModal = () => {
+  showReviewModal.value = false
+  isSubmittingReview.value = false
+}
+
+const setRating = (rating: number) => {
+  reviewForm.rating = rating
+}
+
+const triggerFileUpload = () => {
+  if (uploadedImages.value.length < 3) {
+    fileInput.value?.click()
+  }
+}
+
+const handleFileSelect = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files) {
+    handleFiles(Array.from(target.files))
+  }
+}
+
+const handleFileDrop = (event: DragEvent) => {
+  if (event.dataTransfer?.files) {
+    handleFiles(Array.from(event.dataTransfer.files))
+  }
+}
+
+// const handleFiles = (files: File[]) => {
+//   const remainingSlots = 3 - uploadedImages.value.length
+//   const filesToProcess = files.slice(0, remainingSlots)
+
+//   filesToProcess.forEach(file => {
+//     if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+//       const reader = new FileReader()
+//       reader.onload = (e) => {
+//         uploadedImages.value.push({
+//           file,
+//           preview: e.target?.result as string
+//         })
+//       }
+//       reader.readAsDataURL(file)
+//     }
+//   })
+// }
+
+const handleFiles = async (files: File[]) => {
+  const remainingSlots = 3 - uploadedImages.value.length
+  const filesToProcess = files.slice(0, remainingSlots)
+
+  for (const file of filesToProcess) {
+    if (file.type.startsWith('image/') || file.type.startsWith('video/')) {
+      // Create preview immediately
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const tempIndex = uploadedImages.value.length
+        uploadedImages.value.push({
+          file,
+          preview: e.target?.result as string,
+          uploading: true,
+          uploaded: false,
+          uploadUrl: null
+        })
+        
+        // Start upload process
+        uploadFile(file, tempIndex)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+}
+
+const uploadFile = async (file: File, index: number) => {
+  try {
+    uploadingFiles.value.add(index)
+    
+    // Upload file using the composable
+    await singleUploadFile(file)
+    
+    // Update the uploaded image with the response
+    if (uploadResponse.value) {
+      uploadedImages.value[index] = {
+        ...uploadedImages.value[index],
+        uploading: false,
+        uploaded: true,
+        uploadUrl: uploadResponse.value.url || uploadResponse.value // Adjust based on your response structure
+      }
+    }
+  } catch (error) {
+    console.error('Upload failed:', error)
+    // Remove the failed upload
+    uploadedImages.value.splice(index, 1)
+    // You might want to show a toast notification here
+  } finally {
+    uploadingFiles.value.delete(index)
+  }
+}
+
+const removeImage = (index: number) => {
+  uploadedImages.value.splice(index, 1)
+}
+
+const submitReview = async () => {
+  if (!isReviewFormValid.value || !product.value) return
+
+  isSubmittingReview.value = true
+
+  try {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    const newReview: ProductReview = {
+      _id: Date.now().toString(),
+      productId: {
+        _id: product.value._id,
+        name: product.value.name,
+        discountPercentage: 0,
+        id: product.value._id
+      },
+      userId: 'current-user-id',
+      userName: reviewForm.email,
+      userRole: 'customer',
+      rating: reviewForm.rating,
+      comment: reviewForm.comment,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      id: Date.now().toString()
+    }
+
+    // Add to reviews list (in real app, this would be handled by API response)
+    productReviews.value.unshift(newReview)
+
+    showToast({
+      title: "Review Submitted",
+      message: "Thank you for your review! It will be published after moderation.",
+      toastType: "success",
+      duration: 4000
+    })
+
+    closeReviewModal()
+  } catch (error) {
+    console.error('Error submitting review:', error)
+    showToast({
+      title: "Error",
+      message: "Failed to submit review. Please try again.",
+      toastType: "error",
+      duration: 3000
+    })
+  } finally {
+    isSubmittingReview.value = false
+  }
+}
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+}
+
 // Animation hooks
 const beforeEnter = (el: HTMLElement) => {
   document.body.style.overflow = 'hidden'
@@ -738,7 +1428,7 @@ const enter = (el: HTMLElement, done: () => void) => {
   el.offsetHeight
   el.style.transition = 'opacity 0.3s ease-out'
   el.style.opacity = '1'
-  
+
   const animateItems = el.querySelectorAll('.animate-item')
   animateItems.forEach((item, index) => {
     const element = item as HTMLElement
@@ -746,13 +1436,13 @@ const enter = (el: HTMLElement, done: () => void) => {
     element.style.transform = 'translateY(20px)'
     element.style.transition = 'all 0.5s ease-out'
     element.style.transitionDelay = `${index * 0.1}s`
-    
+
     setTimeout(() => {
       element.style.opacity = '1'
       element.style.transform = 'translateY(0)'
     }, 100)
   })
-  
+
   setTimeout(done, 300)
 }
 
@@ -785,6 +1475,7 @@ watch(() => props.isOpen, (isOpen) => {
     currentImageIndex.value = 0
     showPaymentModal.value = false
     pendingCartItem.value = null
+    showReviewModal.value = false
     Object.keys(expandedSections).forEach(key => {
       expandedSections[key as keyof typeof expandedSections] = false
     })
@@ -825,6 +1516,58 @@ watch(() => props.isOpen, (isOpen) => {
 .image-fade-leave-to {
   opacity: 0;
   transform: scale(1.05);
+}
+
+.review-button-fade-enter-active {
+  transition: all 0.5s ease-out;
+}
+
+.review-button-fade-leave-active {
+  transition: all 0.3s ease-in;
+}
+
+.review-button-fade-enter-from {
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+}
+
+.review-button-fade-leave-to {
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+}
+
+.review-modal-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.review-modal-fade-leave-active {
+  transition: all 0.2s ease-in;
+}
+
+.review-modal-fade-enter-from {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.review-modal-fade-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s infinite;
+}
+
+@keyframes bounce-slow {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
 }
 
 .overflow-y-auto::-webkit-scrollbar {
@@ -875,3 +1618,4 @@ img {
   }
 }
 </style>
+

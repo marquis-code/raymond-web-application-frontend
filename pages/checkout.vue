@@ -78,7 +78,7 @@
           <div class="absolute top-4 left-0 right-0 h-0.5 bg-slate-200">
             <div 
               class="h-full bg-gradient-to-r from-slate-800 to-slate-900 transition-all duration-500 ease-out"
-              :style="{ width: `{((currentStep - 1) / 2) * 100}%` }"
+              :style="{ width: `${((currentStep - 1) / 2) * 100}%` }"
             ></div>
           </div>
           
@@ -228,7 +228,6 @@
                   
                   <div class="space-y-2">
                     <label for="zipCode" class="block text-sm font-semibold text-slate-700">ZIP Code</label>
-                    <!-- {{taxConfigs}} -->
                     <input 
                       id="zipCode"
                       v-model="deliveryDetails.zipCode"
@@ -240,11 +239,9 @@
                     />
                   </div>
                 </div>
-
                 
                 <div class="space-y-2">
                   <label for="country" class="block text-sm font-semibold text-slate-700">Country</label>
-                  <!-- {{ shippingConfigs }} -->
                   <select 
                     id="country"
                     v-model="deliveryDetails.country"
@@ -349,7 +346,7 @@
                       <div class="flex-1">
                         <div class="flex justify-between items-center mb-1">
                           <span class="font-semibold text-slate-800">Pay Full Amount</span>
-                          <span class="font-bold text-emerald-600">{{ convertFromUSD(calculateTotal()) }}</span>
+                          <span class="font-bold text-emerald-600">{{ convertFromUSD(calculateTotal()).formattedAmount }}</span>
                         </div>
                         <p class="text-sm text-slate-600">Complete payment now with no additional fees</p>
                       </div>
@@ -628,7 +625,7 @@
               <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
                 <ShoppingCart class="w-5 h-5 text-slate-600" />
               </div>
-              <h2 class="text-lg lg:text-xl font-bold text-slate-800">Order Summary sssss</h2>
+              <h2 class="text-lg lg:text-xl font-bold text-slate-800">Order Summary</h2>
             </div>
             
             <!-- Cart Items -->
@@ -654,59 +651,30 @@
                     <span v-if="item.color" class="text-xs block px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.color }}</span>
                     <span v-if="item.hasInstallmentOption" class="text-xs px-2 py-1 block bg-emerald-100 text-emerald-700 rounded-full">Installments</span>
                   </div>
-
                   <div class="flex flex-wrap items-center gap-3 mt-2">
-  <div class="flex items-center gap-2">
-    <button 
-      @click="updateItemQuantity(item.id, Math.max(1, item.quantity - 1))"
-      class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition-colors"
-      :disabled="item.quantity <= 1"
-    >
-      <Minus class="w-4 h-4" />
-    </button>
-
-    <span class="text-sm font-semibold text-center min-w-[2rem]">{{ item.quantity }}</span>
-
-    <button 
-      @click="updateItemQuantity(item.id, item.quantity + 1)"
-      class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition-colors"
-    >
-      <Plus class="w-4 h-4" />
-    </button>
-  </div>
-
-  <button 
-    @click="removeItem(item.id)"
-    class="ml-auto w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
-  >
-    <Trash2 class="w-4 h-4" />
-  </button>
-</div>
-
-                  
-                  <!-- <div class="flex items-center mt-2">
-                    <button 
-                      @click="updateItemQuantity(item.id, Math.max(1, item.quantity - 1))"
-                      class="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition-colors"
-                      :disabled="item.quantity <= 1"
-                    >
-                      <Minus class="w-3 h-3" />
-                    </button>
-                    <span class="mx-3 text-sm font-semibold min-w-[2rem] text-center">{{ item.quantity }}</span>
-                    <button 
-                      @click="updateItemQuantity(item.id, item.quantity + 1)"
-                      class="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition-colors"
-                    >
-                      <Plus class="w-3 h-3" />
-                    </button>
-                    
+                    <div class="flex items-center gap-2">
+                      <button 
+                        @click="updateItemQuantity(item.id, Math.max(1, item.quantity - 1))"
+                        class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition-colors"
+                        :disabled="item.quantity <= 1"
+                      >
+                        <Minus class="w-4 h-4" />
+                      </button>
+                      <span class="text-sm font-semibold text-center min-w-[2rem]">{{ item.quantity }}</span>
+                      <button 
+                        @click="updateItemQuantity(item.id, item.quantity + 1)"
+                        class="w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-slate-100 transition-colors"
+                      >
+                        <Plus class="w-4 h-4" />
+                      </button>
+                    </div>
                     <button 
                       @click="removeItem(item.id)"
-                      class="ml-auto w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
+                      class="ml-auto w-9 h-9 rounded-lg border border-slate-200 flex items-center justify-center hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors"
                     >
-                      <Trash2 class="w-3 h-3" />
+                      <Trash2 class="w-4 h-4" />
                     </button>
-                  </div> -->
+                  </div>
                 </div>
                 <div class="text-right">
                   <span class="font-semibold text-slate-800">{{ convertFromUSD(item.price * item.quantity).formattedAmount }}</span>
@@ -736,15 +704,15 @@
                 <div class="text-xs font-semibold text-blue-800 mb-2">Installment Plan</div>
                 <div class="flex justify-between text-xs text-blue-700 mb-1">
                   <span>Down Payment</span>
-                  <span>{{ convertFromUSD(installmentSummary.downPayment) }}</span>
+                  <span>{{ convertFromUSD(installmentSummary.downPayment).formattedAmount }}</span>
                 </div>
                 <div class="flex justify-between text-xs text-blue-700 mb-1">
-                  <span>{{ installmentConfig.numberOfInstallments }} × {{ convertFromUSD(installmentSummary.installmentAmount) }}</span>
-                  <span>{{ convertFromUSD(installmentSummary.installmentAmount * installmentConfig.numberOfInstallments) }}</span>
+                  <span>{{ installmentConfig.numberOfInstallments }} × {{ convertFromUSD(installmentSummary.installmentAmount).formattedAmount }}</span>
+                  <span>{{ convertFromUSD(installmentSummary.installmentAmount * installmentConfig.numberOfInstallments).formattedAmount }}</span>
                 </div>
                 <div class="flex justify-between text-xs text-blue-700">
                   <span>Total Interest</span>
-                  <span>{{ convertFromUSD(installmentSummary.totalInterest) }}</span>
+                  <span>{{ convertFromUSD(installmentSummary.totalInterest).formattedAmount }}</span>
                 </div>
               </div>
               
@@ -1011,23 +979,8 @@ import { useLocalStorage } from '@/composables/useLocalStorage'
 import { useTaxConfig } from '@/composables/modules/shipping-tax/useTaxConfig'
 import { useShippingConfig } from '@/composables/modules/shipping-tax/useShippingConfig'
 import { useCustomToast } from '@/composables/core/useCustomToast'
-// import { useCurrencyConverter } from "@/composables/useConvertCurrency"
 import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter"
-// const {
-//   countryCode,
-//   currency,
-//   isLoading,
-//   error,
-//   currencyCode,
-//   currencySymbol,
-//   currencyName,
-//   detectCountry,
-//   convertFromUSD,
-//   setCurrency,
-//   setCountry,
-//   getSupportedCurrencies,
-//   getSupportedCountries
-// } = useCurrencyConverter()
+
 const {
   userCountry,
   userCurrency,
@@ -1040,16 +993,8 @@ const {
   convertCurrency,
 } = useCurrencyConverter()
 
-const fixedInstallmentPayment = ref(50)
-
-
-// Auto-detect country on mount
-// onMounted(() => {
-//   detectCountry()
-// })
-
-// const fixedInstallmentPayment = ref(50) // USD base amount
-
+// Remove hardcoded values
+// const fixedInstallmentPayment = ref(50) - REMOVED
 const convertedPrice = ref<any>({})
 const fromCurrency = ref<string>('USD')
 const toCurrency = ref<string>('NGN')
@@ -1258,7 +1203,7 @@ const hasInstallmentOptions = computed(() => {
     const hasInstallment = item.hasInstallmentOption === true &&
                            item.installmentConfig &&
                            item.installmentConfig.enabled === true
-    console.log(`Item {item.id}: hasInstallmentOption={item.hasInstallmentOption}, config enabled={item.installmentConfig?.enabled}, result={hasInstallment}`)
+    console.log(`Item ${item.id}: hasInstallmentOption=${item.hasInstallmentOption}, config enabled=${item.installmentConfig?.enabled}, result=${hasInstallment}`)
     return hasInstallment
   })
   console.log('Overall hasInstallmentOptions:', hasOptions)
@@ -1292,13 +1237,36 @@ const availableInstallmentTerms = computed(() => {
   return terms
 })
 
-// Get minimum installment amount for display
+// Get minimum installment amount for display - UPDATED: Dynamic calculation
 const getMinimumInstallmentAmount = () => {
-  if (!hasInstallmentOptions.value) return 0
+  if (!hasInstallmentOptions.value || availableInstallmentTerms.value.length === 0) return 0
   
   const total = calculateTotal()
   const maxTerms = Math.max(...availableInstallmentTerms.value)
-  return total / maxTerms
+  
+  // Find the first item with installment config to get interest rate
+  const firstItemWithInstallments = cartItems.value.find(item =>
+    item.hasInstallmentOption === true &&
+    item.installmentConfig &&
+    item.installmentConfig.enabled === true
+  )
+  
+  if (!firstItemWithInstallments?.installmentConfig) {
+    return total / maxTerms
+  }
+  
+  const config = firstItemWithInstallments.installmentConfig
+  const minDownPaymentPercentage = config.minimumDownPaymentPercentage || 20
+  const minDownPayment = (total * minDownPaymentPercentage) / 100
+  const remainingAmount = total - minDownPayment
+  const monthlyInterestRate = (config.interestRate || 0) / 12 / 100
+  
+  if (monthlyInterestRate > 0) {
+    const factor = Math.pow(1 + monthlyInterestRate, maxTerms)
+    return (remainingAmount * monthlyInterestRate * factor) / (factor - 1)
+  } else {
+    return remainingAmount / maxTerms
+  }
 }
 
 // FIXED: Calculate estimated monthly payment for a given term
@@ -1493,7 +1461,7 @@ const getPaymentButtonText = () => {
   if (selectedPaymentType.value === 'installment') {
     return `Pay Down Payment - ${convertFromUSD(installmentSummary.value.downPayment).formattedAmount}`
   } else {
-    return `Complete Order - ${convertFromUSD(calculateTotal().formattedAmount)}`
+    return `Complete Order - ${convertFromUSD(calculateTotal()).formattedAmount}`
   }
 }
 
@@ -1669,12 +1637,7 @@ const clearPersistedCheckoutData = () => {
   }
 }
 
-// Available countries
 // Available countries from shipping configs
-// const availableCountries = computed(() => {
-//   return Array.isArray(shippingConfigs.value) && shippingConfigs?.value?.filter(config => config.isActive)
-// })
-
 const availableCountries = ref([
   { countryCode: 'NG', countryName: 'Nigeria' },
   { countryCode: 'US', countryName: 'United States' },
@@ -1750,7 +1713,6 @@ const availableCountries = ref([
   { countryCode: 'IL', countryName: 'Israel' },
   { countryCode: 'PS', countryName: 'Palestine' },
   { countryCode: 'TR', countryName: 'Turkey' },
-  { countryCode: 'CY', countryName: 'Cyprus' },
   { countryCode: 'GE', countryName: 'Georgia' },
   { countryCode: 'AM', countryName: 'Armenia' },
   { countryCode: 'AZ', countryName: 'Azerbaijan' },
@@ -1852,23 +1814,7 @@ const availableCountries = ref([
   { countryCode: 'GH', countryName: 'Ghana' },
   { countryCode: 'TG', countryName: 'Togo' },
   { countryCode: 'BJ', countryName: 'Benin' },
-  { countryCode: 'AO', countryName: 'Angola' },
-  { countryCode: 'AU', countryName: 'Australia' },
-  { countryCode: 'NZ', countryName: 'New Zealand' },
-  { countryCode: 'PG', countryName: 'Papua New Guinea' },
-  { countryCode: 'FJ', countryName: 'Fiji' },
-  { countryCode: 'SB', countryName: 'Solomon Islands' },
-  { countryCode: 'VU', countryName: 'Vanuatu' },
-  { countryCode: 'NC', countryName: 'New Caledonia' },
-  { countryCode: 'PF', countryName: 'French Polynesia' },
-  { countryCode: 'WS', countryName: 'Samoa' },
-  { countryCode: 'TO', countryName: 'Tonga' },
-  { countryCode: 'KI', countryName: 'Kiribati' },
-  { countryCode: 'TV', countryName: 'Tuvalu' },
-  { countryCode: 'NR', countryName: 'Nauru' },
-  { countryCode: 'PW', countryName: 'Palau' },
-  { countryCode: 'FM', countryName: 'Federated States of Micronesia' },
-  { countryCode: 'MH', countryName: 'Marshall Islands' }
+  { countryCode: 'AO', countryName: 'Angola' }
 ])
 
 // Computed properties
@@ -1903,7 +1849,6 @@ const loadShippingAndTaxConfigs = async () => {
       fetchShippingConfigs(),
       fetchTaxConfigs()
     ])
-
     
     if (shippingResponse) {
       shippingConfigs.value = shippingResponse
@@ -1937,8 +1882,7 @@ const handleCountryChange = () => {
     const shippingConfig = shippingConfigs.value.find(config => 
       config.countryCode === countryCode && config.isActive
     )
-
-    console.log(shippingConfig, 'selected shipping cionfig')
+    console.log(shippingConfig, 'selected shipping config')
     
     if (shippingConfig) {
       currentShippingFee.value = shippingConfig.shippingRate
@@ -2145,7 +2089,6 @@ const processPayment = async () => {
     const result = await processCheckout(orderData)
     
     console.log('Checkout result:', result)
-
     if (result.success) {
       // Generate order ID
       orderId.value = result.orderId || generateOrderNumber()
@@ -2157,12 +2100,12 @@ const processPayment = async () => {
       
       showToast({
         title: 'Order Successful',
-        message: `Your order #{orderId.value} has been placed successfully!`,
+        message: `Your order #${orderId.value} has been placed successfully!`,
         toastType: 'success',
         duration: 5000
       })
     } else {
-      console.log(result, 'resal message here')
+      console.log(result, 'result message here')
       throw new Error(result.error || 'Payment processing failed')
     }
   } catch (error) {
@@ -2180,16 +2123,8 @@ const processPayment = async () => {
 const generateOrderNumber = () => {
   const timestamp = Date.now().toString().slice(-6)
   const random = Math.random().toString(36).substring(2, 5).toUpperCase()
-  return `ORD{timestamp}{random}`
+  return `ORD${timestamp}${random}`
 }
-
-// Utility functions
-// const formatPrice = (price: number) => {
-//   if (typeof price !== 'number' || isNaN(price)) {
-//     return '0.00'
-//   }
-//   return price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-// }
 
 const handleImageError = (event: Event) => {
   const target = event.target as HTMLImageElement
@@ -2206,7 +2141,6 @@ const checkUserAuth = () => {
     showAuthModal.value = true
   }
 }
-
 
 // Watch for route changes to sync query parameters
 watch(() => route.query, (newQuery) => {
@@ -2242,9 +2176,9 @@ watch(() => installmentConfig.value, () => {
 // Lifecycle hooks
 onMounted(async () => {
   console.log('Checkout page mounted')
-
-    // Check if user is logged in immediately on mount
-    nextTick(() => {
+  
+  // Check if user is logged in immediately on mount
+  nextTick(() => {
     checkUserAuth()
   })
   
