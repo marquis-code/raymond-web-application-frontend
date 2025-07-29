@@ -14,7 +14,7 @@ export const useFetchReview = () => {
     try {
       const response = await review_api.$_fetch_review_by_productId(route?.params?.id || route?.query?.productId || id)
       console.log(response, 'response gere')
-      review.value = response.data.reviews
+      review.value = response?.data?.reviews?.filter((item: Record<string, any>) => item?.status === 'approved')
       
       
       return response.data

@@ -22,7 +22,7 @@
         <!-- Product Gallery with advanced scroll and hover effects -->
         <section ref="productGalleryRef" class="pt-16 overflow-hidden">
       <div class="mx-auto px-4">
-        <h2 class="text-2xl font-bold text-center mb-12 slide-up">
+        <h2 class="text-base font-bold text-center mb-12 slide-up">
           Shop Artworks
         </h2>
 
@@ -87,7 +87,6 @@
                 <img
                   :src="product.images[0]"
                   :alt="product.title"
-                  class="w-full h-80 rounded-lg transition-transform duration-500 group-hover:scale-105"
                 />
                 <div
                   v-if="product.isFeatured"

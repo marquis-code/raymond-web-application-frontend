@@ -12,7 +12,7 @@ export const useFetchAllReviews = () => {
     try {
       const response = await review_api.$_fetch_reviews()
       console.log(response.data, 'all revies hwew')
-      reviews.value = response?.data?.reviews
+      reviews.value = response?.data?.reviews?.filter((item: Record<string, any>) => item?.status === 'approved')
     } catch (e: any) {
       error.value = e.response?.data?.message || 'Failed to fetch orders'
     } finally {

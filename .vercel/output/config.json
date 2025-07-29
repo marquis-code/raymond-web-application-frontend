@@ -1,17 +1,20 @@
 {
   "version": 3,
   "overrides": {
+    "cart/index.html": {
+      "path": "cart"
+    },
+    "shop/index.html": {
+      "path": "shop"
+    },
     "about/index.html": {
       "path": "about"
     },
     "terms/index.html": {
       "path": "terms"
     },
-    "shop/index.html": {
-      "path": "shop"
-    },
-    "checkout/index.html": {
-      "path": "checkout"
+    "signup/index.html": {
+      "path": "signup"
     },
     "advert/index.html": {
       "path": "advert"
@@ -19,44 +22,41 @@
     "contact/index.html": {
       "path": "contact"
     },
-    "signup/index.html": {
-      "path": "signup"
-    },
-    "academy/index.html": {
-      "path": "academy"
+    "checkout/index.html": {
+      "path": "checkout"
     },
     "commission/index.html": {
       "path": "commission"
     },
-    "artworks/index.html": {
-      "path": "artworks"
-    },
-    "cart/index.html": {
-      "path": "cart"
-    },
-    "refund-policy/index.html": {
-      "path": "refund-policy"
-    },
     "contact-us/index.html": {
       "path": "contact-us"
-    },
-    "shipping-policy/index.html": {
-      "path": "shipping-policy"
-    },
-    "order-success/index.html": {
-      "path": "order-success"
-    },
-    "privacy-policy/index.html": {
-      "path": "privacy-policy"
-    },
-    "prints/index.html": {
-      "path": "prints"
     },
     "test-price/index.html": {
       "path": "test-price"
     },
+    "prints/index.html": {
+      "path": "prints"
+    },
+    "academy/index.html": {
+      "path": "academy"
+    },
+    "order-success/index.html": {
+      "path": "order-success"
+    },
+    "refund-policy/index.html": {
+      "path": "refund-policy"
+    },
+    "artworks/index.html": {
+      "path": "artworks"
+    },
+    "privacy-policy/index.html": {
+      "path": "privacy-policy"
+    },
     "index.html": {
       "path": ""
+    },
+    "shipping-policy/index.html": {
+      "path": "shipping-policy"
     }
   },
   "routes": [
