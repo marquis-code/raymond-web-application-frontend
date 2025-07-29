@@ -87,7 +87,7 @@
                 <img
                   :src="product.images[0]"
                   :alt="product.title"
-                  class="w-full h-80 rounded-lg object-cover transition-transform duration-500 group-hover:scale-105"
+                  class="w-full h-80 rounded-lg transition-transform duration-500 group-hover:scale-105"
                 />
                 <div
                   v-if="product.isFeatured"

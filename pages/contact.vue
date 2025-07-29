@@ -25,7 +25,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
         <!-- Enhanced Contact Form -->
-        <div class="order-2 lg:order-1 animate-slide-up" style="animation-delay: 0.4s;">
+        <div class="order-1  animate-slide-up" style="animation-delay: 0.4s;">
           <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-6 md:p-10 transform transition-all duration-500 hover:shadow-3xl hover:scale-[1.02] border border-white/20">
             <div class="text-center mb-8">
               <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-rose-500 to-pink-600 rounded-2xl mb-4 animate-pulse-slow">
@@ -224,7 +224,7 @@
         </div>
 
         <!-- Enhanced Contact Information -->
-        <div class="order-1 lg:order-2 space-y-6 md:space-y-8 animate-slide-up" style="animation-delay: 0.6s;">
+        <div class="order-2 space-y-6 md:space-y-8 animate-slide-up" style="animation-delay: 0.6s;">
           <!-- Contact Info Card -->
           <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-6 md:p-8 transform transition-all duration-500 hover:shadow-3xl hover:scale-[1.02] border border-white/20">
             <div class="text-center mb-8">

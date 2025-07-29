@@ -97,7 +97,7 @@
         </div>
 
         <!-- Enhanced Cart Items with Creative Layout -->
-        <div v-else class="flex-grow overflow-y-auto p-6 bg-gradient-to-b from-gray-50/50 to-white custom-scrollbar">
+        <div v-else class="flex-grow overflow-y-auto p-3 bg-gradient-to-b from-gray-50/50 to-white custom-scrollbar">
           <TransitionGroup name="cart-item" tag="div" class="space-y-4">
             <div 
               v-for="(item, index) in cart"
@@ -105,7 +105,7 @@
               class="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-gray-200 transform hover:-translate-y-1"
               :style="{ animationDelay: `${index * 100}ms` }"
             >
-              <div class="flex p-5">
+              <div class="flex p-2">
                 <!-- Enhanced Item Image with Overlay Effects -->
                 <div class="relative w-28 h-28 rounded-xl overflow-hidden flex-shrink-0 border border-gray-200 group-hover:border-gray-300 transition-all duration-300">
                   <img 
@@ -124,8 +124,8 @@
                 <!-- Enhanced Item Details -->
                 <div class="flex-grow pl-5 flex flex-col justify-between">
                   <div>
-                    <div class="flex justify-between items-start mb-2">
-                      <h4 class="font-semibold text-gray-900 text-lg leading-tight group-hover:text-black transition-colors duration-300">
+                    <div class="flex justify-between items-center mb-2">
+                      <h4 class="font-semibold text-gray-900 text-sm leading-tight group-hover:text-black transition-colors duration-300">
                         {{ item.title }}
                       </h4>
                       <button 
@@ -146,10 +146,17 @@
                       </button>
                     </div>
                     
-                    <p class="text-sm text-gray-500 mb-3 flex items-center gap-2">
-                      <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                      {{ item.quantity }} × {{ convertFromUSD(item.price).formattedAmount }}
-                    </p>
+                  <section>
+                       <p class="text-sm text-gray-500 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        {{ item.quantity }} × {{ convertFromUSD(item.price).formattedAmount }}
+                      </p>
+                      <div class="text-left pb-3">
+                        <span class="text-sm font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                          {{ convertFromUSD(item.price * item.quantity).formattedAmount }}
+                        </span>
+                      </div>  
+                  </section>           
                   </div>
 
                   <!-- Enhanced Quantity Controls and Price -->
@@ -182,11 +189,11 @@
                       </button>
                     </div>
                     
-                    <div class="text-right">
+                    <!-- <div class="text-right">
                       <span class="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                         {{ convertFromUSD(item.price * item.quantity).formattedAmount }}
                       </span>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </div>

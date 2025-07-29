@@ -105,6 +105,9 @@
                       <span class="text-base font-bold text-gray-900">
                         <span v-if="!selectedSize">From {{ convertFromUSD(getMinPrice(product))?.formattedAmount }}</span>
                         <span v-else>{{ convertFromUSD(getSelectedSizePrice())?.formattedAmount }}</span>
+                      </span> 
+                      <span>
+                        {{product?.promotionText}}
                       </span>
                       <span v-if="selectedSize && quantity > 1" class="text-base text-gray-600">
                         × {{ quantity }}

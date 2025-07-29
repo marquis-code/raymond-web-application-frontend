@@ -1,1 +1,0 @@
-import{G as r}from"./OGZqr3Xg.js";const _={$_create_review(e){return r.post("/reviews",e)},$_fetch_review_by_productId(e){return r.get(`/reviews/product/${e}`)},$_fetch_reviews(){return r.get("/reviews")}};export{_ as r};

@@ -33,75 +33,71 @@
         <div class="w-24 h-1 bg-gradient-to-r from-gray-400 to-gray-600 mx-auto animate-scale-in animation-delay-300"></div>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1 lg:gap-2">
-  <div
-    v-for="(artwork, index) in products"
-    :key="artwork._id"
-    class="artwork-card group cursor-pointer relative animate-fade-in-up h-full"
-    :style="{ animationDelay: `${index * 100}ms` }"
-    @click="openFullScreenModal(artwork, index)"
-    @mouseenter="hoveredIndex = index"
-    @mouseleave="hoveredIndex = null"
-  >
-    <!-- Artwork Container -->
-    <div class="relative aspect-[4/5] overflow-hidden rounded-lg bg-white shadow-md group-hover:shadow-xl transition-all duration-700 h-full">
-      <!-- Artwork Image -->
-      <img
-        :src="getFirstImage(artwork)"
-        :alt="artwork.name"
-        class="w-full h-full object-cover transition-all duration-700 ease-out"
-        :class="{
-          'scale-110': hoveredIndex === index,
-          'scale-100': hoveredIndex !== index
-        }"
-      />
-      
-      <!-- Dark Glassy Overlay -->
-      <div 
-        class="absolute inset-0 bg-black/50 backdrop-blur-[0.5px] transition-all duration-500"
-        :class="{
-          'opacity-100': hoveredIndex === index,
-          'opacity-0': hoveredIndex !== index
-        }"
-      ></div>
+      <div class="grid grid-cols-2  lg:grid-cols-3 gap-1 lg:gap-2">
+        <div
+          v-for="(artwork, index) in products"
+          :key="artwork._id"
+          class="artwork-card group cursor-pointer relative animate-fade-in-up h-full"
+          :style="{ animationDelay: `${index * 100}ms` }"
+          @click="openFullScreenModal(artwork, index)"
+          @mouseenter="hoveredIndex = index"
+          @mouseleave="hoveredIndex = null"
+        >
+          <div class="relative aspect-[4/5] overflow-hidden bg-white shadow-md group-hover:shadow-xl transition-all duration-700 h-full">
+            <img
+              :src="getFirstImage(artwork)"
+              :alt="artwork.name"
+              class="w-full h-full transition-all duration-700 ease-out"
+              :class="{
+                'scale-110': hoveredIndex === index,
+                'scale-100': hoveredIndex !== index
+              }"
+            />
+            
+            <div 
+              class="absolute inset-0 bg-black/50 backdrop-blur-[0.5px] transition-all duration-500"
+              :class="{
+                'opacity-100': hoveredIndex === index,
+                'opacity-0': hoveredIndex !== index
+              }"
+            ></div>
 
-      <!-- Artwork Title Overlay - Positioned at Bottom -->
-      <div 
-        class="absolute bottom-0 left-0 right-0 p-4 transition-all duration-500"
-        :class="{
-          'opacity-100': hoveredIndex === index,
-          'opacity-0': hoveredIndex !== index
-        }"
-      >
-        <div class="text-center transform transition-all duration-700">
-          <h3 
-            class="text-lg md:text-xl font-semibold text-white mb-2 tracking-wide drop-shadow-lg"
-            :class="{
-              'translate-y-0 opacity-100': hoveredIndex === index,
-              'translate-y-4 opacity-0': hoveredIndex !== index
-            }"
-          >
-            {{ artwork.name.toUpperCase() }}
-          </h3>
-          <div 
-            class="w-12 h-0.5 bg-white mx-auto transition-all duration-700 delay-100"
-            :class="{
-              'scale-x-100 opacity-100': hoveredIndex === index,
-              'scale-x-0 opacity-0': hoveredIndex !== index
-            }"
-          ></div>
+            <div 
+              class="absolute bottom-0 left-0 right-0 p-4 transition-all duration-500"
+              :class="{
+                'opacity-100': hoveredIndex === index,
+                'opacity-0': hoveredIndex !== index
+              }"
+            >
+              <div class="text-center transform transition-all duration-700">
+                <h3 
+                  class="text-lg md:text-xl font-semibold text-white mb-2 tracking-wide drop-shadow-lg"
+                  :class="{
+                    'translate-y-0 opacity-100': hoveredIndex === index,
+                    'translate-y-4 opacity-0': hoveredIndex !== index
+                  }"
+                >
+                  {{ artwork.name.toUpperCase() }}
+                </h3>
+                <div 
+                  class="w-12 h-0.5 bg-white mx-auto transition-all duration-700 delay-100"
+                  :class="{
+                    'scale-x-100 opacity-100': hoveredIndex === index,
+                    'scale-x-0 opacity-0': hoveredIndex !== index
+                  }"
+                ></div>
+              </div>
+            </div>
+
+
+            <div v-if="getProductTag(artwork)" class="absolute top-3 left-3 z-10">
+              <span class="bg-white/90 backdrop-blur-sm text-gray-900 text-xs px-2.5 py-1 font-medium rounded-full shadow-lg">
+                {{ getProductTag(artwork) }}
+              </span>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <!-- Product Tags -->
-      <div v-if="getProductTag(artwork)" class="absolute top-3 left-3 z-10">
-        <span class="bg-white/90 backdrop-blur-sm text-gray-900 text-xs px-2.5 py-1 font-medium rounded-full shadow-lg">
-          {{ getProductTag(artwork) }}
-        </span>
-      </div>
-    </div>
-  </div>
-</div>
+     </div>
     </div>
 
     <!-- Enhanced Full Screen Modal -->
@@ -281,7 +277,7 @@
                 <img 
                   :src="getFirstImage(selectedArtwork)" 
                   :alt="selectedArtwork.name" 
-                  class="w-full h-full object-cover rounded-lg shadow-2xl"
+                  class="w-full h-full rounded-lg shadow-2xl"
                   @load="imageLoaded = true"
                 />
                 

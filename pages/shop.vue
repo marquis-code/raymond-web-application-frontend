@@ -47,7 +47,7 @@
               <img
                 :src="getProductImage(product, index)"
                 :alt="product.name"
-                class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                class="w-full h-full transition-all duration-700 group-hover:scale-110"
                 @load="handleImageLoad(index)"
                 @error="handleImageError(index)"
               />
@@ -69,7 +69,7 @@
 
           <!-- Product Info -->
           <div class="pt-6 text-center space-y-3">
-            <h3 class="text-lg font-medium text-gray-900 tracking-wide group-hover:text-gray-700 transition-colors">
+            <h3 class="text-base font-medium text-gray-900 tracking-wide group-hover:text-gray-700 transition-colors">
               {{ product?.name ?? 'Nil' }}
             </h3>
             <!-- <p class="text-gray-600 font-light">From 
@@ -83,10 +83,11 @@
                 or {{ getConvertedInstallmentPayment(product) }}/month
               </span>
             </p>
+            <p class="text-sm">{{ product?.promotionText }}</p>
 
             <div class="pt-4 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500">
               <button 
-                class="w-full bg-gray-900 text-white py-3 px-6 text-sm rounded-xl font-medium hover:bg-gray-800 transition-all duration-300 hover:scale-105 shadow-lg"
+                class="w-full bg-gray-900 text-white py-2.5 text-sm px-6 rounded-xl font-medium hover:bg-gray-800 transition-all duration-300 hover:scale-105 shadow-lg"
                 @click.stop="router.push(`/artworks/${product._id}`)"
               >
                 Add to Cart

@@ -11,8 +11,8 @@
         <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center">
           <ShoppingBag class="w-12 h-12 text-slate-400" />
         </div>
-        <h2 class="text-2xl font-bold text-slate-800 mb-4">Your cart is empty</h2>
-        <p class="text-slate-600 mb-8">Add some amazing products to your cart to continue with checkout.</p>
+        <h2 class="text-2xl font-bold text-slate-800 mb-4">Your shopping cart is empty</h2>
+        <p class="text-slate-600 mb-8">Browse our amazing collection and add items to your cart to get started with your purchase.</p>
         <NuxtLink 
           to="/artworks"
           class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
@@ -30,22 +30,22 @@
           <div class="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center">
             <CheckCircle class="w-10 h-10 text-emerald-600" />
           </div>
-          <h2 class="text-3xl font-bold text-slate-800 mb-4">Order Confirmed!</h2>
-          <p class="text-slate-600 mb-2">Thank you for your purchase</p>
-          <p class="text-slate-500 text-sm">We've sent a confirmation email with your order details</p>
+          <h2 class="text-3xl font-bold text-slate-800 mb-4">Order Successfully Placed!</h2>
+          <p class="text-slate-600 mb-2">Thank you for choosing us for your purchase</p>
+          <p class="text-slate-500 text-sm">A confirmation email with your order details has been sent to your email address</p>
         </div>
         
         <div class="bg-slate-50 rounded-xl p-6 mb-8">
           <div class="flex justify-between items-center mb-3">
-            <span class="text-slate-600 font-medium">Order Number</span>
+            <span class="text-slate-600 font-medium">Order Reference</span>
             <span class="font-bold text-slate-800">#{{ orderId || generateOrderNumber() }}</span>
           </div>
           <div class="flex justify-between items-center mb-3">
-            <span class="text-slate-600 font-medium">Payment Type</span>
-            <span class="font-bold text-slate-800">{{ selectedPaymentType === 'installment' ? 'Installment Plan' : 'Full Payment' }}</span>
+            <span class="text-slate-600 font-medium">Payment Method</span>
+            <span class="font-bold text-slate-800">{{ selectedPaymentType === 'installment' ? 'Payment Plan' : 'Full Payment' }}</span>
           </div>
           <div v-if="selectedPaymentType === 'installment'" class="flex justify-between items-center mb-3">
-            <span class="text-slate-600 font-medium">Down Payment</span>
+            <span class="text-slate-600 font-medium">Initial Payment</span>
             <span class="font-bold text-emerald-600">{{ convertFromUSD(installmentSummary.downPayment).formattedAmount }}</span>
           </div>
           <div class="flex justify-between items-center">
@@ -67,8 +67,8 @@
     <div v-else class="container mx-auto px-4 py-8 lg:py-12">
       <!-- Header -->
       <div class="text-center mt-20 mb-12">
-        <h1 class="text-xl lg:text-3xl font-bold text-slate-800 mb-4">Secure Checkout</h1>
-        <p class="text-slate-600 max-w-2xl mx-auto">Complete your purchase securely. Your information is protected with industry-standard encryption.</p>
+        <h1 class="text-xl lg:text-3xl font-bold text-slate-800 mb-4">Secure Checkout Process</h1>
+        <p class="text-slate-600 max-w-2xl mx-auto">Complete your purchase safely and securely. All your personal and payment information is protected with advanced encryption technology.</p>
       </div>
 
       <!-- Progress Steps -->
@@ -82,7 +82,7 @@
             ></div>
           </div>
           
-          <!-- Step 1: Details -->
+          <!-- Step 1: Personal Information -->
           <div class="relative flex flex-col items-center">
             <div 
               class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 z-10"
@@ -90,10 +90,10 @@
             >
               <User class="w-4 h-4" />
             </div>
-            <span class="text-xs font-medium mt-2 text-slate-600">Details</span>
+            <span class="text-xs font-medium mt-2 text-slate-600">Personal Info</span>
           </div>
           
-          <!-- Step 2: Shipping -->
+          <!-- Step 2: Delivery Options -->
           <div class="relative flex flex-col items-center">
             <div 
               class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 z-10"
@@ -101,10 +101,10 @@
             >
               <Truck class="w-4 h-4" />
             </div>
-            <span class="text-xs font-medium mt-2 text-slate-600">Shipping</span>
+            <span class="text-xs font-medium mt-2 text-slate-600">Delivery</span>
           </div>
           
-          <!-- Step 3: Payment -->
+          <!-- Step 3: Payment Setup -->
           <div class="relative flex flex-col items-center">
             <div 
               class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 z-10"
@@ -128,13 +128,13 @@
                 <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
                   <User class="w-5 h-5 text-slate-600" />
                 </div>
-                <h2 class="text-xl lg:text-2xl font-bold text-slate-800">Customer Details</h2>
+                <h2 class="text-xl lg:text-2xl font-bold text-slate-800">Personal Information</h2>
               </div>
               
               <form @submit.prevent="handleNextStep" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div class="space-y-2">
-                    <label for="firstName" class="block text-sm font-semibold text-slate-700">First Name</label>
+                    <label for="firstName" class="block text-sm font-semibold text-slate-700">First Name *</label>
                     <input 
                       id="firstName"
                       v-model="deliveryDetails.firstName"
@@ -147,7 +147,7 @@
                   </div>
                   
                   <div class="space-y-2">
-                    <label for="lastName" class="block text-sm font-semibold text-slate-700">Last Name</label>
+                    <label for="lastName" class="block text-sm font-semibold text-slate-700">Last Name *</label>
                     <input 
                       id="lastName"
                       v-model="deliveryDetails.lastName"
@@ -161,7 +161,7 @@
                 </div>
                 
                 <div class="space-y-2">
-                  <label for="email" class="block text-sm font-semibold text-slate-700">Email Address</label>
+                  <label for="email" class="block text-sm font-semibold text-slate-700">Email Address *</label>
                   <input 
                     id="email"
                     v-model="deliveryDetails.email"
@@ -171,10 +171,11 @@
                     placeholder="Enter your email address"
                     @input="persistDeliveryDetails"
                   />
+                  <p class="text-xs text-slate-500">We'll send your order confirmation to this email</p>
                 </div>
                 
                 <div class="space-y-2">
-                  <label for="phone" class="block text-sm font-semibold text-slate-700">Phone Number</label>
+                  <label for="phone" class="block text-sm font-semibold text-slate-700">Phone Number *</label>
                   <input 
                     id="phone"
                     v-model="deliveryDetails.phone"
@@ -184,24 +185,25 @@
                     placeholder="Enter your phone number"
                     @input="persistDeliveryDetails"
                   />
+                  <p class="text-xs text-slate-500">For delivery updates and order notifications</p>
                 </div>
                 
                 <div class="space-y-2">
-                  <label for="address" class="block text-sm font-semibold text-slate-700">Street Address</label>
+                  <label for="address" class="block text-sm font-semibold text-slate-700">Complete Address *</label>
                   <input 
                     id="address"
                     v-model="deliveryDetails.address"
                     type="text"
                     required
                     class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
-                    placeholder="Enter your street address"
+                    placeholder="Enter your complete street address"
                     @input="persistDeliveryDetails"
                   />
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div class="space-y-2">
-                    <label for="city" class="block text-sm font-semibold text-slate-700">City</label>
+                    <label for="city" class="block text-sm font-semibold text-slate-700">City *</label>
                     <input 
                       id="city"
                       v-model="deliveryDetails.city"
@@ -214,7 +216,7 @@
                   </div>
                   
                   <div class="space-y-2">
-                    <label for="state" class="block text-sm font-semibold text-slate-700">State</label>
+                    <label for="state" class="block text-sm font-semibold text-slate-700">State/Province *</label>
                     <input 
                       id="state"
                       v-model="deliveryDetails.state"
@@ -227,7 +229,7 @@
                   </div>
                   
                   <div class="space-y-2">
-                    <label for="zipCode" class="block text-sm font-semibold text-slate-700">ZIP Code</label>
+                    <label for="zipCode" class="block text-sm font-semibold text-slate-700">ZIP/Postal Code *</label>
                     <input 
                       id="zipCode"
                       v-model="deliveryDetails.zipCode"
@@ -241,30 +243,20 @@
                 </div>
                 
                 <div class="space-y-2">
-                  <label for="country" class="block text-sm font-semibold text-slate-700">Country</label>
-                  <select 
-                    id="country"
+                  <label for="country" class="block text-sm font-semibold text-slate-700">Country *</label>
+                  <CustomDropdown
                     v-model="deliveryDetails.country"
-                    required
-                    class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all duration-200 bg-white"
+                    :options="countryOptions"
+                    placeholder="Select your country"
                     @change="handleCountryChange"
-                  >
-                    <option value="">Select Country</option>
-                    <option 
-                      v-for="country in availableCountries"
-                      :key="country.countryCode"
-                      :value="country.countryCode"
-                    >
-                      {{ country.countryName }}
-                    </option>
-                  </select>
+                  />
                 </div>
                 
                 <button 
                   type="submit"
                   class="w-full py-4 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl font-medium flex items-center justify-center"
                 >
-                  Continue to Shipping
+                  Continue to Delivery Options
                   <ArrowRight class="w-5 h-5 ml-2" />
                 </button>
               </form>
@@ -276,7 +268,7 @@
                 <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
                   <Truck class="w-5 h-5 text-slate-600" />
                 </div>
-                <h2 class="text-xl lg:text-2xl font-bold text-slate-800">Shipping Method</h2>
+                <h2 class="text-xl lg:text-2xl font-bold text-slate-800">Delivery Options</h2>
               </div>
               
               <div class="space-y-4 mb-8">
@@ -292,10 +284,11 @@
                     </div>
                     <div class="flex-1">
                       <div class="flex justify-between items-center mb-1">
-                        <span class="font-semibold text-slate-800">Express Shipping</span>
+                        <span class="font-semibold text-slate-800">Express Delivery</span>
                         <span class="font-bold text-slate-800">{{ convertFromUSD(currentShippingFee).formattedAmount }}</span>
                       </div>
-                      <p class="text-sm text-slate-600">Delivery within 5-7 business days</p>
+                      <p class="text-sm text-slate-600">Fast and reliable delivery within 5-7 business days</p>
+                      <p class="text-xs text-slate-500 mt-1">Includes package tracking and delivery confirmation</p>
                     </div>
                   </div>
                 </div>
@@ -325,12 +318,12 @@
                 <div class="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center mr-4">
                   <CreditCard class="w-5 h-5 text-slate-600" />
                 </div>
-                <h2 class="text-lg lg:text-2xl font-bold text-slate-800">Payment Options</h2>
+                <h2 class="text-lg lg:text-2xl font-bold text-slate-800">Payment Setup</h2>
               </div>
 
               <!-- Payment Type Selection -->
               <div class="mb-8">
-                <h3 class="text-base lg:text-lg font-semibold text-slate-800 mb-4">Choose Payment Type</h3>
+                <h3 class="text-base lg:text-lg font-semibold text-slate-800 mb-4">Choose Your Payment Method</h3>
                 <div class="space-y-4">
                   <!-- Full Payment Option -->
                   <div 
@@ -345,10 +338,10 @@
                       </div>
                       <div class="flex-1">
                         <div class="flex justify-between items-center mb-1">
-                          <span class="font-semibold text-slate-800">Pay Full Amount</span>
+                          <span class="font-semibold text-slate-800">Pay Complete Amount Now</span>
                           <span class="font-bold text-emerald-600">{{ convertFromUSD(calculateTotal()).formattedAmount }}</span>
                         </div>
-                        <p class="text-sm text-slate-600">Complete payment now with no additional fees</p>
+                        <p class="text-sm text-slate-600">Complete your purchase immediately with no additional charges or fees</p>
                       </div>
                       <div class="w-10 h-10 bg-emerald-100 rounded-md flex items-center justify-center ml-4">
                         <CreditCard class="w-6 h-6 text-emerald-600" />
@@ -370,10 +363,10 @@
                       </div>
                       <div class="flex-1">
                         <div class="flex justify-between items-center mb-1">
-                          <span class="font-semibold text-slate-800">Installment Plan</span>
-                          <span class="font-bold text-blue-600">From {{ convertFromUSD(getMinimumInstallmentAmount()).formattedAmount }}/month</span>
+                          <span class="font-semibold text-slate-800">Flexible Payment Plan</span>
+                          <span class="font-bold text-blue-600">Starting from {{ convertFromUSD(getMinimumInstallmentAmount()).formattedAmount }}/month</span>
                         </div>
-                        <p class="text-sm text-slate-600">Split your payment into manageable installments</p>
+                        <p class="text-sm text-slate-600">Break down your payment into manageable monthly installments with flexible terms</p>
                       </div>
                       <div class="w-10 h-10 bg-blue-100 rounded-md flex items-center justify-center ml-4">
                         <Calendar class="w-6 h-6 text-blue-600" />
@@ -381,15 +374,14 @@
                     </div>
                   </div>
 
-                  <!-- Debug Info for Installment Options -->
+                  <!-- No Installment Options Available -->
                   <div v-if="!hasInstallmentOptions" class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                     <div class="flex items-center">
                       <HelpCircle class="w-5 h-5 text-yellow-600 mr-2" />
-                      <span class="text-sm text-yellow-800">No installment options available for current cart items</span>
+                      <span class="text-sm text-yellow-800">Payment plans are not available for the current items in your cart</span>
                     </div>
                     <div class="mt-2 text-xs text-yellow-700">
-                      <p>Cart items with installment options: {{ cartItemsWithInstallments.length }}</p>
-                      <p>Total cart items: {{ cartItems.length }}</p>
+                      <p>Items eligible for payment plans: {{ cartItemsWithInstallments.length }} of {{ cartItems.length }}</p>
                     </div>
                   </div>
                 </div>
@@ -400,118 +392,196 @@
                 <div v-if="selectedPaymentType === 'installment'" class="mb-8 p-6 bg-blue-50 rounded-xl border border-blue-200">
                   <h3 class="text-lg font-semibold text-slate-800 mb-6 flex items-center">
                     <Settings class="w-5 h-5 mr-2 text-blue-600" />
-                    Configure Your Installment Plan
+                    Set Up Your Payment Plan
                   </h3>
                   
                   <div class="space-y-6">
                     <!-- Total Amount Display -->
                     <div class="bg-white p-4 rounded-lg border border-blue-200">
                       <div class="flex justify-between items-center mb-2">
-                        <span class="text-sm font-medium text-slate-600">Total Amount Agreed</span>
+                        <span class="text-sm font-medium text-slate-600">Total Purchase Amount</span>
                         <span class="text-lg font-bold text-slate-800">{{ convertFromUSD(calculateTotal()).formattedAmount }}</span>
                       </div>
-                      <p class="text-xs text-slate-500">This is the total amount you agree to pay including interest</p>
+                      <p class="text-xs text-slate-500">This is the total amount for your order including all fees and taxes</p>
                     </div>
 
                     <!-- Number of Installments -->
                     <div class="space-y-3">
                       <label class="block text-sm font-semibold text-slate-700">
-                        Preferred number of installments?
+                        How many months would you like to spread the payments? *
                       </label>
-                      <select 
-                        v-model="installmentConfig.numberOfInstallments"
-                        @change="calculateInstallmentDetails"
-                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
-                        required
-                      >
-                        <option value="">Select installment terms</option>
-                        <option 
-                          v-for="term in availableInstallmentTerms"
-                          :key="term"
-                          :value="term"
-                        >
-                          {{ term }} months (Est. {{ convertFromUSD(calculateEstimatedMonthlyPayment(term)).formattedAmount }}/month)
-                        </option>
-                      </select>
+                      <div class="space-y-2">
+                        <CustomDropdown
+                          v-model="installmentConfig.numberOfInstallments"
+                          :options="installmentTermOptions.map(opt => ({ value: opt.value, label: opt.displayText }))"
+                          placeholder="Choose your payment duration"
+                          @change="handleInstallmentTermChange"
+                        />
+                        
+                        <!-- Payment Term Comparison Cards -->
+                        <div class="grid grid-cols-1 gap-3 mt-4">
+                          <div 
+                            v-for="option in installmentTermOptions" 
+                            :key="option.value"
+                            class="border rounded-lg p-4 hover:bg-slate-50 transition-colors cursor-pointer"
+                            :class="installmentConfig.numberOfInstallments === option.value ? 'border-blue-500 bg-blue-50' : 'border-slate-200'"
+                            @click="installmentConfig.numberOfInstallments = option.value; handleInstallmentTermChange()"
+                          >
+                            <div class="flex justify-between items-start">
+                              <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-2">
+                                  <div class="w-4 h-4 rounded-full border-2 flex items-center justify-center"
+                                       :class="installmentConfig.numberOfInstallments === option.value ? 'border-blue-500 bg-blue-500' : 'border-slate-300'">
+                                    <div v-if="installmentConfig.numberOfInstallments === option.value" class="w-2 h-2 rounded-full bg-white"></div>
+                                  </div>
+                                  <span class="font-semibold text-slate-800">{{ option.label }}</span>
+                                </div>
+                                
+                                <div class="space-y-1 text-sm">
+                                  <div class="flex justify-between">
+                                    <span class="text-slate-600">Monthly Payment:</span>
+                                    <span class="font-semibold text-slate-800">{{ convertFromUSD(option.estimate.monthlyPayment).formattedAmount }}</span>
+                                  </div>
+                                  <div class="flex justify-between">
+                                    <span class="text-slate-600">Min. Down Payment:</span>
+                                    <span class="text-slate-700">{{ convertFromUSD(option.estimate.downPayment).formattedAmount }}</span>
+                                  </div>
+                                  <div class="flex justify-between">
+                                    <span class="text-slate-600">Total Interest:</span>
+                                    <span class="text-slate-700">{{ convertFromUSD(option.estimate.totalInterest).formattedAmount }}</span>
+                                  </div>
+                                  <div class="flex justify-between font-semibold border-t pt-1 mt-2">
+                                    <span class="text-slate-800">Total You'll Pay:</span>
+                                    <span class="text-slate-800">{{ convertFromUSD(option.estimate.totalPayable).formattedAmount }}</span>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <button 
+                                @click.stop="showTermBreakdown(option.value)"
+                                class="ml-3 px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
+                              >
+                                View Details
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <p class="text-xs text-slate-500">Compare different payment terms to find what works best for your budget</p>
                     </div>
 
                     <!-- Payment Frequency -->
                     <div class="space-y-3">
                       <label class="block text-sm font-semibold text-slate-700">
-                        How often would you like to pay?
+                        How often would you prefer to make payments? *
                       </label>
-                      <select 
+                      <CustomDropdown
                         v-model="installmentConfig.paymentFrequency"
+                        :options="paymentFrequencyOptions"
+                        placeholder="Select payment schedule"
                         @change="calculateInstallmentDetails"
-                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
-                        required
-                      >
-                        <option value="">Select payment frequency</option>
-                        <option value="weekly">Weekly</option>
-                        <option value="biweekly">Bi-weekly (Every 2 weeks)</option>
-                        <option value="monthly">Monthly</option>
-                      </select>
+                      />
                     </div>
 
                     <!-- Down Payment -->
                     <div class="space-y-3">
                       <label class="block text-sm font-semibold text-slate-700">
-                        Down Payment Amount ({{ getMinimumDownPaymentPercentage() }}% - {{ getMaximumDownPaymentPercentage() }}%)
+                        Initial Payment Amount *
                       </label>
                       <div class="relative">
-                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500"></span>
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium">{{ userCurrency || 'USD' }}</span>
                         <input 
                           v-model.number="installmentConfig.downPayment"
-                          @input="calculateInstallmentDetails"
+                          @input="handleDownPaymentChange"
+                          @blur="handleDownPaymentBlur"
                           type="number"
-                          :min="getMinimumDownPayment()"
-                          :max="getMaximumDownPayment()"
+                          :min="getMinimumDownPaymentForSelectedTerm()"
+                          :max="getMaximumDownPaymentForSelectedTerm()"
                           step="0.01"
-                          class="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
-                          placeholder="Enter down payment amount"
+                          :class="[
+                            'w-full pl-16 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white',
+                            downPaymentError ? 'border-red-300 ring-2 ring-red-200' : 'border-slate-300'
+                          ]"
+                          placeholder="Enter initial payment amount"
                           required
                         />
+                        <!-- Real-time percentage indicator -->
+                        <div v-if="installmentConfig.downPayment > 0 && !downPaymentError" class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                          <span class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
+                            {{ calculateDownPaymentPercentage() }}%
+                          </span>
+                        </div>
                       </div>
-                      <div class="flex justify-between text-xs text-slate-500">
-                        <span>Min: {{ convertFromUSD(getMinimumDownPayment()).formattedAmount }}</span>
-                        <span>Max: {{ convertFromUSD(getMaximumDownPayment()).formattedAmount }}</span>
+                      
+                      <!-- Down Payment Error -->
+                      <Transition name="error-fade">
+                        <div v-if="downPaymentError" class="text-sm text-red-600 animate-pulse flex items-center">
+                          <AlertCircle class="w-4 h-4 mr-1" />
+                          {{ downPaymentError }}
+                        </div>
+                      </Transition>
+                      
+                      <!-- Dynamic Min/Max based on selected term -->
+                      <div v-if="installmentConfig.numberOfInstallments" class="space-y-2">
+                        <div class="flex justify-between text-xs text-slate-500">
+                          <span>Minimum for {{ installmentConfig.numberOfInstallments }} months: {{ convertFromUSD(getMinimumDownPaymentForSelectedTerm()).formattedAmount }}</span>
+                          <span>Maximum: {{ convertFromUSD(getMaximumDownPaymentForSelectedTerm()).formattedAmount }}</span>
+                        </div>
+                        <div class="bg-slate-100 rounded-lg p-3">
+                          <div class="flex justify-between text-xs text-slate-600 mb-1">
+                            <span>{{ getMinimumDownPaymentPercentage() }}%</span>
+                            <span>{{ getMaximumDownPaymentPercentage() }}%</span>
+                          </div>
+                          <div class="w-full bg-slate-200 rounded-full h-2">
+                            <div 
+                              class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                              :style="{ width: `${Math.min(100, Math.max(0, (installmentConfig.downPayment - getMinimumDownPaymentForSelectedTerm()) / (getMaximumDownPaymentForSelectedTerm() - getMinimumDownPaymentForSelectedTerm()) * 100))}%` }"
+                            ></div>
+                          </div>
+                          <p class="text-xs text-slate-500 mt-2">
+                            For {{ installmentConfig.numberOfInstallments }} months plan: Pay between 
+                            {{ getMinimumDownPaymentPercentage() }}% - {{ getMaximumDownPaymentPercentage() }}% upfront
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div v-else class="text-xs text-slate-500 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                        <p class="flex items-center">
+                          <HelpCircle class="w-4 h-4 mr-1" />
+                          Please select the number of months first to see payment limits
+                        </p>
                       </div>
                     </div>
 
                     <!-- Start Date -->
                     <div class="space-y-3">
                       <label class="block text-sm font-semibold text-slate-700">
-                        Start date for the first payment?
+                        When should your first installment payment be due? *
                       </label>
-                      <input 
+                      <CustomDatePicker
                         v-model="installmentConfig.startDate"
-                        type="date"
-                        :min="getMinimumStartDate()"
-                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
-                        required
+                        :min-date="getMinimumStartDate()"
+                        placeholder="Select first payment date"
                       />
+                      <p class="text-xs text-slate-500">Choose a date at least 7 days from today for your first installment</p>
                     </div>
 
                     <!-- Payment Method -->
                     <div class="space-y-3">
                       <label class="block text-sm font-semibold text-slate-700">
-                        Preferred payment method?
+                        How would you like to make your installment payments? *
                       </label>
-                      <select 
+                      <CustomDropdown
                         v-model="installmentConfig.paymentMethod"
-                        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
-                        required
-                      >
-                        <option value="">Select payment method</option>
-                        <option value="auto_deduction">Auto Deduction (Recommended)</option>
-                        <option value="manual">Manual Payment</option>
-                      </select>
+                        :options="installmentPaymentMethodOptions"
+                        placeholder="Choose payment method"
+                      />
                     </div>
 
                     <!-- Formal Agreement -->
                     <div class="space-y-3">
                       <label class="block text-sm font-semibold text-slate-700">
-                        Do you need a formal agreement for this plan?
+                        Would you like a formal payment agreement document? *
                       </label>
                       <div class="space-y-2">
                         <label class="flex items-center">
@@ -521,7 +591,7 @@
                             :value="true"
                             class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                           />
-                          <span class="ml-2 text-sm text-slate-700">Yes, I need a formal agreement</span>
+                          <span class="ml-2 text-sm text-slate-700">Yes, I would like a formal agreement document</span>
                         </label>
                         <label class="flex items-center">
                           <input 
@@ -530,38 +600,38 @@
                             :value="false"
                             class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                           />
-                          <span class="ml-2 text-sm text-slate-700">No, proceed without formal agreement</span>
+                          <span class="ml-2 text-sm text-slate-700">No, proceed without formal documentation</span>
                         </label>
                       </div>
                     </div>
 
                     <!-- Installment Summary -->
                     <div v-if="installmentSummary.installmentAmount > 0" class="bg-white p-6 rounded-lg border border-blue-200">
-                      <h4 class="font-semibold text-slate-800 mb-4">Installment Plan Summary</h4>
+                      <h4 class="font-semibold text-slate-800 mb-4">Your Payment Plan Summary</h4>
                       <div class="space-y-3">
                         <div class="flex justify-between">
-                          <span class="text-sm text-slate-600">Down Payment (Today)</span>
+                          <span class="text-sm text-slate-600">Initial Payment (Today)</span>
                           <span class="font-semibold">{{ convertFromUSD(installmentSummary.downPayment).formattedAmount }}</span>
                         </div>
                         <div class="flex justify-between">
-                          <span class="text-sm text-slate-600">Installment Amount</span>
+                          <span class="text-sm text-slate-600">Monthly Payment Amount</span>
                           <span class="font-semibold">{{ convertFromUSD(installmentSummary.installmentAmount).formattedAmount }}</span>
                         </div>
                         <div class="flex justify-between">
-                          <span class="text-sm text-slate-600">Number of Payments</span>
+                          <span class="text-sm text-slate-600">Number of Monthly Payments</span>
                           <span class="font-semibold">{{ installmentConfig.numberOfInstallments }}</span>
                         </div>
                         <div class="flex justify-between">
-                          <span class="text-sm text-slate-600">Interest Rate</span>
-                          <span class="font-semibold">{{ getCurrentInterestRate() }}% annually</span>
+                          <span class="text-sm text-slate-600">Annual Interest Rate</span>
+                          <span class="font-semibold">{{ getCurrentInterestRate() }}%</span>
                         </div>
                         <div class="flex justify-between">
-                          <span class="text-sm text-slate-600">Total Interest</span>
+                          <span class="text-sm text-slate-600">Total Interest Charges</span>
                           <span class="font-semibold">{{ convertFromUSD(installmentSummary.totalInterest).formattedAmount }}</span>
                         </div>
                         <div class="border-t pt-3">
                           <div class="flex justify-between">
-                            <span class="font-semibold text-slate-800">Total Payable</span>
+                            <span class="font-semibold text-slate-800">Total Amount You'll Pay</span>
                             <span class="font-bold text-lg">{{ convertFromUSD(installmentSummary.totalPayable).formattedAmount }}</span>
                           </div>
                         </div>
@@ -573,7 +643,7 @@
 
               <!-- Payment Method Selection -->
               <div class="mb-8">
-                <h3 class="text-lg font-semibold text-slate-800 mb-4">Payment Gateway</h3>
+                <h3 class="text-lg font-semibold text-slate-800 mb-4">Secure Payment Gateway</h3>
                 <div class="space-y-4">
                   <div 
                     class="border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 hover:shadow-md"
@@ -586,8 +656,8 @@
                         <div v-if="paymentMethod === 'flutterwave'" class="w-3 h-3 rounded-full bg-white"></div>
                       </div>
                       <div class="flex-1">
-                        <span class="font-semibold text-slate-800">Pay with Card</span>
-                        <p class="text-sm text-slate-600">Secure payment via Flutterwave</p>
+                        <span class="font-semibold text-slate-800">Pay Securely with Card</span>
+                        <p class="text-sm text-slate-600">Safe and secure payment processing via Flutterwave</p>
                       </div>
                       <div class="w-10 h-10 bg-slate-100 rounded-md flex items-center justify-center">
                         <CreditCard class="w-6 h-6 text-slate-600" />
@@ -649,7 +719,7 @@
                   <div class="flex items-center gap-2 mt-1">
                     <span v-if="item.size" class="text-xs block px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.size }}</span>
                     <span v-if="item.color" class="text-xs block px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.color }}</span>
-                    <span v-if="item.hasInstallmentOption" class="text-xs px-2 py-1 block bg-emerald-100 text-emerald-700 rounded-full">Installments</span>
+                    <span v-if="item.hasInstallmentOption" class="text-xs px-2 py-1 block bg-emerald-100 text-emerald-700 rounded-full">Payment Plans Available</span>
                   </div>
                   <div class="flex flex-wrap items-center gap-3 mt-2">
                     <div class="flex items-center gap-2">
@@ -690,7 +760,7 @@
               </div>
               
               <div class="flex justify-between text-sm">
-                <span class="text-slate-600">Shipping</span>
+                <span class="text-slate-600">Delivery</span>
                 <span class="font-semibold text-slate-800">{{ getShippingCost() === 0 ? 'Free' : `${convertFromUSD(getShippingCost()).formattedAmount}` }}</span>
               </div>
               
@@ -701,9 +771,9 @@
               
               <!-- Installment Summary in Order Total -->
               <div v-if="selectedPaymentType === 'installment' && installmentSummary.installmentAmount > 0" class="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                <div class="text-xs font-semibold text-blue-800 mb-2">Installment Plan</div>
+                <div class="text-xs font-semibold text-blue-800 mb-2">Payment Plan Details</div>
                 <div class="flex justify-between text-xs text-blue-700 mb-1">
-                  <span>Down Payment</span>
+                  <span>Initial Payment</span>
                   <span>{{ convertFromUSD(installmentSummary.downPayment).formattedAmount }}</span>
                 </div>
                 <div class="flex justify-between text-xs text-blue-700 mb-1">
@@ -711,20 +781,20 @@
                   <span>{{ convertFromUSD(installmentSummary.installmentAmount * installmentConfig.numberOfInstallments).formattedAmount }}</span>
                 </div>
                 <div class="flex justify-between text-xs text-blue-700">
-                  <span>Total Interest</span>
+                  <span>Interest Charges</span>
                   <span>{{ convertFromUSD(installmentSummary.totalInterest).formattedAmount }}</span>
                 </div>
               </div>
               
               <div v-if="selectedCountryInfo" class="text-xs text-slate-500 bg-slate-50 p-3 rounded-lg">
-                <p>Shipping to: {{ selectedCountryInfo.countryName }}</p>
+                <p>Delivering to: {{ selectedCountryInfo.countryName }}</p>
                 <p>Tax Rate: {{ currentTaxRate }}%</p>
-                <p v-if="selectedPaymentType === 'installment'">Payment Type: Installment Plan</p>
+                <p v-if="selectedPaymentType === 'installment'">Payment Method: Flexible Payment Plan</p>
               </div>
               
               <div class="flex justify-between font-bold text-lg pt-3 border-t border-slate-200">
                 <span class="text-slate-800">
-                  {{ selectedPaymentType === 'installment' ? 'Total Payable' : 'Total' }}
+                  {{ selectedPaymentType === 'installment' ? 'Total Amount' : 'Total' }}
                 </span>
                 <span class="text-slate-800">
                   {{ (selectedPaymentType === 'installment' && installmentSummary.totalPayable > 0 ? convertFromUSD(installmentSummary.totalPayable).formattedAmount : convertFromUSD(calculateTotal()).formattedAmount) }}
@@ -734,10 +804,10 @@
               <!-- Today's Payment for Installments -->
               <div v-if="selectedPaymentType === 'installment' && installmentSummary.downPayment > 0" class="bg-emerald-50 p-3 rounded-lg border border-emerald-200">
                 <div class="flex justify-between font-semibold text-emerald-800">
-                  <span>Today's Payment</span>
+                  <span>Amount Due Today</span>
                   <span>{{ convertFromUSD(installmentSummary.downPayment).formattedAmount }}</span>
                 </div>
-                <p class="text-xs text-emerald-600 mt-1">Down payment due now</p>
+                <p class="text-xs text-emerald-600 mt-1">Initial payment required to start your plan</p>
               </div>
             </div>
             
@@ -745,7 +815,7 @@
             <div class="mt-6 pt-4 border-t border-slate-200">
               <div class="flex items-center text-sm text-slate-600 mb-3">
                 <LockIcon class="w-4 h-4 mr-2" />
-                <span>Secure 256-bit SSL encryption</span>
+                <span>Protected by 256-bit SSL encryption</span>
               </div>
               <div class="flex gap-2">
                 <div class="w-10 h-6 bg-slate-100 rounded flex items-center justify-center">
@@ -943,6 +1013,128 @@
         </div>
       </div>
     </Transition>
+
+    <!-- Payment Breakdown Modal -->
+    <Transition name="modal">
+      <div v-if="showBreakdownModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
+          <button 
+            @click="closeBreakdownModal"
+            class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors"
+          >
+            <X class="w-4 h-4" />
+          </button>
+          
+          <div v-if="selectedTermBreakdown">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6">{{ selectedTermBreakdown.term }} Month Payment Plan</h2>
+            
+            <!-- Visual Payment Timeline -->
+            <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
+              <h3 class="font-semibold text-slate-800 mb-3">Payment Timeline</h3>
+              <div class="space-y-2">
+                <div class="flex items-center justify-between p-2 bg-white rounded-lg">
+                  <span class="text-sm font-medium text-slate-700">Today (Down Payment)</span>
+                  <span class="font-bold text-emerald-600">{{ convertFromUSD(selectedTermBreakdown.downPayment).formattedAmount }}</span>
+                </div>
+                <div class="flex items-center justify-between p-2 bg-white rounded-lg">
+                  <span class="text-sm font-medium text-slate-700">Monthly × {{ selectedTermBreakdown.term }}</span>
+                  <span class="font-bold text-blue-600">{{ convertFromUSD(selectedTermBreakdown.monthlyPayment).formattedAmount }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Detailed Breakdown -->
+            <div class="space-y-4">
+              <div class="bg-slate-50 rounded-xl p-4">
+                <h3 class="font-semibold text-slate-800 mb-3">Cost Breakdown</h3>
+                <div class="space-y-3">
+                  <div class="flex justify-between items-center">
+                    <span class="text-slate-600">Order Total</span>
+                    <span class="font-semibold">{{ convertFromUSD(calculateTotal()).formattedAmount }}</span>
+                  </div>
+                  
+                  <div class="border-t pt-3">
+                    <div class="flex justify-between items-center mb-2">
+                      <span class="text-slate-600">Down Payment ({{ Math.round((selectedTermBreakdown.downPayment / calculateTotal()) * 100) }}%)</span>
+                      <span class="font-semibold text-emerald-600">{{ convertFromUSD(selectedTermBreakdown.downPayment).formattedAmount }}</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                      <span class="text-slate-600">Remaining Balance</span>
+                      <span class="font-semibold">{{ convertFromUSD(calculateTotal() - selectedTermBreakdown.downPayment).formattedAmount }}</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-2">
+                      <span class="text-slate-600">Interest ({{ selectedTermBreakdown.interestRate }}% annually)</span>
+                      <span class="font-semibold">{{ convertFromUSD(selectedTermBreakdown.totalInterest).formattedAmount }}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="border-t pt-3">
+                    <div class="flex justify-between items-center font-bold text-lg">
+                      <span class="text-slate-800">Total You'll Pay</span>
+                      <span class="text-slate-800">{{ convertFromUSD(selectedTermBreakdown.totalPayable).formattedAmount }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm text-slate-600 mt-1">
+                      <span>Extra cost vs. full payment</span>
+                      <span class="font-medium">{{ convertFromUSD(selectedTermBreakdown.totalPayable - calculateTotal()).formattedAmount }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Monthly Payment Calculation -->
+              <div class="bg-blue-50 rounded-xl p-4">
+                <h3 class="font-semibold text-slate-800 mb-3">How We Calculate Your Monthly Payment</h3>
+                <div class="text-sm text-slate-700 space-y-2">
+                  <p><strong>Formula:</strong> (Remaining Balance + Interest) ÷ {{ selectedTermBreakdown.term }} months</p>
+                  <p><strong>Calculation:</strong></p>
+                  <ul class="list-disc list-inside ml-4 space-y-1">
+                    <li>Remaining Balance: {{ convertFromUSD(calculateTotal() - selectedTermBreakdown.downPayment).formattedAmount }}</li>
+                    <li>Interest over {{ selectedTermBreakdown.term }} months: {{ convertFromUSD(selectedTermBreakdown.totalInterest).formattedAmount }}</li>
+                    <li>Total to be paid monthly: {{ convertFromUSD((calculateTotal() - selectedTermBreakdown.downPayment) + selectedTermBreakdown.totalInterest).formattedAmount }}</li>
+                    <li>Monthly Payment: {{ convertFromUSD(selectedTermBreakdown.monthlyPayment).formattedAmount }}</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <!-- Comparison with Other Terms -->
+              <div class="bg-yellow-50 rounded-xl p-4">
+                <h3 class="font-semibold text-slate-800 mb-3">Why Choose {{ selectedTermBreakdown.term }} Months?</h3>
+                <div class="text-sm text-slate-700">
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <p class="font-medium text-green-700 mb-1">✓ Pros:</p>
+                      <ul class="text-xs space-y-1">
+                        <li v-if="selectedTermBreakdown.term <= 6">• Lower total interest</li>
+                        <li v-if="selectedTermBreakdown.term <= 6">• Pay off debt faster</li>
+                        <li v-if="selectedTermBreakdown.term >= 12">• Lower monthly payments</li>
+                        <li v-if="selectedTermBreakdown.term >= 12">• Better cash flow</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <p class="font-medium text-red-700 mb-1">⚠ Cons:</p>
+                      <ul class="text-xs space-y-1">
+                        <li v-if="selectedTermBreakdown.term <= 6">• Higher monthly payments</li>
+                        <li v-if="selectedTermBreakdown.term >= 12">• More total interest</li>
+                        <li v-if="selectedTermBreakdown.term >= 12">• Longer commitment</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t">
+              <button 
+                @click="closeBreakdownModal"
+                class="w-full py-3 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl hover:from-slate-900 hover:to-black transition-all duration-300 font-medium"
+              >
+                Got It, Close Details
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -966,8 +1158,13 @@ import {
   LockIcon,
   HelpCircle,
   Calendar,
-  Settings
+  Settings,
+  AlertCircle
 } from 'lucide-vue-next'
+
+// Import custom components
+import CustomDropdown from '@/components/ui/CustomDropdown.vue'
+import CustomDatePicker from '@/components/ui/CustomDatePicker.vue'
 
 // Import composables
 import { useCartStore } from '@/composables/useCartStore'
@@ -993,47 +1190,6 @@ const {
   convertCurrency,
 } = useCurrencyConverter()
 
-// Remove hardcoded values
-// const fixedInstallmentPayment = ref(50) - REMOVED
-const convertedPrice = ref<any>({})
-const fromCurrency = ref<string>('USD')
-const toCurrency = ref<string>('NGN')
-const manualConversionResult = ref<any>(null)
-
-// Available currencies for dropdown
-const availableCurrencies = computed(() => {
-  return Object.keys(exchangeRates.value).sort()
-})
-
-// Initialize on mount
-onMounted(async () => {
-  await initializeUserCurrency()
-  updateConvertedPrice()
-})
-
-// Watch for currency changes
-watch([userCurrency, exchangeRates], () => {
-  updateConvertedPrice()
-})
-
-// Update converted price when user currency or exchange rates change
-const updateConvertedPrice = () => {
-  if (userCurrency.value && Object.keys(exchangeRates.value).length > 0) {
-    convertedPrice.value = convertFromUSD(100).formattedAmount // Example conversion
-  }
-}
-
-// Retry initialization on error
-const retryInitialization = async () => {
-  await initializeUserCurrency()
-  updateConvertedPrice()
-}
-
-// Set default target currency to user currency when it changes
-watch(userCurrency, (newCurrency) => {
-  toCurrency.value = newCurrency
-})
-
 // Router
 const router = useRouter()
 const route = useRoute()
@@ -1054,7 +1210,7 @@ const {
   paymentForm
 } = useCheckoutPayment()
 
-// FIXED: Use reactive ref for modal visibility instead of localStorage check
+// Modal visibility
 const showAuthModal = ref(false)
 
 // Toast notifications
@@ -1087,22 +1243,22 @@ const currentShippingFee = ref(0)
 const currentTaxRate = ref(0)
 const isLoadingConfigs = ref(false)
 
-// Current step with query parameter sync
+// Current step
 const currentStep = ref(1)
 
 // Authentication state
-const authModalMode = ref('check') // 'check', 'signin', 'signup'
+const authModalMode = ref('check')
 const isSigningUp = ref(false)
 const isSigningIn = ref(false)
 
 // Express delivery multiplier
 const EXPRESS_DELIVERY_MULTIPLIER = 2.5
 
-// Minimum step and maximum step
+// Step constraints
 const MIN_STEP = 1
 const MAX_STEP = 3
 
-// Cart items - reactive reference that loads from localStorage
+// Cart items
 const cartItems = ref([])
 
 // Delivery details
@@ -1122,11 +1278,14 @@ const deliveryDetails = ref({
 const deliveryMethod = ref('standard')
 const paymentMethod = ref('flutterwave')
 
-// Payment type selection - UPDATED: Initialize from query params
-const selectedPaymentType = ref('full') // 'full' or 'installment'
+// Payment type selection
+const selectedPaymentType = ref('full')
 
-// Order ID for completed orders
+// Order ID
 const orderId = ref('')
+
+// Down payment error state
+const downPaymentError = ref('')
 
 // Installment configuration
 const installmentConfig = ref({
@@ -1149,7 +1308,7 @@ const installmentSummary = ref({
   remainingAmount: 0
 })
 
-// Current installment configuration based on selected product size
+// Current installment configuration
 const currentInstallmentConfig = ref(null)
 
 // Signup data
@@ -1168,7 +1327,7 @@ const signinData = ref({
   password: ''
 })
 
-// Enhanced persistence keys
+// Persistence keys
 const PERSISTENCE_KEYS = {
   CART: 'art-gallery-cart',
   CHECKOUT_STEP: 'checkout-step',
@@ -1183,20 +1342,50 @@ const PERSISTENCE_KEYS = {
   GUEST_MODE: 'checkout-guest-mode'
 }
 
-// UPDATED: Initialize payment type from query params
+// Dropdown options
+const countryOptions = computed(() => {
+  return availableCountries.value.map(country => ({
+    value: country.countryCode,
+    label: country.countryName
+  }))
+})
+
+const installmentTermOptions = computed(() => {
+  return availableInstallmentTerms.value.map(term => {
+    const estimate = calculateDetailedEstimate(term)
+    return {
+      value: term.toString(),
+      label: `${term} months`,
+      estimate: estimate,
+      displayText: `${term} months - ${convertFromUSD(estimate.monthlyPayment).formattedAmount}/month`
+    }
+  })
+})
+
+const paymentFrequencyOptions = [
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'biweekly', label: 'Bi-weekly (Every 2 weeks)' },
+  { value: 'monthly', label: 'Monthly' }
+]
+
+const installmentPaymentMethodOptions = [
+  { value: 'auto_deduction', label: 'Auto Deduction (Recommended)' },
+  { value: 'manual', label: 'Manual Payment' }
+]
+
+// Initialize payment type from query params
 const initializePaymentTypeFromQuery = () => {
   const paymentTypeParam = route.query.paymentType
   if (paymentTypeParam && ['full', 'installment'].includes(paymentTypeParam as string)) {
     selectedPaymentType.value = paymentTypeParam as 'full' | 'installment'
     console.log('Payment type initialized from query params:', selectedPaymentType.value)
   } else {
-    // Default to 'full' if no valid payment type in query params
     selectedPaymentType.value = 'full'
     console.log('Payment type defaulted to full payment')
   }
 }
 
-// FIXED: Check if any cart items have installment options
+// Check if any cart items have installment options
 const hasInstallmentOptions = computed(() => {
   console.log('Checking installment options for cart items:', cartItems.value)
   const hasOptions = cartItems.value.some(item => {
@@ -1210,7 +1399,7 @@ const hasInstallmentOptions = computed(() => {
   return hasOptions
 })
 
-// FIXED: Get cart items with installment options for debugging
+// Get cart items with installment options
 const cartItemsWithInstallments = computed(() => {
   return cartItems.value.filter(item =>
     item.hasInstallmentOption === true &&
@@ -1219,7 +1408,7 @@ const cartItemsWithInstallments = computed(() => {
   )
 })
 
-// FIXED: Get available installment terms based on cart items
+// Get available installment terms
 const availableInstallmentTerms = computed(() => {
   const allTerms = new Set()
   
@@ -1237,14 +1426,13 @@ const availableInstallmentTerms = computed(() => {
   return terms
 })
 
-// Get minimum installment amount for display - UPDATED: Dynamic calculation
+// Get minimum installment amount
 const getMinimumInstallmentAmount = () => {
   if (!hasInstallmentOptions.value || availableInstallmentTerms.value.length === 0) return 0
   
   const total = calculateTotal()
   const maxTerms = Math.max(...availableInstallmentTerms.value)
   
-  // Find the first item with installment config to get interest rate
   const firstItemWithInstallments = cartItems.value.find(item =>
     item.hasInstallmentOption === true &&
     item.installmentConfig &&
@@ -1269,12 +1457,11 @@ const getMinimumInstallmentAmount = () => {
   }
 }
 
-// FIXED: Calculate estimated monthly payment for a given term
+// Calculate estimated monthly payment
 const calculateEstimatedMonthlyPayment = (term: number) => {
   if (!currentInstallmentConfig.value) {
-    // Use a default configuration if none is available
     const total = calculateTotal()
-    const defaultDownPayment = total * 0.2 // 20% default
+    const defaultDownPayment = total * 0.2
     const remainingAmount = total - defaultDownPayment
     return remainingAmount / term
   }
@@ -1293,16 +1480,15 @@ const calculateEstimatedMonthlyPayment = (term: number) => {
   }
 }
 
-// FIXED: Get current installment configuration
+// Get current installment configuration
 const getCurrentInstallmentConfig = () => {
-  // Find the first item with installment options
   const firstItemWithInstallments = cartItems.value.find(item =>
     item.hasInstallmentOption === true &&
     item.installmentConfig &&
     item.installmentConfig.enabled === true
   )
   
-  console.log('Current installment config from item:', firstItemWithInstallments?.installmentConfig)
+  console.log('Current installment config from item:', currentInstallmentConfig.value)
   return firstItemWithInstallments?.installmentConfig || null
 }
 
@@ -1312,24 +1498,48 @@ watch(cartItems, () => {
   console.log('Updated currentInstallmentConfig:', currentInstallmentConfig.value)
 }, { deep: true })
 
-// FIXED: Get minimum down payment percentage
+// Get minimum down payment percentage
 const getMinimumDownPaymentPercentage = () => {
   return currentInstallmentConfig.value?.minimumDownPaymentPercentage || 20
 }
 
-// FIXED: Get maximum down payment percentage
+// Get maximum down payment percentage
 const getMaximumDownPaymentPercentage = () => {
   return currentInstallmentConfig.value?.maximumDownPaymentPercentage || 80
 }
 
-// Get minimum down payment
-const getMinimumDownPayment = () => {
+// FIXED: Get minimum down payment based on selected term
+const getMinimumDownPaymentForSelectedTerm = () => {
+  if (!installmentConfig.value.numberOfInstallments) return 0
+  
   const total = calculateTotal()
-  return (total * getMinimumDownPaymentPercentage()) / 100
+  const selectedTerm = parseInt(installmentConfig.value.numberOfInstallments)
+  
+  // Calculate minimum based on what the user can afford for the selected term
+  const config = currentInstallmentConfig.value
+  if (!config) return total * 0.2 // Default 20%
+  
+  const maxAffordableMonthly = total * 0.1 // Assume max 10% of total per month
+  const monthlyInterestRate = (config.interestRate || 0) / 12 / 100
+  
+  let maxRemainingAmount
+  if (monthlyInterestRate > 0) {
+    const factor = Math.pow(1 + monthlyInterestRate, selectedTerm)
+    maxRemainingAmount = (maxAffordableMonthly * (factor - 1)) / (monthlyInterestRate * factor)
+  } else {
+    maxRemainingAmount = maxAffordableMonthly * selectedTerm
+  }
+  
+  const minDownPayment = Math.max(
+    total - maxRemainingAmount,
+    (total * getMinimumDownPaymentPercentage()) / 100
+  )
+  
+  return Math.min(minDownPayment, total)
 }
 
-// Get maximum down payment
-const getMaximumDownPayment = () => {
+// FIXED: Get maximum down payment based on selected term
+const getMaximumDownPaymentForSelectedTerm = () => {
   const total = calculateTotal()
   return (total * getMaximumDownPaymentPercentage()) / 100
 }
@@ -1339,13 +1549,67 @@ const getCurrentInterestRate = () => {
   return currentInstallmentConfig.value?.interestRate || 0
 }
 
-// Get minimum start date (today)
+// Get minimum start date
 const getMinimumStartDate = () => {
   const today = new Date()
+  today.setDate(today.getDate() + 7) // Minimum 7 days from today
   return today.toISOString().split('T')[0]
 }
 
-// FIXED: Calculate installment details
+// FIXED: Calculate down payment percentage for display
+const calculateDownPaymentPercentage = () => {
+  if (!installmentConfig.value.downPayment) return 0
+  const total = calculateTotal()
+  return Math.round((installmentConfig.value.downPayment / total) * 100)
+}
+
+// FIXED: Handle installment term change
+const handleInstallmentTermChange = () => {
+  // Reset down payment when term changes
+  if (installmentConfig.value.numberOfInstallments) {
+    installmentConfig.value.downPayment = getMinimumDownPaymentForSelectedTerm()
+    downPaymentError.value = ''
+  }
+  calculateInstallmentDetails()
+}
+
+// Handle down payment change with validation
+const handleDownPaymentChange = () => {
+  if (!installmentConfig.value.numberOfInstallments) {
+    downPaymentError.value = 'Please select the number of months first'
+    return
+  }
+  
+  const downPayment = Number(installmentConfig.value.downPayment)
+  const minPayment = getMinimumDownPaymentForSelectedTerm()
+  const maxPayment = getMaximumDownPaymentForSelectedTerm()
+  
+  downPaymentError.value = ''
+  
+  if (downPayment < minPayment) {
+    downPaymentError.value = `For ${installmentConfig.value.numberOfInstallments} months, minimum payment is ${convertFromUSD(minPayment).formattedAmount}`
+  } else if (downPayment > maxPayment) {
+    downPaymentError.value = `Maximum payment allowed is ${convertFromUSD(maxPayment).formattedAmount} (${getMaximumDownPaymentPercentage()}% of total)`
+  }
+  
+  if (!downPaymentError.value) {
+    calculateInstallmentDetails()
+  }
+}
+
+// Handle down payment blur (when user finishes typing)
+const handleDownPaymentBlur = () => {
+  // Auto-correct to minimum if below minimum
+  if (installmentConfig.value.numberOfInstallments && installmentConfig.value.downPayment > 0) {
+    const minPayment = getMinimumDownPaymentForSelectedTerm()
+    if (installmentConfig.value.downPayment < minPayment) {
+      installmentConfig.value.downPayment = minPayment
+      handleDownPaymentChange()
+    }
+  }
+}
+
+// Calculate installment details
 const calculateInstallmentDetails = () => {
   console.log('Calculating installment details...')
   console.log('Config:', installmentConfig.value)
@@ -1382,12 +1646,10 @@ const calculateInstallmentDetails = () => {
   let totalInterest = 0
   
   if (monthlyInterestRate > 0) {
-    // Calculate using compound interest formula
     const factor = Math.pow(1 + monthlyInterestRate, numberOfInstallments)
     installmentAmount = (remainingAmount * monthlyInterestRate * factor) / (factor - 1)
     totalInterest = installmentAmount * numberOfInstallments - remainingAmount
   } else {
-    // No interest
     installmentAmount = remainingAmount / numberOfInstallments
     totalInterest = 0
   }
@@ -1408,12 +1670,11 @@ const calculateInstallmentDetails = () => {
     remainingAmount
   }
   
-  // Update installment config
   installmentConfig.value.totalAmount = totalAmount
   installmentConfig.value.interestRate = annualInterestRate
 }
 
-// FIXED: Check if payment configuration is valid
+// Check if payment configuration is valid
 const isPaymentConfigValid = computed(() => {
   console.log('Checking payment config validity...')
   console.log('Payment type:', selectedPaymentType.value)
@@ -1432,9 +1693,10 @@ const isPaymentConfigValid = computed(() => {
       config.downPayment > 0 &&
       config.startDate !== '' &&
       config.paymentMethod !== '' &&
-      config.downPayment >= getMinimumDownPayment() &&
-      config.downPayment <= getMaximumDownPayment() &&
-      typeof config.needsFormalAgreement === 'boolean'
+      config.downPayment >= getMinimumDownPaymentForSelectedTerm() &&
+      config.downPayment <= getMaximumDownPaymentForSelectedTerm() &&
+      typeof config.needsFormalAgreement === 'boolean' &&
+      !downPaymentError.value
     )
     
     console.log('Installment payment validation:', {
@@ -1444,8 +1706,9 @@ const isPaymentConfigValid = computed(() => {
       downPayment: config.downPayment > 0,
       startDate: config.startDate !== '',
       installmentPaymentMethod: config.paymentMethod !== '',
-      downPaymentRange: config.downPayment >= getMinimumDownPayment() && config.downPayment <= getMaximumDownPayment(),
+      downPaymentRange: config.downPayment >= getMinimumDownPaymentForSelectedTerm() && config.downPayment <= getMaximumDownPaymentForSelectedTerm(),
       formalAgreement: typeof config.needsFormalAgreement === 'boolean',
+      noDownPaymentError: !downPaymentError.value,
       overall: isValid
     })
     
@@ -1459,7 +1722,7 @@ const getPaymentButtonText = () => {
   if (isProcessing.value) return 'Processing...'
   
   if (selectedPaymentType.value === 'installment') {
-    return `Pay Down Payment - ${convertFromUSD(installmentSummary.value.downPayment).formattedAmount}`
+    return `Pay Initial Amount - ${convertFromUSD(installmentSummary.value.downPayment).formattedAmount}`
   } else {
     return `Complete Order - ${convertFromUSD(calculateTotal()).formattedAmount}`
   }
@@ -1470,27 +1733,60 @@ const handlePaymentTypeChange = (type: string) => {
   selectedPaymentType.value = type
   
   if (type === 'installment') {
-    // Initialize installment config
     currentInstallmentConfig.value = getCurrentInstallmentConfig()
     if (currentInstallmentConfig.value) {
-      // Set default down payment to minimum
-      installmentConfig.value.downPayment = getMinimumDownPayment()
-      // Set default start date to 30 days from now
+      // Don't set default down payment here - let user select term first
       const defaultStartDate = new Date()
       defaultStartDate.setDate(defaultStartDate.getDate() + 30)
       installmentConfig.value.startDate = defaultStartDate.toISOString().split('T')[0]
-      
-      // Trigger calculation
-      nextTick(() => {
-        calculateInstallmentDetails()
-      })
     }
   }
   
   persistCheckoutData()
 }
 
-// Load cart from localStorage
+// FIXED: Handle country change to work with CustomDropdown
+const handleCountryChange = (countryCode: string) => {
+  const country = availableCountries.value.find(c => c.countryCode === countryCode)
+  
+  if (country) {
+    selectedCountryInfo.value = country
+    
+    const shippingConfig = shippingConfigs.value.find(config => 
+      config.countryCode === countryCode && config.isActive
+    )
+    console.log(shippingConfig, 'selected shipping config')
+    
+    if (shippingConfig) {
+      currentShippingFee.value = shippingConfig.shippingRate
+    } else {
+      currentShippingFee.value = countryCode === 'NG' ? 0 : 25
+    }
+    
+    const taxConfig = taxConfigs.value.find(config => 
+      config.countryCode === countryCode && config.isActive
+    )
+    
+    if (taxConfig) {
+      currentTaxRate.value = taxConfig.vatRate
+    } else {
+      const defaultTaxRates = {
+        'NG': 7.5,
+        'US': 8.5,
+        'GB': 20,
+        'CA': 13,
+        'AU': 10,
+        'DE': 19,
+        'FR': 20
+      }
+      currentTaxRate.value = defaultTaxRates[countryCode] || 0
+    }
+    
+    persistCheckoutData()
+  }
+}
+
+// Load cart from storage
 const loadCartFromStorage = () => {
   try {
     if (process.client && localStorage) {
@@ -1510,7 +1806,7 @@ const loadCartFromStorage = () => {
   return []
 }
 
-// Save cart to localStorage
+// Save cart to storage
 const saveCartToStorage = () => {
   try {
     if (process.client && localStorage) {
@@ -1521,11 +1817,10 @@ const saveCartToStorage = () => {
   }
 }
 
-// Enhanced persistence functions
+// Persist checkout data
 const persistCheckoutData = () => {
   try {
     if (process.client && localStorage) {
-      // Persist all checkout-related data
       setItem(PERSISTENCE_KEYS.CHECKOUT_STEP, currentStep.value.toString())
       setItem(PERSISTENCE_KEYS.DELIVERY_METHOD, deliveryMethod.value)
       setItem(PERSISTENCE_KEYS.PAYMENT_METHOD, paymentMethod.value)
@@ -1555,7 +1850,6 @@ const persistDeliveryDetails = () => {
 const loadPersistedCheckoutData = () => {
   try {
     if (process.client && localStorage) {
-      // Load checkout step
       const savedStep = getItem(PERSISTENCE_KEYS.CHECKOUT_STEP)
       if (savedStep && !isNaN(Number(savedStep))) {
         const step = Number(savedStep)
@@ -1564,27 +1858,23 @@ const loadPersistedCheckoutData = () => {
         }
       }
       
-      // Load delivery method
       const savedDeliveryMethod = getItem(PERSISTENCE_KEYS.DELIVERY_METHOD)
       if (savedDeliveryMethod && ['standard', 'express', 'pickup'].includes(savedDeliveryMethod)) {
         deliveryMethod.value = savedDeliveryMethod
       }
       
-      // Load payment method
       const savedPaymentMethod = getItem(PERSISTENCE_KEYS.PAYMENT_METHOD)
       if (savedPaymentMethod && ['flutterwave', 'interswitch', 'manual'].includes(savedPaymentMethod)) {
         paymentMethod.value = savedPaymentMethod
       }
       
-      // Load payment type - UPDATED: Only load from storage if not already set from query params
-      if (selectedPaymentType.value === 'full') { // Only override if still default
+      if (selectedPaymentType.value === 'full') {
         const savedPaymentType = getItem(PERSISTENCE_KEYS.PAYMENT_TYPE)
         if (savedPaymentType && ['full', 'installment'].includes(savedPaymentType)) {
           selectedPaymentType.value = savedPaymentType
         }
       }
       
-      // Load installment config
       const savedInstallmentConfig = getItem(PERSISTENCE_KEYS.INSTALLMENT_CONFIG)
       if (savedInstallmentConfig) {
         try {
@@ -1595,7 +1885,6 @@ const loadPersistedCheckoutData = () => {
         }
       }
       
-      // Load delivery details
       const savedDeliveryDetails = getItem(PERSISTENCE_KEYS.DELIVERY_DETAILS)
       if (savedDeliveryDetails) {
         try {
@@ -1606,7 +1895,6 @@ const loadPersistedCheckoutData = () => {
         }
       }
       
-      // Load country and shipping/tax info
       const savedCountryData = getItem(PERSISTENCE_KEYS.SELECTED_COUNTRY)
       if (savedCountryData) {
         try {
@@ -1637,7 +1925,7 @@ const clearPersistedCheckoutData = () => {
   }
 }
 
-// Available countries from shipping configs
+// Available countries
 const availableCountries = ref([
   { countryCode: 'NG', countryName: 'Nigeria' },
   { countryCode: 'US', countryName: 'United States' },
@@ -1849,6 +2137,8 @@ const loadShippingAndTaxConfigs = async () => {
       fetchShippingConfigs(),
       fetchTaxConfigs()
     ])
+    console.log(taxResponse, 'Tax configs')
+    console.log(shippingResponse, 'Shipping Configs')
     
     if (shippingResponse) {
       shippingConfigs.value = shippingResponse
@@ -1867,52 +2157,6 @@ const loadShippingAndTaxConfigs = async () => {
     })
   } finally {
     isLoadingConfigs.value = false
-  }
-}
-
-// Handle country change
-const handleCountryChange = () => {
-  const countryCode = deliveryDetails.value.country
-  const country = availableCountries.value.find(c => c.countryCode === countryCode)
-  
-  if (country) {
-    selectedCountryInfo.value = country
-    
-    // Find shipping config for this country
-    const shippingConfig = shippingConfigs.value.find(config => 
-      config.countryCode === countryCode && config.isActive
-    )
-    console.log(shippingConfig, 'selected shipping config')
-    
-    if (shippingConfig) {
-      currentShippingFee.value = shippingConfig.shippingRate
-    } else {
-      // Default shipping fee
-      currentShippingFee.value = countryCode === 'NG' ? 0 : 25
-    }
-    
-    // Find tax config for this country
-    const taxConfig = taxConfigs.value.find(config => 
-      config.countryCode === countryCode && config.isActive
-    )
-    
-    if (taxConfig) {
-      currentTaxRate.value = taxConfig.vatRate
-    } else {
-      // Default tax rates
-      const defaultTaxRates = {
-        'NG': 7.5,
-        'US': 8.5,
-        'GB': 20,
-        'CA': 13,
-        'AU': 10,
-        'DE': 19,
-        'FR': 20
-      }
-      currentTaxRate.value = defaultTaxRates[countryCode] || 0
-    }
-    
-    persistCheckoutData()
   }
 }
 
@@ -2065,7 +2309,6 @@ const processPayment = async () => {
   }
 
   try {
-    // Prepare order data
     const orderData = {
       items: cartItems.value,
       deliveryDetails: deliveryDetails.value,
@@ -2084,16 +2327,12 @@ const processPayment = async () => {
     }
 
     console.log('Order data prepared:', orderData)
-
-    // Process the checkout
     const result = await processCheckout(orderData)
     
     console.log('Checkout result:', result)
     if (result.success) {
-      // Generate order ID
       orderId.value = result.orderId || generateOrderNumber()
       
-      // Clear cart and persisted data
       cartItems.value = []
       saveCartToStorage()
       clearPersistedCheckoutData()
@@ -2131,9 +2370,8 @@ const handleImageError = (event: Event) => {
   target.src = '/placeholder.svg?height=64&width=64'
 }
 
-// FIXED: Check if user is logged in on page load
+// Check if user is logged in on page load
 const checkUserAuth = () => {
-  // Only show auth modal if user is not logged in and not in guest mode
   const isGuestMode = getItem ? getItem(PERSISTENCE_KEYS.GUEST_MODE) === 'true' : false
   const hasToken = process.client && localStorage ? localStorage.getItem('token') : null
   
@@ -2144,7 +2382,6 @@ const checkUserAuth = () => {
 
 // Watch for route changes to sync query parameters
 watch(() => route.query, (newQuery) => {
-  // Update payment type if it changes in query params
   if (newQuery.paymentType && ['full', 'installment'].includes(newQuery.paymentType as string)) {
     const newPaymentType = newQuery.paymentType as 'full' | 'installment'
     if (selectedPaymentType.value !== newPaymentType) {
@@ -2156,7 +2393,6 @@ watch(() => route.query, (newQuery) => {
 
 // Watch for payment type changes to update query params
 watch(selectedPaymentType, (newType) => {
-  // Update query params when payment type changes
   const currentQuery = { ...route.query }
   if (newType !== currentQuery.paymentType) {
     router.push({
@@ -2177,38 +2413,22 @@ watch(() => installmentConfig.value, () => {
 onMounted(async () => {
   console.log('Checkout page mounted')
   
-  // Check if user is logged in immediately on mount
   nextTick(() => {
     checkUserAuth()
   })
   
-  // Initialize payment type from query params first
   initializePaymentTypeFromQuery()
-  
-  // Load cart from storage
   loadCartFromStorage()
-  
-  // Load persisted checkout data
   loadPersistedCheckoutData()
-  
-  // Load shipping and tax configurations
   await loadShippingAndTaxConfigs()
+  await initializeUserCurrency()
   
-  // Set current installment config
   currentInstallmentConfig.value = getCurrentInstallmentConfig()
   
-  // If installment payment type is selected, initialize config
   if (selectedPaymentType.value === 'installment' && hasInstallmentOptions.value) {
-    // Set default values
-    installmentConfig.value.downPayment = getMinimumDownPayment()
     const defaultStartDate = new Date()
     defaultStartDate.setDate(defaultStartDate.getDate() + 30)
     installmentConfig.value.startDate = defaultStartDate.toISOString().split('T')[0]
-    
-    // Calculate initial details
-    nextTick(() => {
-      calculateInstallmentDetails()
-    })
   }
   
   console.log('Checkout initialization complete')
@@ -2216,6 +2436,62 @@ onMounted(async () => {
   console.log('Has installment options:', hasInstallmentOptions.value)
   console.log('Selected payment type:', selectedPaymentType.value)
 })
+
+const calculateDetailedEstimate = (term: number) => {
+  const total = calculateTotal()
+  const config = currentInstallmentConfig.value
+  
+  if (!config) {
+    const defaultDownPayment = total * 0.2
+    const remainingAmount = total - defaultDownPayment
+    return {
+      monthlyPayment: remainingAmount / term,
+      downPayment: defaultDownPayment,
+      totalInterest: 0,
+      totalPayable: total,
+      interestRate: 0
+    }
+  }
+  
+  const minDownPaymentPercentage = config.minimumDownPaymentPercentage || 20
+  const downPayment = (total * minDownPaymentPercentage) / 100
+  const remainingAmount = total - downPayment
+  const monthlyInterestRate = (config.interestRate || 0) / 12 / 100
+  
+  let monthlyPayment = 0
+  let totalInterest = 0
+  
+  if (monthlyInterestRate > 0) {
+    const factor = Math.pow(1 + monthlyInterestRate, term)
+    monthlyPayment = (remainingAmount * monthlyInterestRate * factor) / (factor - 1)
+    totalInterest = monthlyPayment * term - remainingAmount
+  } else {
+    monthlyPayment = remainingAmount / term
+    totalInterest = 0
+  }
+  
+  return {
+    monthlyPayment,
+    downPayment,
+    totalInterest,
+    totalPayable: downPayment + monthlyPayment * term,
+    interestRate: config.interestRate || 0,
+    term
+  }
+}
+
+const showBreakdownModal = ref(false)
+const selectedTermBreakdown = ref(null)
+
+const showTermBreakdown = (term) => {
+  selectedTermBreakdown.value = calculateDetailedEstimate(parseInt(term))
+  showBreakdownModal.value = true
+}
+
+const closeBreakdownModal = () => {
+  showBreakdownModal.value = false
+  selectedTermBreakdown.value = null
+}
 </script>
 
 <style scoped>
@@ -2243,6 +2519,21 @@ onMounted(async () => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.error-fade-enter-active,
+.error-fade-leave-active {
+  transition: all 0.3s ease;
+}
+
+.error-fade-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.error-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 
 .modal-enter-active,
