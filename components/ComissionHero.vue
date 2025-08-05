@@ -49,4 +49,10 @@ onMounted(() => {
   fetchContentByType("commission_hero")
 })
 
+
+const emits = defineEmits(['next'])
+
+const nextStep = () => {
+  emits('next')
+}
 </script>

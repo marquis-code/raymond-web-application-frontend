@@ -2,29 +2,11 @@
   <div class="bg-white">
     <!-- Main Content with top padding for fixed header -->
     <div class="pt-10">
-      <!-- Full Screen Loader -->
-      <transition name="fullscreen-loader">
-        <div v-if="showFullScreenLoader" class="fixed inset-0 z-[9999] bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500 flex items-center justify-center">
-          <div class="text-center text-white">
-            <div class="relative mb-8">
-              <div class="w-32 h-32 border-8 border-white/20 rounded-full animate-spin-slow"></div>
-              <div class="absolute inset-4 border-8 border-white border-t-transparent rounded-full animate-spin"></div>
-              <div class="absolute inset-8 border-4 border-white/40 border-b-transparent rounded-full animate-spin-reverse"></div>
-            </div>
-            <h3 class="text-2xl font-bold mb-2 animate-pulse">Uploading Your Image</h3>
-            <p class="text-lg opacity-90 animate-bounce">{{ uploadProgress }}%</p>
-            <div class="w-64 h-2 bg-white/20 rounded-full mx-auto mt-4 overflow-hidden">
-              <div class="h-full bg-white rounded-full transition-all duration-500 ease-out animate-shimmer" :style="{ width: uploadProgress + '%' }"></div>
-            </div>
-          </div>
-        </div>
-      </transition>
-
       <!-- Step Content with Transitions -->
       <transition :name="slideDirection" mode="out-in">
         <!-- Step 1: Hero Section -->
         <section v-if="currentStep === 1" key="step1" class="relative overflow-hidden py-20 px-4 sm:px-6 lg:px-8">
-         <ComissionHero />
+          <ComissionHero @next="handleNextStep" />
         </section>
 
         <!-- Step 2: Information Section -->
@@ -36,8 +18,8 @@
               Please review all the information below to understand our process, pricing, and requirements before placing your order.
             </div>
           </div>
+
           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-            <!-- Information sections remain the same as in original code -->
             <!-- 1. SIZES AND PRICES with Measurement Images -->
             <div class="mb-12 animate-slide-up bg-white rounded-xl shadow-lg p-6 md:p-8 border-l-4 border-emerald-500">
               <h3 class="text-xl md:text-2xl font-bold mb-6 text-emerald-600 flex items-center">
@@ -46,24 +28,24 @@
               </h3>
               <p class="mb-4 text-gray-700 text-sm md:text-base">Depending on your wall space, budget and photographs.</p>
               <p class="mb-6 text-gray-700 text-sm md:text-base">I offer the following sizes:</p>
+              
               <!-- Size Grid -->
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                <div v-for="size in content?.metadata.sizes" class="bg-gray-50 p-4 rounded-lg border hover:shadow-md transition-shadow">
+                <div v-for="size in content?.metadata.sizes" :key="size?.name" class="bg-gray-50 p-4 rounded-lg border hover:shadow-md transition-shadow">
                   <h4 class="font-bold text-emerald-600 text-sm md:text-base">{{ size?.name }}</h4>
                   <p class="text-gray-600 text-sm">{{ size?.dimensions }}</p>
                 </div>
               </div>
             </div>
 
-            <!-- Other information sections... (keeping original content) -->
             <!-- 2. REFERENCE PHOTO -->
-            <div v-for="section in content?.metadata?.sections" class="mb-12 animate-slide-up bg-white rounded-xl shadow-lg p-6 md:p-8 border-l-4 border-blue-500" style="animation-delay: 0.2s;">
+            <div v-for="section in content?.metadata?.sections" :key="section?.title" class="mb-12 animate-slide-up bg-white rounded-xl shadow-lg p-6 md:p-8 border-l-4 border-blue-500" style="animation-delay: 0.2s;">
               <h3 class="text-xl md:text-2xl font-bold mb-6 text-blue-600 flex items-center">
                 <span class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
-                {{section?.title}}
+                {{ section?.title }}
               </h3>
               <div class="space-y-4 text-gray-700 leading-loose text-sm md:text-base">
-                <p> {{section?.content}}</p>
+                <p>{{ section?.content }}</p>
               </div>
             </div>
           </div>
@@ -94,6 +76,7 @@
                   />
                   <p v-if="formErrors.firstName" class="mt-1 text-sm text-red-600">{{ formErrors.firstName }}</p>
                 </div>
+
                 <div class="animate-slide-up" style="animation-delay: 0.2s;">
                   <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last name *</label>
                   <input 
@@ -143,11 +126,7 @@
                       ]"
                     >
                       <option value="" disabled>Select your country</option>
-                      <option 
-                        v-for="country in countries" 
-                        :key="country.code" 
-                        :value="country.code"
-                      >
+                      <option v-for="country in countries" :key="country.code" :value="country.code">
                         {{ country.flag }} {{ country.name }} (+{{ country.dialCode }})
                       </option>
                     </select>
@@ -165,9 +144,7 @@
                   <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
                   <div class="relative">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                      <span class="text-gray-500 text-sm">
-                        {{ selectedCountry?.flag }} +{{ selectedCountry?.dialCode }}
-                      </span>
+                      <span class="text-gray-500 text-sm">{{ selectedCountry?.flag }} +{{ selectedCountry?.dialCode }}</span>
                     </div>
                     <input 
                       id="phone" 
@@ -254,9 +231,7 @@
                   ]"
                 >
                   <option value="" disabled selected>Select drawing type</option>
-                  <option v-for="(item, idx) in drawingTypes" :key="idx" :value="item._id">
-                    {{ item?.name }}
-                  </option>
+                  <option v-for="(item, idx) in drawingTypes" :key="idx" :value="item._id">{{ item?.name }}</option>
                 </select>
                 <p v-if="formErrors.drawingType" class="mt-1 text-sm text-red-600">{{ formErrors.drawingType }}</p>
               </div>
@@ -289,6 +264,7 @@
                       <p class="text-sm text-emerald-600 font-medium">Uploading...</p>
                       <p class="text-xs text-gray-500">Please wait</p>
                     </div>
+
                     <!-- No File State -->
                     <div v-else-if="!mainPhotoUrl" class="flex flex-col items-center justify-center pt-5 pb-6">
                       <svg class="w-6 md:w-8 h-6 md:h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
@@ -299,14 +275,11 @@
                       </p>
                       <p class="text-xs text-gray-500">PNG, JPG or JPEG (MAX. 15MB)</p>
                     </div>
+
                     <!-- File Uploaded State -->
                     <div v-else class="flex flex-col items-center justify-center w-full h-full">
                       <div class="relative w-full h-full">
-                        <img 
-                          :src="mainPhotoPreview" 
-                          alt="Main Photo Preview" 
-                          class="w-full h-full object-contain rounded"
-                        />
+                        <img :src="mainPhotoPreview" alt="Main Photo Preview" class="w-full h-full object-contain rounded"/>
                         <button 
                           @click.stop="removeMainPhoto" 
                           class="absolute top-2 right-2 w-6 md:w-8 h-6 md:h-8 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors duration-300 transform hover:scale-110"
@@ -317,6 +290,7 @@
                         </button>
                       </div>
                     </div>
+
                     <input 
                       id="mainPhoto" 
                       type="file" 
@@ -359,6 +333,7 @@
                         </div>
                         <p class="text-xs text-emerald-600 font-medium">Uploading...</p>
                       </div>
+
                       <!-- No File State -->
                       <div v-else-if="!optional1PhotoUrl" class="flex flex-col items-center justify-center pt-3 pb-3">
                         <svg class="w-5 md:w-6 h-5 md:h-6 mb-2 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
@@ -366,13 +341,10 @@
                         </svg>
                         <p class="text-xs text-gray-500 text-center">Upload File (MAX. 15MB)</p>
                       </div>
+
                       <!-- File Uploaded State -->
                       <div v-else class="relative w-full h-full p-2">
-                        <img 
-                          :src="optional1PhotoPreview" 
-                          alt="Optional Photo 1 Preview" 
-                          class="w-full h-full object-cover rounded"
-                        />
+                        <img :src="optional1PhotoPreview" alt="Optional Photo 1 Preview" class="w-full h-full object-cover rounded"/>
                         <button 
                           @click.stop="removeOptional1Photo" 
                           class="absolute top-3 right-3 w-5 md:w-6 h-5 md:h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors duration-300 transform hover:scale-110"
@@ -382,6 +354,7 @@
                           </svg>
                         </button>
                       </div>
+
                       <input 
                         id="optionalPhoto1" 
                         type="file" 
@@ -420,6 +393,7 @@
                         </div>
                         <p class="text-xs text-emerald-600 font-medium">Uploading...</p>
                       </div>
+
                       <!-- No File State -->
                       <div v-else-if="!optional2PhotoUrl" class="flex flex-col items-center justify-center pt-3 pb-3">
                         <svg class="w-5 md:w-6 h-5 md:h-6 mb-2 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
@@ -427,13 +401,10 @@
                         </svg>
                         <p class="text-xs text-gray-500 text-center">Upload File (MAX. 15MB)</p>
                       </div>
+
                       <!-- File Uploaded State -->
                       <div v-else class="relative w-full h-full p-2">
-                        <img 
-                          :src="optional2PhotoPreview" 
-                          alt="Optional Photo 2 Preview" 
-                          class="w-full h-full object-cover rounded"
-                        />
+                        <img :src="optional2PhotoPreview" alt="Optional Photo 2 Preview" class="w-full h-full object-cover rounded"/>
                         <button 
                           @click.stop="removeOptional2Photo" 
                           class="absolute top-3 right-3 w-5 md:w-6 h-5 md:h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors duration-300 transform hover:scale-110"
@@ -443,6 +414,7 @@
                           </svg>
                         </button>
                       </div>
+
                       <input 
                         id="optionalPhoto2" 
                         type="file" 
@@ -494,7 +466,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 md:h-6 w-5 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
-        <span class="">Submit Form</span>
+        <span>Submit Form</span>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 md:h-5 w-4 md:w-5 animate-bounce-x" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
         </svg>
@@ -505,20 +477,14 @@
     <transition name="modal">
       <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center z-50 px-4">
         <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" @click="closeSuccessModal"></div>
+        
         <!-- Confetti Animation -->
         <div class="absolute inset-0 pointer-events-none">
-          <div 
-            v-for="i in 50" 
-            :key="i" 
-            class="absolute animate-confetti"
-            :style="getConfettiStyle(i)"
-          >
-            <div 
-              class="w-2 h-2 rounded-full"
-              :class="getConfettiColor(i)"
-            ></div>
+          <div v-for="i in 50" :key="i" class="absolute animate-confetti" :style="getConfettiStyle(i)">
+            <div class="w-2 h-2 rounded-full" :class="getConfettiColor(i)"></div>
           </div>
         </div>
+
         <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 md:p-8 animate-modal-bounce">
           <div class="text-center">
             <!-- Animated Success Icon -->
@@ -528,6 +494,7 @@
               </svg>
               <div class="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-20"></div>
             </div>
+
             <h3 class="text-2xl md:text-3xl font-bold text-gray-800 mb-3 animate-text-reveal">Congratulations!</h3>
             <p class="text-gray-600 mb-6 animate-text-reveal text-sm md:text-base" style="animation-delay: 0.2s;">
               Your commission request has been submitted successfully! 🎨
@@ -535,6 +502,7 @@
             <p class="text-sm text-gray-500 mb-8 animate-text-reveal" style="animation-delay: 0.4s;">
               We will contact you shortly to discuss the details and begin creating your masterpiece.
             </p>
+
             <button 
               @click="closeSuccessModal" 
               class="w-full py-3 md:py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 transform hover:scale-105 animate-button-reveal text-sm md:text-base"
@@ -553,10 +521,26 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import TestimonialsCarousel from '../components/TestimonialsCarousel.vue'
-import { useFetchContentByType } from "@/composables/modules/content/useFetchContentByType"
-const { fetchContentByType, loading: fetchingContent, content } = useFetchContentByType()
 
+import TestimonialsCarousel from '../components/TestimonialsCarousel.vue'
+
+import { useFetchDrawingTypes } from "@/composables/modules/commission/useFetchDrawingTypes"
+
+import { useCreateCommission } from "@/composables/modules/commission/useCreateCommission"
+
+import { useSingleUploadFile } from "@/composables/core/useSingleUpload"
+
+import { useFetchContentByType } from "@/composables/modules/content/useFetchContentByType"
+
+// Composables
+
+const { loading, createCommission } = useCreateCommission()
+
+const { singleUploadFile } = useSingleUploadFile()
+
+const { loading: fetchingTypes, drawingTypes } = useFetchDrawingTypes()
+
+const { fetchContentByType, loading: fetchingContent, content } = useFetchContentByType()
 // Types
 interface Country {
   name: string
@@ -565,7 +549,7 @@ interface Country {
   flag: string
   format: string
   placeholder: string
-  pattern: RegExp
+  patterns: RegExp[]
 }
 
 interface FormData {
@@ -587,91 +571,510 @@ interface FormErrors {
   [key: string]: string
 }
 
-// Mock composables for demonstration
-const useCreateCommission = () => ({
-  loading: ref(false),
-  createCommission: async (data: any) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    console.log('Commission created:', data)
-  }
-})
-
-const useSingleUploadFile = () => ({
-  singleUploadFile: async (file: File) => {
-    // Simulate file upload
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    return { url: URL.createObjectURL(file) }
-  }
-})
-
-const useFetchDrawingTypes = () => ({
-  loading: ref(false),
-  drawingTypes: ref([
-    { _id: '1', name: 'Portrait Drawing' },
-    { _id: '2', name: 'Pet Portrait' },
-    { _id: '3', name: 'Landscape Drawing' },
-    { _id: '4', name: 'Custom Artwork' }
-  ])
-})
-
 // Composables
-const { loading, createCommission } = useCreateCommission()
-const { singleUploadFile } = useSingleUploadFile()
-const { loading: fetchingTypes, drawingTypes } = useFetchDrawingTypes()
+// const { $fetch } = useNuxtApp()
 
-// Countries data with comprehensive list
-const countries = ref<Country[]>([
-  { name: 'United States', code: 'US', dialCode: '1', flag: '🇺🇸', format: '(XXX) XXX-XXXX', placeholder: '(555) 123-4567', pattern: /^$$\d{3}$$ \d{3}-\d{4}$/ },
-  { name: 'United Kingdom', code: 'GB', dialCode: '44', flag: '🇬🇧', format: 'XXXX XXX XXXX', placeholder: '7911 123456', pattern: /^\d{4} \d{3} \d{4}$/ },
-  { name: 'Canada', code: 'CA', dialCode: '1', flag: '🇨🇦', format: '(XXX) XXX-XXXX', placeholder: '(555) 123-4567', pattern: /^$$\d{3}$$ \d{3}-\d{4}$/ },
-  { name: 'Australia', code: 'AU', dialCode: '61', flag: '🇦🇺', format: 'XXXX XXX XXX', placeholder: '0412 345 678', pattern: /^\d{4} \d{3} \d{3}$/ },
-  { name: 'Germany', code: 'DE', dialCode: '49', flag: '🇩🇪', format: 'XXX XXXXXXXX', placeholder: '030 12345678', pattern: /^\d{3} \d{8}$/ },
-  { name: 'France', code: 'FR', dialCode: '33', flag: '🇫🇷', format: 'XX XX XX XX XX', placeholder: '01 23 45 67 89', pattern: /^\d{2} \d{2} \d{2} \d{2} \d{2}$/ },
-  { name: 'Italy', code: 'IT', dialCode: '39', flag: '🇮🇹', format: 'XXX XXX XXXX', placeholder: '320 123 4567', pattern: /^\d{3} \d{3} \d{4}$/ },
-  { name: 'Spain', code: 'ES', dialCode: '34', flag: '🇪🇸', format: 'XXX XX XX XX', placeholder: '612 34 56 78', pattern: /^\d{3} \d{2} \d{2} \d{2}$/ },
-  { name: 'Netherlands', code: 'NL', dialCode: '31', flag: '🇳🇱', format: 'XX XXXXXXXX', placeholder: '06 12345678', pattern: /^\d{2} \d{8}$/ },
-  { name: 'Belgium', code: 'BE', dialCode: '32', flag: '🇧🇪', format: 'XXX XX XX XX', placeholder: '470 12 34 56', pattern: /^\d{3} \d{2} \d{2} \d{2}$/ },
-  { name: 'Switzerland', code: 'CH', dialCode: '41', flag: '🇨🇭', format: 'XX XXX XX XX', placeholder: '79 123 45 67', pattern: /^\d{2} \d{3} \d{2} \d{2}$/ },
-  { name: 'Austria', code: 'AT', dialCode: '43', flag: '🇦🇹', format: 'XXX XXXXXXX', placeholder: '664 1234567', pattern: /^\d{3} \d{7}$/ },
-  { name: 'Sweden', code: 'SE', dialCode: '46', flag: '🇸🇪', format: 'XXX-XXX XX XX', placeholder: '070-123 45 67', pattern: /^\d{3}-\d{3} \d{2} \d{2}$/ },
-  { name: 'Norway', code: 'NO', dialCode: '47', flag: '🇳🇴', format: 'XXX XX XXX', placeholder: '412 34 567', pattern: /^\d{3} \d{2} \d{3}$/ },
-  { name: 'Denmark', code: 'DK', dialCode: '45', flag: '🇩🇰', format: 'XX XX XX XX', placeholder: '20 12 34 56', pattern: /^\d{2} \d{2} \d{2} \d{2}$/ },
-  { name: 'Finland', code: 'FI', dialCode: '358', flag: '🇫🇮', format: 'XXX XXXXXXX', placeholder: '050 1234567', pattern: /^\d{3} \d{7}$/ },
-  { name: 'Poland', code: 'PL', dialCode: '48', flag: '🇵🇱', format: 'XXX XXX XXX', placeholder: '512 345 678', pattern: /^\d{3} \d{3} \d{3}$/ },
-  { name: 'Czech Republic', code: 'CZ', dialCode: '420', flag: '🇨🇿', format: 'XXX XXX XXX', placeholder: '601 123 456', pattern: /^\d{3} \d{3} \d{3}$/ },
-  { name: 'Hungary', code: 'HU', dialCode: '36', flag: '🇭🇺', format: 'XX XXX XXXX', placeholder: '20 123 4567', pattern: /^\d{2} \d{3} \d{4}$/ },
-  { name: 'Portugal', code: 'PT', dialCode: '351', flag: '🇵🇹', format: 'XXX XXX XXX', placeholder: '912 345 678', pattern: /^\d{3} \d{3} \d{3}$/ },
-  { name: 'Greece', code: 'GR', dialCode: '30', flag: '🇬🇷', format: 'XXX XXX XXXX', placeholder: '694 123 4567', pattern: /^\d{3} \d{3} \d{4}$/ },
-  { name: 'Turkey', code: 'TR', dialCode: '90', flag: '🇹🇷', format: 'XXX XXX XX XX', placeholder: '532 123 45 67', pattern: /^\d{3} \d{3} \d{2} \d{2}$/ },
-  { name: 'Russia', code: 'RU', dialCode: '7', flag: '🇷🇺', format: 'XXX XXX-XX-XX', placeholder: '912 345-67-89', pattern: /^\d{3} \d{3}-\d{2}-\d{2}$/ },
-  { name: 'Japan', code: 'JP', dialCode: '81', flag: '🇯🇵', format: 'XXX-XXXX-XXXX', placeholder: '090-1234-5678', pattern: /^\d{3}-\d{4}-\d{4}$/ },
-  { name: 'South Korea', code: 'KR', dialCode: '82', flag: '🇰🇷', format: 'XXX-XXXX-XXXX', placeholder: '010-1234-5678', pattern: /^\d{3}-\d{4}-\d{4}$/ },
-  { name: 'China', code: 'CN', dialCode: '86', flag: '🇨🇳', format: 'XXX XXXX XXXX', placeholder: '138 0013 8000', pattern: /^\d{3} \d{4} \d{4}$/ },
-  { name: 'India', code: 'IN', dialCode: '91', flag: '🇮🇳', format: 'XXXXX XXXXX', placeholder: '98765 43210', pattern: /^\d{5} \d{5}$/ },
-  { name: 'Singapore', code: 'SG', dialCode: '65', flag: '🇸🇬', format: 'XXXX XXXX', placeholder: '9123 4567', pattern: /^\d{4} \d{4}$/ },
-  { name: 'Malaysia', code: 'MY', dialCode: '60', flag: '🇲🇾', format: 'XX-XXX XXXX', placeholder: '12-345 6789', pattern: /^\d{2}-\d{3} \d{4}$/ },
-  { name: 'Thailand', code: 'TH', dialCode: '66', flag: '🇹🇭', format: 'XX-XXX-XXXX', placeholder: '08-1234-5678', pattern: /^\d{2}-\d{3}-\d{4}$/ },
-  { name: 'Philippines', code: 'PH', dialCode: '63', flag: '🇵🇭', format: 'XXXX XXX XXXX', placeholder: '0917 123 4567', pattern: /^\d{4} \d{3} \d{4}$/ },
-  { name: 'Indonesia', code: 'ID', dialCode: '62', flag: '🇮🇩', format: 'XXXX-XXXX-XXXX', placeholder: '0812-3456-7890', pattern: /^\d{4}-\d{4}-\d{4}$/ },
-  { name: 'Vietnam', code: 'VN', dialCode: '84', flag: '🇻🇳', format: 'XXX XXX XXXX', placeholder: '091 234 5678', pattern: /^\d{3} \d{3} \d{4}$/ },
-  { name: 'Hong Kong', code: 'HK', dialCode: '852', flag: '🇭🇰', format: 'XXXX XXXX', placeholder: '9123 4567', pattern: /^\d{4} \d{4}$/ },
-  { name: 'Taiwan', code: 'TW', dialCode: '886', flag: '🇹🇼', format: 'XXXX XXX XXX', placeholder: '0912 345 678', pattern: /^\d{4} \d{3} \d{3}$/ },
-  { name: 'Brazil', code: 'BR', dialCode: '55', flag: '🇧🇷', format: '(XX) XXXXX-XXXX', placeholder: '(11) 99999-9999', pattern: /^$$\d{2}$$ \d{5}-\d{4}$/ },
-  { name: 'Argentina', code: 'AR', dialCode: '54', flag: '🇦🇷', format: 'XX XXXX-XXXX', placeholder: '11 1234-5678', pattern: /^\d{2} \d{4}-\d{4}$/ },
-  { name: 'Mexico', code: 'MX', dialCode: '52', flag: '🇲🇽', format: 'XXX XXX XXXX', placeholder: '55 1234 5678', pattern: /^\d{3} \d{3} \d{4}$/ },
-  { name: 'Chile', code: 'CL', dialCode: '56', flag: '🇨🇱', format: 'X XXXX XXXX', placeholder: '9 1234 5678', pattern: /^\d \d{4} \d{4}$/ },
-  { name: 'Colombia', code: 'CO', dialCode: '57', flag: '🇨🇴', format: 'XXX XXX XXXX', placeholder: '300 123 4567', pattern: /^\d{3} \d{3} \d{4}$/ },
-  { name: 'Peru', code: 'PE', dialCode: '51', flag: '🇵🇪', format: 'XXX XXX XXX', placeholder: '987 654 321', pattern: /^\d{3} \d{3} \d{3}$/ },
-  { name: 'South Africa', code: 'ZA', dialCode: '27', flag: '🇿🇦', format: 'XXX XXX XXXX', placeholder: '082 123 4567', pattern: /^\d{3} \d{3} \d{4}$/ },
-  { name: 'Nigeria', code: 'NG', dialCode: '234', flag: '🇳🇬', format: 'XXX XXX XXXX', placeholder: '803 123 4567', pattern: /^\d{3} \d{3} \d{4}$/ },
-  { name: 'Kenya', code: 'KE', dialCode: '254', flag: '🇰🇪', format: 'XXX XXXXXX', placeholder: '712 123456', pattern: /^\d{3} \d{6}$/ },
-  { name: 'Egypt', code: 'EG', dialCode: '20', flag: '🇪🇬', format: 'XXX XXX XXXX', placeholder: '100 123 4567', pattern: /^\d{3} \d{3} \d{4}$/ },
-  { name: 'Morocco', code: 'MA', dialCode: '212', flag: '🇲🇦', format: 'XXX-XXXXXX', placeholder: '661-234567', pattern: /^\d{3}-\d{6}$/ },
-  { name: 'Israel', code: 'IL', dialCode: '972', flag: '🇮🇱', format: 'XXX-XXX-XXXX', placeholder: '050-123-4567', pattern: /^\d{3}-\d{3}-\d{4}$/ },
-  { name: 'Saudi Arabia', code: 'SA', dialCode: '966', flag: '🇸🇦', format: 'XXX XXX XXXX', placeholder: '050 123 4567', pattern: /^\d{3} \d{3} \d{4}$/ },
-  { name: 'UAE', code: 'AE', dialCode: '971', flag: '🇦🇪', format: 'XXX XXX XXXX', placeholder: '050 123 4567', pattern: /^\d{3} \d{3} \d{4}$/ },
-  { name: 'New Zealand', code: 'NZ', dialCode: '64', flag: '🇳🇿', format: 'XXX XXX XXXX', placeholder: '021 123 4567', pattern: /^\d{3} \d{3} \d{4}$/ }
+// Mock composables - replace with your actual composables
+// const loading = ref(false)
+// const fetchingTypes = ref(false)
+// const drawingTypes = ref([])
+// const content = ref(null)
+
+// // Mock functions - replace with your actual composables
+// const createCommission = async (data: FormData) => {
+//   // Replace with your actual API call
+//   await new Promise(resolve => setTimeout(resolve, 2000))
+//   console.log('Commission created:', data)
+// }
+
+// const singleUploadFile = async (file: File) => {
+//   // Replace with your actual upload function
+//   await new Promise(resolve => setTimeout(resolve, 1500))
+//   return {
+//     url: URL.createObjectURL(file)
+//   }
+// }
+
+// const fetchContentByType = async (type: string) => {
+//   // Replace with your actual content fetching
+//   content.value = {
+//     metadata: {
+//       sizes: [
+//         { name: 'Small', dimensions: '8x10 inches' },
+//         { name: 'Medium', dimensions: '11x14 inches' },
+//         { name: 'Large', dimensions: '16x20 inches' }
+//       ],
+//       sections: [
+//         {
+//           title: 'REFERENCE PHOTO',
+//           content: 'Please provide high-quality reference photos for the best results.'
+//         }
+//       ]
+//     }
+//   }
+// }
+
+const handleNextStep = () => {
+  currentStep.value = 2
+}
+
+// Countries data with improved phone validation patterns
+const countries = ref([
+  { 
+    name: 'United States', 
+    code: 'US', 
+    dialCode: '1', 
+    flag: '🇺🇸', 
+    format: '(XXX) XXX-XXXX', 
+    placeholder: '(555) 123-4567', 
+    patterns: [/^$$\d{3}$$ \d{3}-\d{4}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'United Kingdom', 
+    code: 'GB', 
+    dialCode: '44', 
+    flag: '🇬🇧', 
+    format: 'XXXX XXX XXXX', 
+    placeholder: '7911 123456', 
+    patterns: [/^\d{4} \d{3} \d{4}$/, /^\d{11}$/] 
+  },
+  { 
+    name: 'Canada', 
+    code: 'CA', 
+    dialCode: '1', 
+    flag: '🇨🇦', 
+    format: '(XXX) XXX-XXXX', 
+    placeholder: '(555) 123-4567', 
+    patterns: [/^$$\d{3}$$ \d{3}-\d{4}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Nigeria', 
+    code: 'NG', 
+    dialCode: '234', 
+    flag: '🇳🇬', 
+    format: 'XXX XXX XXXX', 
+    placeholder: '803 123 4567', 
+    patterns: [
+      /^\d{3} \d{3} \d{4}$/,  // With spaces: 803 123 4567
+      /^\d{10}$/,             // Without spaces: 8031234567
+      /^0\d{10}$/,            // With leading 0: 08031234567
+      /^\d{4} \d{3} \d{4}$/   // Alternative format: 0803 123 4567
+    ]
+  },
+  { 
+    name: 'Australia', 
+    code: 'AU', 
+    dialCode: '61', 
+    flag: '🇦🇺', 
+    format: 'XXXX XXX XXX', 
+    placeholder: '0412 345 678', 
+    patterns: [/^\d{4} \d{3} \d{3}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Germany', 
+    code: 'DE', 
+    dialCode: '49', 
+    flag: '🇩🇪', 
+    format: 'XXX XXXXXXXX', 
+    placeholder: '030 12345678', 
+    patterns: [/^\d{3} \d{8}$/, /^\d{11}$/] 
+  },
+  { 
+    name: 'France', 
+    code: 'FR', 
+    dialCode: '33', 
+    flag: '🇫🇷', 
+    format: 'XX XX XX XX XX', 
+    placeholder: '01 23 45 67 89', 
+    patterns: [/^\d{2} \d{2} \d{2} \d{2} \d{2}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Italy', 
+    code: 'IT', 
+    dialCode: '39', 
+    flag: '🇮🇹', 
+    format: 'XXX XXX XXXX', 
+    placeholder: '320 123 4567', 
+    patterns: [/^\d{3} \d{3} \d{4}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Spain', 
+    code: 'ES', 
+    dialCode: '34', 
+    flag: '🇪🇸', 
+    format: 'XXX XX XX XX', 
+    placeholder: '612 34 56 78', 
+    patterns: [/^\d{3} \d{2} \d{2} \d{2}$/, /^\d{9}$/] 
+  },
+  { 
+    name: 'Netherlands', 
+    code: 'NL', 
+    dialCode: '31', 
+    flag: '🇳🇱', 
+    format: 'XX XXXXXXXX', 
+    placeholder: '06 12345678', 
+    patterns: [/^\d{2} \d{8}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Belgium', 
+    code: 'BE', 
+    dialCode: '32', 
+    flag: '🇧🇪', 
+    format: 'XXX XX XX XX', 
+    placeholder: '470 12 34 56', 
+    patterns: [/^\d{3} \d{2} \d{2} \d{2}$/, /^\d{9}$/] 
+  },
+  { 
+    name: 'Switzerland', 
+    code: 'CH', 
+    dialCode: '41', 
+    flag: '🇨🇭', 
+    format: 'XX XXX XX XX', 
+    placeholder: '79 123 45 67', 
+    patterns: [/^\d{2} \d{3} \d{2} \d{2}$/, /^\d{9}$/] 
+  },
+  { 
+    name: 'Austria', 
+    code: 'AT', 
+    dialCode: '43', 
+    flag: '🇦🇹', 
+    format: 'XXX XXXXXXX', 
+    placeholder: '664 1234567', 
+    patterns: [/^\d{3} \d{7}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Sweden', 
+    code: 'SE', 
+    dialCode: '46', 
+    flag: '🇸🇪', 
+    format: 'XXX-XXX XX XX', 
+    placeholder: '070-123 45 67', 
+    patterns: [/^\d{3}-\d{3} \d{2} \d{2}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Norway', 
+    code: 'NO', 
+    dialCode: '47', 
+    flag: '🇳🇴', 
+    format: 'XXX XX XXX', 
+    placeholder: '412 34 567', 
+    patterns: [/^\d{3} \d{2} \d{3}$/, /^\d{8}$/] 
+  },
+  { 
+    name: 'Denmark', 
+    code: 'DK', 
+    dialCode: '45', 
+    flag: '🇩🇰', 
+    format: 'XX XX XX XX', 
+    placeholder: '20 12 34 56', 
+    patterns: [/^\d{2} \d{2} \d{2} \d{2}$/, /^\d{8}$/] 
+  },
+  { 
+    name: 'Finland', 
+    code: 'FI', 
+    dialCode: '358', 
+    flag: '🇫🇮', 
+    format: 'XXX XXXXXXX', 
+    placeholder: '050 1234567', 
+    patterns: [/^\d{3} \d{7}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Poland', 
+    code: 'PL', 
+    dialCode: '48', 
+    flag: '🇵🇱', 
+    format: 'XXX XXX XXX', 
+    placeholder: '512 345 678', 
+    patterns: [/^\d{3} \d{3} \d{3}$/, /^\d{9}$/] 
+  },
+  { 
+    name: 'Czech Republic', 
+    code: 'CZ', 
+    dialCode: '420', 
+    flag: '🇨🇿', 
+    format: 'XXX XXX XXX', 
+    placeholder: '601 123 456', 
+    patterns: [/^\d{3} \d{3} \d{3}$/, /^\d{9}$/] 
+  },
+  { 
+    name: 'Hungary', 
+    code: 'HU', 
+    dialCode: '36', 
+    flag: '🇭🇺', 
+    format: 'XX XXX XXXX', 
+    placeholder: '20 123 4567', 
+    patterns: [/^\d{2} \d{3} \d{4}$/, /^\d{9}$/] 
+  },
+  { 
+    name: 'Portugal', 
+    code: 'PT', 
+    dialCode: '351', 
+    flag: '🇵🇹', 
+    format: 'XXX XXX XXX', 
+    placeholder: '912 345 678', 
+    patterns: [/^\d{3} \d{3} \d{3}$/, /^\d{9}$/] 
+  },
+  { 
+    name: 'Greece', 
+    code: 'GR', 
+    dialCode: '30', 
+    flag: '🇬🇷', 
+    format: 'XXX XXX XXXX', 
+    placeholder: '694 123 4567', 
+    patterns: [/^\d{3} \d{3} \d{4}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Turkey', 
+    code: 'TR', 
+    dialCode: '90', 
+    flag: '🇹🇷', 
+    format: 'XXX XXX XX XX', 
+    placeholder: '532 123 45 67', 
+    patterns: [/^\d{3} \d{3} \d{2} \d{2}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Russia', 
+    code: 'RU', 
+    dialCode: '7', 
+    flag: '🇷🇺', 
+    format: 'XXX XXX-XX-XX', 
+    placeholder: '912 345-67-89', 
+    patterns: [/^\d{3} \d{3}-\d{2}-\d{2}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Japan', 
+    code: 'JP', 
+    dialCode: '81', 
+    flag: '🇯🇵', 
+    format: 'XXX-XXXX-XXXX', 
+    placeholder: '090-1234-5678', 
+    patterns: [/^\d{3}-\d{4}-\d{4}$/, /^\d{11}$/] 
+  },
+  { 
+    name: 'South Korea', 
+    code: 'KR', 
+    dialCode: '82', 
+    flag: '🇰🇷', 
+    format: 'XXX-XXXX-XXXX', 
+    placeholder: '010-1234-5678', 
+    patterns: [/^\d{3}-\d{4}-\d{4}$/, /^\d{11}$/] 
+  },
+  { 
+    name: 'China', 
+    code: 'CN', 
+    dialCode: '86', 
+    flag: '🇨🇳', 
+    format: 'XXX XXXX XXXX', 
+    placeholder: '138 0013 8000', 
+    patterns: [/^\d{3} \d{4} \d{4}$/, /^\d{11}$/] 
+  },
+  { 
+    name: 'India', 
+    code: 'IN', 
+    dialCode: '91', 
+    flag: '🇮🇳', 
+    format: 'XXXXX XXXXX', 
+    placeholder: '98765 43210', 
+    patterns: [/^\d{5} \d{5}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Singapore', 
+    code: 'SG', 
+    dialCode: '65', 
+    flag: '🇸🇬', 
+    format: 'XXXX XXXX', 
+    placeholder: '9123 4567', 
+    patterns: [/^\d{4} \d{4}$/, /^\d{8}$/] 
+  },
+  { 
+    name: 'Malaysia', 
+    code: 'MY', 
+    dialCode: '60', 
+    flag: '🇲🇾', 
+    format: 'XX-XXX XXXX', 
+    placeholder: '12-345 6789', 
+    patterns: [/^\d{2}-\d{3} \d{4}$/, /^\d{9}$/] 
+  },
+  { 
+    name: 'Thailand', 
+    code: 'TH', 
+    dialCode: '66', 
+    flag: '🇹🇭', 
+    format: 'XX-XXX-XXXX', 
+    placeholder: '08-1234-5678', 
+    patterns: [/^\d{2}-\d{3}-\d{4}$/, /^\d{9}$/] 
+  },
+  { 
+    name: 'Philippines', 
+    code: 'PH', 
+    dialCode: '63', 
+    flag: '🇵🇭', 
+    format: 'XXXX XXX XXXX', 
+    placeholder: '0917 123 4567', 
+    patterns: [/^\d{4} \d{3} \d{4}$/, /^\d{11}$/] 
+  },
+  { 
+    name: 'Indonesia', 
+    code: 'ID', 
+    dialCode: '62', 
+    flag: '🇮🇩', 
+    format: 'XXXX-XXXX-XXXX', 
+    placeholder: '0812-3456-7890', 
+    patterns: [/^\d{4}-\d{4}-\d{4}$/, /^\d{12}$/] 
+  },
+  { 
+    name: 'Vietnam', 
+    code: 'VN', 
+    dialCode: '84', 
+    flag: '🇻🇳', 
+    format: 'XXX XXX XXXX', 
+    placeholder: '091 234 5678', 
+    patterns: [/^\d{3} \d{3} \d{4}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Hong Kong', 
+    code: 'HK', 
+    dialCode: '852', 
+    flag: '🇭🇰', 
+    format: 'XXXX XXXX', 
+    placeholder: '9123 4567', 
+    patterns: [/^\d{4} \d{4}$/, /^\d{8}$/] 
+  },
+  { 
+    name: 'Taiwan', 
+    code: 'TW', 
+    dialCode: '886', 
+    flag: '🇹🇼', 
+    format: 'XXXX XXX XXX', 
+    placeholder: '0912 345 678', 
+    patterns: [/^\d{4} \d{3} \d{3}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Brazil', 
+    code: 'BR', 
+    dialCode: '55', 
+    flag: '🇧🇷', 
+    format: '(XX) XXXXX-XXXX', 
+    placeholder: '(11) 99999-9999', 
+    patterns: [/^$$\d{2}$$ \d{5}-\d{4}$/, /^\d{11}$/] 
+  },
+  { 
+    name: 'Argentina', 
+    code: 'AR', 
+    dialCode: '54', 
+    flag: '🇦🇷', 
+    format: 'XX XXXX-XXXX', 
+    placeholder: '11 1234-5678', 
+    patterns: [/^\d{2} \d{4}-\d{4}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Mexico', 
+    code: 'MX', 
+    dialCode: '52', 
+    flag: '🇲🇽', 
+    format: 'XXX XXX XXXX', 
+    placeholder: '55 1234 5678', 
+    patterns: [/^\d{3} \d{3} \d{4}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Chile', 
+    code: 'CL', 
+    dialCode: '56', 
+    flag: '🇨🇱', 
+    format: 'X XXXX XXXX', 
+    placeholder: '9 1234 5678', 
+    patterns: [/^\d \d{4} \d{4}$/, /^\d{9}$/] 
+  },
+  { 
+    name: 'Colombia', 
+    code: 'CO', 
+    dialCode: '57', 
+    flag: '🇨🇴', 
+    format: 'XXX XXX XXXX', 
+    placeholder: '300 123 4567', 
+    patterns: [/^\d{3} \d{3} \d{4}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Peru', 
+    code: 'PE', 
+    dialCode: '51', 
+    flag: '🇵🇪', 
+    format: 'XXX XXX XXX', 
+    placeholder: '987 654 321', 
+    patterns: [/^\d{3} \d{3} \d{3}$/, /^\d{9}$/] 
+  },
+  { 
+    name: 'South Africa', 
+    code: 'ZA', 
+    dialCode: '27', 
+    flag: '🇿🇦', 
+    format: 'XXX XXX XXXX', 
+    placeholder: '082 123 4567', 
+    patterns: [/^\d{3} \d{3} \d{4}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Kenya', 
+    code: 'KE', 
+    dialCode: '254', 
+    flag: '🇰🇪', 
+    format: 'XXX XXXXXX', 
+    placeholder: '712 123456', 
+    patterns: [/^\d{3} \d{6}$/, /^\d{9}$/] 
+  },
+  { 
+    name: 'Egypt', 
+    code: 'EG', 
+    dialCode: '20', 
+    flag: '🇪🇬', 
+    format: 'XXX XXX XXXX', 
+    placeholder: '100 123 4567', 
+    patterns: [/^\d{3} \d{3} \d{4}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Morocco', 
+    code: 'MA', 
+    dialCode: '212', 
+    flag: '🇲🇦', 
+    format: 'XXX-XXXXXX', 
+    placeholder: '661-234567', 
+    patterns: [/^\d{3}-\d{6}$/, /^\d{9}$/] 
+  },
+  { 
+    name: 'Israel', 
+    code: 'IL', 
+    dialCode: '972', 
+    flag: '🇮🇱', 
+    format: 'XXX-XXX-XXXX', 
+    placeholder: '050-123-4567', 
+    patterns: [/^\d{3}-\d{3}-\d{4}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'Saudi Arabia', 
+    code: 'SA', 
+    dialCode: '966', 
+    flag: '🇸🇦', 
+    format: 'XXX XXX XXXX', 
+    placeholder: '050 123 4567', 
+    patterns: [/^\d{3} \d{3} \d{4}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'UAE', 
+    code: 'AE', 
+    dialCode: '971', 
+    flag: '🇦🇪', 
+    format: 'XXX XXX XXXX', 
+    placeholder: '050 123 4567', 
+    patterns: [/^\d{3} \d{3} \d{4}$/, /^\d{10}$/] 
+  },
+  { 
+    name: 'New Zealand', 
+    code: 'NZ', 
+    dialCode: '64', 
+    flag: '🇳🇿', 
+    format: 'XXX XXX XXXX', 
+    placeholder: '021 123 4567', 
+    patterns: [/^\d{3} \d{3} \d{4}$/, /^\d{10}$/] 
+  }
 ])
 
 // Step navigation
@@ -694,7 +1097,7 @@ const prevStep = () => {
   }
 }
 
-// Form data with separate image variables
+// Form data
 const form = ref<FormData>({
   firstName: '',
   lastName: '',
@@ -713,19 +1116,17 @@ const form = ref<FormData>({
 // Form validation
 const formErrors = ref<FormErrors>({})
 
-// Separate upload states for each image
+// Upload states for each image (mini spinners instead of full screen)
 const uploadingMain = ref(false)
 const uploadingOptional1 = ref(false)
 const uploadingOptional2 = ref(false)
-const showFullScreenLoader = ref(false)
-const uploadProgress = ref(0)
 
-// Separate drag states for each upload area
+// Drag states for each upload area
 const isDraggingMain = ref(false)
 const isDraggingOptional1 = ref(false)
 const isDraggingOptional2 = ref(false)
 
-// Separate preview URLs for each image
+// Preview URLs for each image
 const mainPhotoUrl = ref('')
 const optional1PhotoUrl = ref('')
 const optional2PhotoUrl = ref('')
@@ -759,16 +1160,21 @@ const onCountryChange = () => {
   formErrors.value.phone = ''
 }
 
-// Phone number validation
+// Improved phone number validation
 const validatePhoneNumber = () => {
   if (!form.value.phone || !selectedCountry.value) {
     formErrors.value.phone = ''
     return
   }
 
-  const isValid = selectedCountry.value.pattern.test(form.value.phone)
+  const phone = form.value.phone.trim()
+  const country = selectedCountry.value
+  
+  // Check if phone matches any of the country's patterns
+  const isValid = country.patterns.some(pattern => pattern.test(phone))
+  
   if (!isValid) {
-    formErrors.value.phone = `Please enter a valid phone number in format: ${selectedCountry.value.format}`
+    formErrors.value.phone = `Please enter a valid phone number in format: ${country.format}`
   } else {
     formErrors.value.phone = ''
   }
@@ -782,52 +1188,43 @@ const validateForm = (): boolean => {
   if (!form.value.firstName.trim()) {
     errors.firstName = 'First name is required'
   }
-
   if (!form.value.lastName.trim()) {
     errors.lastName = 'Last name is required'
   }
-
   if (!form.value.email.trim()) {
     errors.email = 'Email is required'
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) {
     errors.email = 'Please enter a valid email address'
   }
-
   if (!form.value.country) {
     errors.country = 'Please select your country'
   }
-
   if (form.value.phone && selectedCountry.value) {
-    const isValid = selectedCountry.value.pattern.test(form.value.phone)
+    const phone = form.value.phone.trim()
+    const isValid = selectedCountry.value.patterns.some(pattern => pattern.test(phone))
     if (!isValid) {
       errors.phone = `Please enter a valid phone number in format: ${selectedCountry.value.format}`
     }
   }
-
   if (!form.value.subject.trim()) {
     errors.subject = 'Subject is required'
   }
-
   if (!form.value.message.trim()) {
     errors.message = 'Message is required'
   }
-
   if (!form.value.deadline) {
     errors.deadline = 'Deadline is required'
   } else {
     const selectedDate = new Date(form.value.deadline)
     const minAllowedDate = new Date()
     minAllowedDate.setDate(minAllowedDate.getDate() + 14)
-    
     if (selectedDate < minAllowedDate) {
       errors.deadline = 'Deadline must be at least 2 weeks from today'
     }
   }
-
   if (!form.value.drawingType) {
     errors.drawingType = 'Please select a drawing type'
   }
-
   if (!form.value.mainPhoto) {
     errors.mainPhoto = 'Main reference photo is required'
   }
@@ -865,17 +1262,7 @@ const uploadMainPhoto = async (file: File) => {
   }
 
   uploadingMain.value = true
-  showFullScreenLoader.value = true
-  uploadProgress.value = 0
   formErrors.value.mainPhoto = ''
-
-  // Simulate progress
-  const progressInterval = setInterval(() => {
-    uploadProgress.value += 10
-    if (uploadProgress.value >= 100) {
-      clearInterval(progressInterval)
-    }
-  }, 150)
 
   try {
     const response = await singleUploadFile(file)
@@ -887,8 +1274,6 @@ const uploadMainPhoto = async (file: File) => {
     formErrors.value.mainPhoto = 'Upload failed. Please try again.'
   } finally {
     uploadingMain.value = false
-    showFullScreenLoader.value = false
-    uploadProgress.value = 0
   }
 }
 
@@ -931,16 +1316,6 @@ const uploadOptional1Photo = async (file: File) => {
   }
 
   uploadingOptional1.value = true
-  showFullScreenLoader.value = true
-  uploadProgress.value = 0
-
-  // Simulate progress
-  const progressInterval = setInterval(() => {
-    uploadProgress.value += 10
-    if (uploadProgress.value >= 100) {
-      clearInterval(progressInterval)
-    }
-  }, 150)
 
   try {
     const response = await singleUploadFile(file)
@@ -952,8 +1327,6 @@ const uploadOptional1Photo = async (file: File) => {
     alert('Upload failed. Please try again.')
   } finally {
     uploadingOptional1.value = false
-    showFullScreenLoader.value = false
-    uploadProgress.value = 0
   }
 }
 
@@ -995,16 +1368,6 @@ const uploadOptional2Photo = async (file: File) => {
   }
 
   uploadingOptional2.value = true
-  showFullScreenLoader.value = true
-  uploadProgress.value = 0
-
-  // Simulate progress
-  const progressInterval = setInterval(() => {
-    uploadProgress.value += 10
-    if (uploadProgress.value >= 100) {
-      clearInterval(progressInterval)
-    }
-  }, 150)
 
   try {
     const response = await singleUploadFile(file)
@@ -1016,8 +1379,6 @@ const uploadOptional2Photo = async (file: File) => {
     alert('Upload failed. Please try again.')
   } finally {
     uploadingOptional2.value = false
-    showFullScreenLoader.value = false
-    uploadProgress.value = 0
   }
 }
 
@@ -1049,7 +1410,7 @@ const submitForm = async () => {
     loading.value = true
     await createCommission(form.value)
     showSuccessModal.value = true
-    
+
     // Reset form
     form.value = {
       firstName: '',
@@ -1065,12 +1426,12 @@ const submitForm = async () => {
       optionalPhoto1: null,
       optionalPhoto2: null
     }
-    
+
     // Clear all previews
     removeMainPhoto()
     removeOptional1Photo()
     removeOptional2Photo()
-    
+
     // Clear errors
     formErrors.value = {}
   } catch (error) {
@@ -1098,11 +1459,9 @@ const getConfettiColor = (index: number) => {
   return colors[index % colors.length]
 }
 
-// Set minimum date on component mount
+// Initialize on mount
 onMounted(() => {
-  // Set minimum date for deadline input
   fetchContentByType("commission_info")
-  // fetchContentByType("commission_hero")
   const today = new Date()
   const minDate = new Date(today.getTime() + (14 * 24 * 60 * 60 * 1000))
   form.value.deadline = minDate.toISOString().split('T')[0]
@@ -1266,14 +1625,6 @@ onMounted(() => {
 .slide-right-leave-active { animation: slideRightLeave 0.5s ease-in-out; }
 
 /* Transition styles */
-.fullscreen-loader-enter-active, .fullscreen-loader-leave-active {
-  transition: all 0.5s ease;
-}
-.fullscreen-loader-enter-from, .fullscreen-loader-leave-to {
-  opacity: 0;
-  transform: scale(1.1);
-}
-
 .modal-enter-active, .modal-leave-active {
   transition: all 0.3s ease;
 }

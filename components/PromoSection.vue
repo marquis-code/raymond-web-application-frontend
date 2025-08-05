@@ -1,28 +1,9 @@
 <template>
-    <section class="promo-banner">
+    <section class="">
       <div class="banner-container">
         <div class="content-overlay">
           <div class="text-content">
             <h2 class="edition-text">{{ promosale?.description }}</h2>
-<!-- 
-            <div v-if="!promosale?.isLifetime && timeRemaining.total > 0" class="countdown-container">
-                  <div class="countdown-label">Ends In</div>
-                  <div class="countdown-grid">
-                    <div 
-                      v-for="(unit, key) in timeUnits" 
-                      :key="key" 
-                      class="countdown-item"
-                    >
-                      <div class="countdown-number">
-                        <span class="number-display">
-                          {{ String(timeRemaining[key]).padStart(2, '0') }}
-                        </span>
-                        <div class="number-glow"></div>
-                      </div>
-                      <div class="countdown-unit">{{ unit }}</div>
-                    </div>
-                  </div>
-                </div> -->
 
             <h1 class="text-5xl font-black">{{ promosale?.title }}</h1>
             <p class="discount-text">GET {{ promosale?.discountPercentage }}% OFF!!!!!</p>
@@ -31,11 +12,10 @@
             </button>
           </div>
         </div>
-        <div class="image-container">
+        <div class="">
           <img 
             :src="promosale?.imageUrl" 
             alt="Promotional image" 
-            class="banner-image"
           />
         </div>
       </div>

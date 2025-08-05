@@ -716,7 +716,7 @@
                 <div class="flex-1 min-w-0">
                   <h4 class="font-semibold text-slate-800 text-sm truncate">{{ item.title }}</h4>
                   <p class="text-sm text-slate-600">{{ convertFromUSD(item.price).formattedAmount }}</p>
-                  <div class="flex items-center gap-2 mt-1">
+                  <div class="flex flex-col items-start justify-start gap-2 mt-1">
                     <span v-if="item.size" class="text-xs block px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.size }}</span>
                     <span v-if="item.color" class="text-xs block px-2 py-1 bg-slate-100 rounded-full text-slate-600">{{ item.color }}</span>
                     <span v-if="item.hasInstallmentOption" class="text-xs px-2 py-1 block bg-emerald-100 text-emerald-700 rounded-full">Payment Plans Available</span>

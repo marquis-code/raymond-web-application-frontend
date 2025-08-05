@@ -4,10 +4,8 @@
 
     <div v-if="fetchingPromoSale" class="flex items-center justify-center lg:py-44">
         <div class="relative">
-          <!-- Main Loader -->
           <div class="w-16 h-16 border-4 border-gray-200 border-t-pink-500 rounded-full animate-spin"></div>
           
-          <!-- Orbiting Dots -->
           <div class="absolute inset-0 animate-orbit-loader">
             <div class="absolute top-0 left-1/2 w-3 h-3 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full transform -translate-x-1/2 animate-pulse"></div>
           </div>
@@ -16,13 +14,13 @@
           </div>
         </div>
       </div>
-    <PromoSection class="mt-16" v-else :promosale="promosale" :loading="fetchingPromoSale" />
-
-
+    <!-- <PromoSection class="mt-16" v-else :promosale="promosale" :loading="fetchingPromoSale" /> -->
+       <HeroBanner :promosale="promosale" class="mt-16" :loading="fetchingPromoSale" v-else />
+        <!-- <img src="@/assets/img/passion.jpeg" class="h-72 w-full object-contain object-center" /> -->
         <!-- Product Gallery with advanced scroll and hover effects -->
         <section ref="productGalleryRef" class="pt-16 overflow-hidden">
       <div class="mx-auto px-4">
-        <h2 class="text-base font-bold text-center mb-12 slide-up">
+        <h2 class="text-xl font-bold text-center mb-12 slide-up">
           Shop Artworks
         </h2>
 
@@ -62,7 +60,8 @@
             </svg>
           </button>
 
-          <div
+          <ProductsMap :products="sortedProducts" />
+          <!-- <div
             ref="productContainerRef"
             class="flex space-x-6 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory"
             @mousedown="startDrag"
@@ -125,7 +124,7 @@
                 or {{ getConvertedInstallmentPayment() }}/month
               </p>
             </div>
-          </div>
+          </div> -->
 
           <button
             class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-md hover:bg-gray-100 transition-colors"
@@ -205,7 +204,7 @@ const {
 
 // const fixedInstallmentPayment = ref(50)
 
-const fixedInstallmentPayment = ref(50) // USD base amount
+// const fixedInstallmentPayment = ref(50) // USD base amount
 
 const convertedPrice = ref<any>({})
 const fromCurrency = ref<string>('USD')
@@ -442,6 +441,22 @@ onMounted(() => {
   // Initialize animations on scroll
   animateOnScroll();
 });
+
+
+// Computed property to sort products by position and filter out unavailable products
+const sortedProducts = computed(() => {
+  if (!products.value) return []
+  
+  return [...products.value]
+    .filter(product => product.isAvailable !== false) // Filter out products that are explicitly unavailable
+    .sort((a, b) => {
+      // Handle cases where position might be undefined or null
+      const positionA = a.position ?? Number.MAX_SAFE_INTEGER
+      const positionB = b.position ?? Number.MAX_SAFE_INTEGER
+      
+      return positionA - positionB
+    })
+})
 
 onBeforeUnmount(() => {
   // Clean up

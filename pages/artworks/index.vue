@@ -1,13 +1,9 @@
 <template>
   <div class="min-h-screen text-gray-900">
     <!-- Hero Section -->
-    <section
-      class="py-20 px-4 sm:px-6 mt-10 lg:px-8 bg-gradient-to-br from-white via-gray-50 to-gray-100"
-    >
+    <section class="py-20 px-4 sm:px-6 mt-10 lg:px-8 bg-gradient-to-br from-white via-gray-50 to-gray-100">
       <div class="max-w-5xl mx-auto text-center">
-        <p
-          class="text-xl text-gray-600 mb-6 max-w-3xl mx-auto font-medium leading-relaxed animate-fade-in-up animation-delay-200"
-        >
+        <p class="text-xl text-gray-600 mb-6 max-w-3xl mx-auto font-medium leading-relaxed animate-fade-in-up animation-delay-200">
           IF YOU ARE INTERESTED IN COLLECTING AN ORIGINAL PIECE, CLICK BELOW
         </p>
         <NuxtLink
@@ -36,30 +32,23 @@
     <!-- Loading Spinner -->
     <div v-if="loading" class="flex justify-center items-center py-20">
       <div class="relative">
-        <div
-          class="animate-spin rounded-full h-16 w-16 border-4 border-gray-200"
-        ></div>
-        <div
-          class="animate-spin rounded-full h-16 w-16 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"
-        ></div>
+        <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-200"></div>
+        <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"></div>
       </div>
     </div>
 
-    <!-- style="width: 302px; height: 403px; object-fit: contain; object-position: center center;" -->
     <!-- Artwork Gallery -->
     <div v-else class="container mx-auto px-6 pt-10">
       <div class="text-center my-10">
         <h3 class="text-3xl font-light text-gray-800 mb-4 animate-fade-in-up">
-          Featured Artworks
+          Original Artworks
         </h3>
-        <div
-          class="w-24 h-1 bg-gradient-to-r from-gray-400 to-gray-600 mx-auto animate-scale-in animation-delay-300"
-        ></div>
+        <div class="w-24 h-1 bg-gradient-to-r from-gray-400 to-gray-600 mx-auto animate-scale-in animation-delay-300"></div>
       </div>
 
       <div class="grid grid-cols-2 lg:grid-cols-3 gap-1 lg:gap-2">
         <div
-          v-for="(artwork, index) in products"
+          v-for="(artwork, index) in sortedOriginals"
           :key="artwork._id"
           class="artwork-card group cursor-pointer relative animate-fade-in-up h-full"
           :style="{ animationDelay: `${index * 100}ms` }"
@@ -67,9 +56,7 @@
           @mouseenter="hoveredIndex = index"
           @mouseleave="hoveredIndex = null"
         >
-          <div
-            class="relative border overflow-hidden group-hover:shadow-xl transition-all duration-700 h-full"
-          >
+          <div class="relative border overflow-hidden group-hover:shadow-xl transition-all duration-700 h-full">
             <img
               :src="getFirstImage(artwork)"
               :alt="artwork.name"
@@ -78,7 +65,6 @@
                 'scale-100': hoveredIndex !== index,
               }"
             />
-
             <div
               class="absolute inset-0 bg-black/50 backdrop-blur-[0.5px] transition-all duration-500"
               :class="{
@@ -86,7 +72,6 @@
                 'opacity-0': hoveredIndex !== index,
               }"
             ></div>
-
             <div
               class="absolute inset-0 flex items-center justify-center p-4 transition-all duration-500"
               :class="{
@@ -96,7 +81,7 @@
             >
               <div class="text-center transform transition-all duration-700">
                 <h3
-                  class="text-lg md:text-xl font-semibold text-white mb-3 tracking-wide drop-shadow-lg"
+                  class="text-base md:text-xl font-semibold text-white mb-3 tracking-wide drop-shadow-lg"
                   :class="{
                     'translate-y-0 opacity-100': hoveredIndex === index,
                     'translate-y-4 opacity-0': hoveredIndex !== index,
@@ -112,17 +97,6 @@
                   }"
                 ></div>
               </div>
-            </div>
-
-            <div
-              v-if="getProductTag(artwork)"
-              class="absolute top-3 left-3 z-10"
-            >
-              <span
-                class="bg-white/90 backdrop-blur-sm text-gray-900 text-xs px-2.5 py-1 font-medium rounded-full shadow-lg"
-              >
-                {{ getProductTag(artwork) }}
-              </span>
             </div>
           </div>
         </div>
@@ -147,16 +121,13 @@
           <!-- Modal Container -->
           <div class="relative h-full flex flex-col" @click.stop>
             <!-- Header -->
-            <div
-              class="flex items-center justify-between p-4 md:p-6 bg-white/10 backdrop-blur-md border-b border-white/20"
-            >
+            <div class="flex items-center justify-between p-4 md:p-6 bg-white/10 backdrop-blur-md border-b border-white/20">
               <!-- Navigation Info -->
               <div class="flex items-center space-x-4">
                 <div class="text-white/90 text-sm font-medium">
-                  {{ selectedArtworkIndex + 1 }} / {{ products.length }}
+                  {{ selectedArtworkIndex + 1 }} / {{ sortedOriginals.length }}
                 </div>
               </div>
-
               <!-- Close Button - More Prominent -->
               <button
                 @click="closeFullScreenModal"
@@ -182,9 +153,7 @@
             </div>
 
             <!-- Main Content -->
-            <div
-              class="flex-1 flex flex-col lg:flex-row overflow-hidden relative"
-            >
+            <div class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
               <!-- Large Navigation Buttons - Positioned over image area -->
               <button
                 @click="navigateToPrevious"
@@ -231,9 +200,7 @@
               <!-- Mobile: Single scrollable container -->
               <div class="flex-1 flex flex-col lg:hidden overflow-y-auto">
                 <!-- Image Section - Mobile -->
-                <div
-                  class="flex-1 flex items-center justify-center p-4 md:p-8 relative min-h-[60vh]"
-                >
+                <div class="flex-1 flex items-center justify-center p-4 md:p-8 relative min-h-[60vh]">
                   <!-- Image Container -->
                   <Transition
                     enter-active-class="transition-all duration-700 ease-out"
@@ -253,16 +220,13 @@
                         :alt="selectedArtwork.name"
                         @load="imageLoaded = true"
                       />
-
                       <!-- Image Loading Overlay -->
                       <div
                         v-if="!imageLoaded"
                         class="absolute inset-0 bg-white/10 rounded-lg flex items-center justify-center"
                       >
                         <div class="flex items-center space-x-2 text-white/70">
-                          <div
-                            class="animate-spin rounded-full h-6 w-6 border-2 border-white/30 border-t-white/70"
-                          ></div>
+                          <div class="animate-spin rounded-full h-6 w-6 border-2 border-white/30 border-t-white/70"></div>
                           <span class="text-sm">Loading...</span>
                         </div>
                       </div>
@@ -271,36 +235,14 @@
                 </div>
 
                 <!-- Details Section - Mobile -->
-                <div
-                  class="w-full bg-white/95 backdrop-blur-md border-t border-white/20 flex-shrink-0"
-                >
+                <div class="w-full bg-white/95 backdrop-blur-md border-t border-white/20 flex-shrink-0">
                   <div class="p-6 space-y-6">
                     <!-- Title Section -->
                     <div class="animate-slide-in-right">
-                      <h1
-                        class="text-2xl md:text-3xl font-light mb-3 text-gray-900 tracking-wide"
-                      >
+                      <h1 class="text-2xl md:text-3xl font-light mb-3 text-gray-900 tracking-wide">
                         {{ selectedArtwork.name.toUpperCase() }}
                       </h1>
-                      <div
-                        class="w-16 h-0.5 bg-gradient-to-r from-gray-600 to-gray-400 rounded-full"
-                      ></div>
-                    </div>
-
-                    <!-- Date Only -->
-                    <div class="animate-slide-in-right animation-delay-100">
-                      <div
-                        v-if="selectedArtwork.createdAt"
-                        class="flex flex-wrap gap-2 text-sm"
-                      >
-                        <div
-                          class="bg-gray-100 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-300"
-                        >
-                          <span class="text-gray-700">{{
-                            formatDate(selectedArtwork.createdAt)
-                          }}</span>
-                        </div>
-                      </div>
+                      <div class="w-16 h-0.5 bg-gradient-to-r from-gray-600 to-gray-400 rounded-full"></div>
                     </div>
 
                     <!-- Description -->
@@ -317,16 +259,9 @@
                       ></div>
                     </div>
 
-                    <!-- Expandable Sections -->
-                    <div
-                      class="space-y-3 animate-slide-in-right animation-delay-300"
-                    ></div>
-
                     <!-- Contact Section -->
                     <div class="animate-slide-in-right animation-delay-400">
-                      <div
-                        class="bg-gradient-to-r from-gray-900 to-gray-800 backdrop-blur-sm rounded-xl p-6 border border-gray-700"
-                      >
+                      <div class="bg-gradient-to-r from-gray-900 to-gray-800 backdrop-blur-sm rounded-xl p-6 border border-gray-700">
                         <h3 class="font-semibold mb-2 text-white text-base">
                           Interested in This Piece?
                         </h3>
@@ -335,7 +270,7 @@
                           and commission opportunities.
                         </p>
                         <NuxtLink
-                          to="/contact-us"
+                          to="/contact"
                           class="block w-full bg-white text-gray-900 text-center py-3 font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 text-sm"
                         >
                           INQUIRE NOW
@@ -345,22 +280,16 @@
 
                     <!-- Progress Indicator -->
                     <div class="animate-slide-in-right animation-delay-500">
-                      <div
-                        class="flex items-center justify-center space-x-3 pt-2"
-                      >
-                        <span class="text-xs text-gray-600"
-                          >{{ selectedArtworkIndex + 1 }} of
-                          {{ products.length }}</span
-                        >
-                        <div
-                          class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden"
-                        >
+                      <div class="flex items-center justify-center space-x-3 pt-2">
+                        <span class="text-xs text-gray-600">
+                          {{ selectedArtworkIndex + 1 }} of {{ sortedOriginals.length }}
+                        </span>
+                        <div class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
                           <div
                             class="h-full bg-gradient-to-r from-gray-700 to-gray-500 rounded-full transition-all duration-700"
                             :style="{
                               width: `${
-                                ((selectedArtworkIndex + 1) / products.length) *
-                                100
+                                ((selectedArtworkIndex + 1) / sortedOriginals.length) * 100
                               }%`,
                             }"
                           ></div>
@@ -372,9 +301,7 @@
               </div>
 
               <!-- Desktop: Image Section -->
-              <div
-                class="hidden lg:flex flex-1 items-center justify-center p-4 md:p-8 relative"
-              >
+              <div class="hidden lg:flex flex-1 items-center justify-center p-4 md:p-8 relative">
                 <!-- Image Container -->
                 <Transition
                   enter-active-class="transition-all duration-700 ease-out"
@@ -394,16 +321,13 @@
                       :alt="selectedArtwork.name"
                       @load="imageLoaded = true"
                     />
-
                     <!-- Image Loading Overlay -->
                     <div
                       v-if="!imageLoaded"
                       class="absolute inset-0 bg-white/10 rounded-lg flex items-center justify-center"
                     >
                       <div class="flex items-center space-x-2 text-white/70">
-                        <div
-                          class="animate-spin rounded-full h-6 w-6 border-2 border-white/30 border-t-white/70"
-                        ></div>
+                        <div class="animate-spin rounded-full h-6 w-6 border-2 border-white/30 border-t-white/70"></div>
                         <span class="text-sm">Loading...</span>
                       </div>
                     </div>
@@ -412,36 +336,14 @@
               </div>
 
               <!-- Desktop: Details Sidebar -->
-              <div
-                class="hidden lg:block w-96 bg-white/95 backdrop-blur-md border-l border-white/20 overflow-y-auto"
-              >
+              <div class="hidden lg:block w-96 bg-white/95 backdrop-blur-md border-l border-white/20 overflow-y-auto">
                 <div class="p-6 space-y-6">
                   <!-- Title Section -->
                   <div class="animate-slide-in-right">
-                    <h1
-                      class="text-2xl md:text-3xl font-light mb-3 text-gray-900 tracking-wide"
-                    >
+                    <h1 class="text-2xl md:text-3xl font-light mb-3 text-gray-900 tracking-wide">
                       {{ selectedArtwork.name.toUpperCase() }}
                     </h1>
-                    <div
-                      class="w-16 h-0.5 bg-gradient-to-r from-gray-600 to-gray-400 rounded-full"
-                    ></div>
-                  </div>
-
-                  <!-- Date Only -->
-                  <div class="animate-slide-in-right animation-delay-100">
-                    <div
-                      v-if="selectedArtwork.createdAt"
-                      class="flex flex-wrap gap-2 text-sm"
-                    >
-                      <div
-                        class="bg-gray-100 backdrop-blur-sm px-3 py-1.5 rounded-full border border-gray-300"
-                      >
-                        <span class="text-gray-700">{{
-                          formatDate(selectedArtwork.createdAt)
-                        }}</span>
-                      </div>
-                    </div>
+                    <div class="w-16 h-0.5 bg-gradient-to-r from-gray-600 to-gray-400 rounded-full"></div>
                   </div>
 
                   <!-- Description -->
@@ -460,9 +362,7 @@
 
                   <!-- Contact Section -->
                   <div class="animate-slide-in-right animation-delay-400">
-                    <div
-                      class="bg-gradient-to-r from-gray-900 to-gray-800 backdrop-blur-sm rounded-xl p-6 border border-gray-700"
-                    >
+                    <div class="bg-gradient-to-r from-gray-900 to-gray-800 backdrop-blur-sm rounded-xl p-6 border border-gray-700">
                       <h3 class="font-semibold mb-2 text-white text-base">
                         Interested in This Piece?
                       </h3>
@@ -471,7 +371,7 @@
                         and commission opportunities.
                       </p>
                       <NuxtLink
-                        to="/contact-us"
+                        to="/contact"
                         class="block w-full bg-white text-gray-900 text-center py-3 font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 text-sm"
                       >
                         INQUIRE NOW
@@ -481,22 +381,16 @@
 
                   <!-- Progress Indicator -->
                   <div class="animate-slide-in-right animation-delay-500">
-                    <div
-                      class="flex items-center justify-center space-x-3 pt-2"
-                    >
-                      <span class="text-xs text-gray-600"
-                        >{{ selectedArtworkIndex + 1 }} of
-                        {{ products.length }}</span
-                      >
-                      <div
-                        class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden"
-                      >
+                    <div class="flex items-center justify-center space-x-3 pt-2">
+                      <span class="text-xs text-gray-600">
+                        {{ selectedArtworkIndex + 1 }} of {{ sortedOriginals.length }}
+                      </span>
+                      <div class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div
                           class="h-full bg-gradient-to-r from-gray-700 to-gray-500 rounded-full transition-all duration-700"
                           :style="{
                             width: `${
-                              ((selectedArtworkIndex + 1) / products.length) *
-                              100
+                              ((selectedArtworkIndex + 1) / sortedOriginals.length) * 100
                             }%`,
                           }"
                         ></div>
@@ -514,8 +408,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
-import { useFetchProducts } from "@/composables/modules/products/useFetchProducts";
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { useFetchOriginals } from "@/composables/modules/originals/useFetchOriginals";
+
+// Use originals composable instead of products
+const { loading, originals } = useFetchOriginals();
 
 // State
 const hoveredIndex = ref<number | null>(null);
@@ -525,23 +422,13 @@ const modalOpen = ref(false);
 const currentModalImageIndex = ref(0);
 const imageLoaded = ref(false);
 
-// Expandable sections
-const expandedSections = reactive({
-  productInfo: false,
-  shippingInfo: false,
-  returnPolicy: false,
+// Sort originals by position
+const sortedOriginals = computed(() => {
+  if (!originals.value) return [];
+  return [...originals.value].sort((a, b) => (a.position || 0) - (b.position || 0));
 });
 
-const { products, loading } = useFetchProducts();
-
 // Methods
-const getProductTag = (product: any) => {
-  if (product.isFeatured) return "Featured";
-  if (product.isNew) return "New";
-  if (product.isBestseller) return "Popular";
-  return null;
-};
-
 const getFirstImage = (artwork: any) => {
   if (!artwork.images || artwork.images.length === 0) return "";
   return artwork.images[0];
@@ -559,7 +446,6 @@ const openFullScreenModal = (artwork: any, index: number) => {
 const closeFullScreenModal = () => {
   modalOpen.value = false;
   document.body.style.overflow = "";
-
   setTimeout(() => {
     selectedArtwork.value = null;
   }, 300);
@@ -567,9 +453,8 @@ const closeFullScreenModal = () => {
 
 const navigateToPrevious = () => {
   const currentIndex = selectedArtworkIndex.value;
-  const newIndex =
-    currentIndex === 0 ? products.value.length - 1 : currentIndex - 1;
-  selectedArtwork.value = products.value[newIndex];
+  const newIndex = currentIndex === 0 ? sortedOriginals.value.length - 1 : currentIndex - 1;
+  selectedArtwork.value = sortedOriginals.value[newIndex];
   selectedArtworkIndex.value = newIndex;
   currentModalImageIndex.value = 0;
   imageLoaded.value = false;
@@ -577,9 +462,8 @@ const navigateToPrevious = () => {
 
 const navigateToNext = () => {
   const currentIndex = selectedArtworkIndex.value;
-  const newIndex =
-    currentIndex === products.value.length - 1 ? 0 : currentIndex + 1;
-  selectedArtwork.value = products.value[newIndex];
+  const newIndex = currentIndex === sortedOriginals.value.length - 1 ? 0 : currentIndex + 1;
+  selectedArtwork.value = sortedOriginals.value[newIndex];
   selectedArtworkIndex.value = newIndex;
   currentModalImageIndex.value = 0;
   imageLoaded.value = false;
@@ -606,14 +490,6 @@ const nextImage = () => {
 const setModalImage = (index: number) => {
   currentModalImageIndex.value = index;
   imageLoaded.value = false;
-};
-
-const toggleSection = (section: keyof typeof expandedSections) => {
-  expandedSections[section] = !expandedSections[section];
-};
-
-const formatDate = (dateString: string) => {
-  return new Date(dateString).getFullYear().toString();
 };
 
 // Handle escape key

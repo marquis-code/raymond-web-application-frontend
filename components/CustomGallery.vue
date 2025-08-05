@@ -1,12 +1,12 @@
 <template>
           <div
-        class="relative h-[500px] overflow-hidden section-transition cursor-pointer"
+        class="relative overflow-hidden section-transition cursor-pointer"
         @click="navigateTo('/artworks')"
       >
         <img
            :src="content?.images[0]"
           alt="Artist with artwork"
-          class="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+          class="w-full h-full transition-transform duration-700 hover:scale-110"
         />
         <div
           class="absolute bottom-0 left-0 right-0 bg-blue-900 text-white p-4 transition-all duration-300 hover:bg-blue-800"

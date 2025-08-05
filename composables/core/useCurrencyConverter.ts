@@ -111,7 +111,7 @@ export interface CurrencyConversionResult {
   
   export const useCurrencyConverter = () => {
     const config = useRuntimeConfig()
-    const API_KEY = 'f5910763dd36b3aa6d1e6760'
+    const API_KEY = '63729107bf850afc2fee0ef1'
     const BASE_URL = 'https://v6.exchangerate-api.com/v6'
     
     // Reactive state
