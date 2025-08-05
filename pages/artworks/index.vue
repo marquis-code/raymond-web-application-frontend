@@ -1,101 +1,104 @@
 <template>
   <div class="min-h-screen text-gray-900">
-    <!-- Hero Section -->
-    <section class="py-20 px-4 sm:px-6 mt-10 lg:px-8 bg-gradient-to-br from-white via-gray-50 to-gray-100">
-      <div class="max-w-5xl mx-auto text-center">
-        <p class="text-xl text-gray-600 mb-6 max-w-3xl mx-auto font-medium leading-relaxed animate-fade-in-up animation-delay-200">
-          IF YOU ARE INTERESTED IN COLLECTING AN ORIGINAL PIECE, CLICK BELOW
-        </p>
-        <NuxtLink
-          to="/contact"
-          class="inline-flex items-center justify-center px-10 py-2.5 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 transition-all duration-500 hover:scale-105 hover:shadow-xl transform group animate-fade-in-up animation-delay-400"
-        >
-          <span class="mr-2">PURCHASE</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="transition-transform group-hover:translate-x-1"
+    <!-- Splash Screen for Loading States -->
+    <SplashScreen 
+      :show="showSplash" 
+      :duration="0"
+      loading-message="Loading original artworks..."
+      @hide="onSplashHide"
+    />
+    
+    <!-- Main Content - Hidden when splash is showing -->
+    <div v-show="!showSplash">
+      <!-- Hero Section -->
+      <section class="py-20 px-4 sm:px-6 mt-10 lg:px-8 bg-gradient-to-br from-white via-gray-50 to-gray-100">
+        <div class="max-w-5xl mx-auto text-center">
+          <p class="text-xl text-gray-600 mb-6 max-w-3xl mx-auto font-medium leading-relaxed animate-fade-in-up animation-delay-200">
+            IF YOU ARE INTERESTED IN COLLECTING AN ORIGINAL PIECE, CLICK BELOW
+          </p>
+          <NuxtLink
+            to="/contact"
+            class="inline-flex items-center justify-center px-10 py-2.5 bg-gray-900 text-white font-medium rounded-full hover:bg-gray-800 transition-all duration-500 hover:scale-105 hover:shadow-xl transform group animate-fade-in-up animation-delay-400"
           >
-            <path d="m9 18 6-6-6-6" />
-          </svg>
-        </NuxtLink>
-      </div>
-    </section>
-
-    <!-- Loading Spinner -->
-    <div v-if="loading" class="flex justify-center items-center py-20">
-      <div class="relative">
-        <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-200"></div>
-        <div class="animate-spin rounded-full h-16 w-16 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"></div>
-      </div>
-    </div>
-
-    <!-- Artwork Gallery -->
-    <div v-else class="container mx-auto px-6 pt-10">
-      <div class="text-center my-10">
-        <h3 class="text-3xl font-light text-gray-800 mb-4 animate-fade-in-up">
-          Original Artworks
-        </h3>
-        <div class="w-24 h-1 bg-gradient-to-r from-gray-400 to-gray-600 mx-auto animate-scale-in animation-delay-300"></div>
-      </div>
-
-      <div class="grid grid-cols-2 lg:grid-cols-3 gap-1 lg:gap-2">
-        <div
-          v-for="(artwork, index) in sortedOriginals"
-          :key="artwork._id"
-          class="artwork-card group cursor-pointer relative animate-fade-in-up h-full"
-          :style="{ animationDelay: `${index * 100}ms` }"
-          @click="openFullScreenModal(artwork, index)"
-          @mouseenter="hoveredIndex = index"
-          @mouseleave="hoveredIndex = null"
-        >
-          <div class="relative border overflow-hidden group-hover:shadow-xl transition-all duration-700 h-full">
-            <img
-              :src="getFirstImage(artwork)"
-              :alt="artwork.name"
-              :class="{
-                'scale-110': hoveredIndex === index,
-                'scale-100': hoveredIndex !== index,
-              }"
-            />
-            <div
-              class="absolute inset-0 bg-black/50 backdrop-blur-[0.5px] transition-all duration-500"
-              :class="{
-                'opacity-100': hoveredIndex === index,
-                'opacity-0': hoveredIndex !== index,
-              }"
-            ></div>
-            <div
-              class="absolute inset-0 flex items-center justify-center p-4 transition-all duration-500"
-              :class="{
-                'opacity-100': hoveredIndex === index,
-                'opacity-0': hoveredIndex !== index,
-              }"
+            <span class="mr-2">PURCHASE</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="transition-transform group-hover:translate-x-1"
             >
-              <div class="text-center transform transition-all duration-700">
-                <h3
-                  class="text-base md:text-xl font-semibold text-white mb-3 tracking-wide drop-shadow-lg"
-                  :class="{
-                    'translate-y-0 opacity-100': hoveredIndex === index,
-                    'translate-y-4 opacity-0': hoveredIndex !== index,
-                  }"
-                >
-                  {{ artwork.name.toUpperCase() }}
-                </h3>
-                <div
-                  class="w-12 h-0.5 bg-white mx-auto transition-all duration-700 delay-100"
-                  :class="{
-                    'scale-x-100 opacity-100': hoveredIndex === index,
-                    'scale-x-0 opacity-0': hoveredIndex !== index,
-                  }"
-                ></div>
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </NuxtLink>
+        </div>
+      </section>
+
+      <!-- Artwork Gallery -->
+      <div class="container mx-auto px-6 pt-10">
+        <div class="text-center my-10">
+          <h3 class="text-3xl font-light text-gray-800 mb-4 animate-fade-in-up">
+            Original Artworks
+          </h3>
+          <div class="w-24 h-1 bg-gradient-to-r from-gray-400 to-gray-600 mx-auto animate-scale-in animation-delay-300"></div>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-1 lg:gap-2">
+          <div
+            v-for="(artwork, index) in sortedOriginals"
+            :key="artwork._id"
+            class="artwork-card group cursor-pointer relative animate-fade-in-up h-full"
+            :style="{ animationDelay: `${index * 100}ms` }"
+            @click="openFullScreenModal(artwork, index)"
+            @mouseenter="hoveredIndex = index"
+            @mouseleave="hoveredIndex = null"
+          >
+            <div class="relative border overflow-hidden group-hover:shadow-xl transition-all duration-700 h-full">
+              <img
+                :src="getFirstImage(artwork)"
+                :alt="artwork.name"
+                :class="{
+                  'scale-110': hoveredIndex === index,
+                  'scale-100': hoveredIndex !== index,
+                }"
+              />
+              <div
+                class="absolute inset-0 bg-black/50 backdrop-blur-[0.5px] transition-all duration-500"
+                :class="{
+                  'opacity-100': hoveredIndex === index,
+                  'opacity-0': hoveredIndex !== index,
+                }"
+              ></div>
+              <div
+                class="absolute inset-0 flex items-center justify-center p-4 transition-all duration-500"
+                :class="{
+                  'opacity-100': hoveredIndex === index,
+                  'opacity-0': hoveredIndex !== index,
+                }"
+              >
+                <div class="text-center transform transition-all duration-700">
+                  <h3
+                    class="text-base md:text-xl font-semibold text-white mb-3 tracking-wide drop-shadow-lg"
+                    :class="{
+                      'translate-y-0 opacity-100': hoveredIndex === index,
+                      'translate-y-4 opacity-0': hoveredIndex !== index,
+                    }"
+                  >
+                    {{ artwork.name.toUpperCase() }}
+                  </h3>
+                  <div
+                    class="w-12 h-0.5 bg-white mx-auto transition-all duration-700 delay-100"
+                    :class="{
+                      'scale-x-100 opacity-100': hoveredIndex === index,
+                      'scale-x-0 opacity-0': hoveredIndex !== index,
+                    }"
+                  ></div>
+                </div>
               </div>
             </div>
           </div>
@@ -281,9 +284,7 @@
                     <!-- Progress Indicator -->
                     <div class="animate-slide-in-right animation-delay-500">
                       <div class="flex items-center justify-center space-x-3 pt-2">
-                        <span class="text-xs text-gray-600">
-                          {{ selectedArtworkIndex + 1 }} of {{ sortedOriginals.length }}
-                        </span>
+                        <span class="text-xs text-gray-600">{{ selectedArtworkIndex + 1 }} of {{ sortedOriginals.length }}</span>
                         <div class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
                           <div
                             class="h-full bg-gradient-to-r from-gray-700 to-gray-500 rounded-full transition-all duration-700"
@@ -382,9 +383,7 @@
                   <!-- Progress Indicator -->
                   <div class="animate-slide-in-right animation-delay-500">
                     <div class="flex items-center justify-center space-x-3 pt-2">
-                      <span class="text-xs text-gray-600">
-                        {{ selectedArtworkIndex + 1 }} of {{ sortedOriginals.length }}
-                      </span>
+                      <span class="text-xs text-gray-600">{{ selectedArtworkIndex + 1 }} of {{ sortedOriginals.length }}</span>
                       <div class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div
                           class="h-full bg-gradient-to-r from-gray-700 to-gray-500 rounded-full transition-all duration-700"
@@ -408,11 +407,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useFetchOriginals } from "@/composables/modules/originals/useFetchOriginals";
 
 // Use originals composable instead of products
 const { loading, originals } = useFetchOriginals();
+
+// Splash Screen Control
+const showSplash = ref(true);
+
+const onSplashHide = () => {
+  showSplash.value = false;
+};
+
+// Watch loading state and control splash screen
+watch(loading, (isLoading) => {
+  if (!isLoading && showSplash.value) {
+    // Add a minimum display time for better UX
+    setTimeout(() => {
+      showSplash.value = false;
+    }, 1500);
+  } else if (isLoading) {
+    showSplash.value = true;
+  }
+});
 
 // State
 const hoveredIndex = ref<number | null>(null);

@@ -1,176 +1,100 @@
 <template>
   <div class="mt-20">
-     <ArtistHero />
-
-    <div v-if="fetchingPromoSale" class="flex items-center justify-center lg:py-44">
-        <div class="relative">
-          <div class="w-16 h-16 border-4 border-gray-200 border-t-pink-500 rounded-full animate-spin"></div>
+    <!-- Splash Screen for Loading States -->
+    <SplashScreen 
+      :show="showSplash" 
+      :duration="0"
+      @hide="onSplashHide"
+    />
+    
+    <!-- Main Content - Hidden when splash is showing -->
+    <div v-show="!showSplash">
+      <ArtistHero />
+      
+      <!-- Promo Sale Section -->
+      <HeroBanner :promosale="promosale" class="mt-16" :loading="fetchingPromoSale" />
+      
+      <!-- Products Section -->
+      <section ref="productGalleryRef" class="pt-16 overflow-hidden">
+        <div class="mx-auto px-4">
+          <h2 class="text-xl font-bold text-center mb-12 slide-up">
+            Shop Artworks
+          </h2>
           
-          <div class="absolute inset-0 animate-orbit-loader">
-            <div class="absolute top-0 left-1/2 w-3 h-3 bg-gradient-to-r from-pink-500 to-orange-500 rounded-full transform -translate-x-1/2 animate-pulse"></div>
-          </div>
-          <div class="absolute inset-0 animate-orbit-loader-reverse">
-            <div class="absolute bottom-0 left-1/2 w-2 h-2 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transform -translate-x-1/2 animate-pulse"></div>
-          </div>
-        </div>
-      </div>
-    <!-- <PromoSection class="mt-16" v-else :promosale="promosale" :loading="fetchingPromoSale" /> -->
-       <HeroBanner :promosale="promosale" class="mt-16" :loading="fetchingPromoSale" v-else />
-        <!-- <img src="@/assets/img/passion.jpeg" class="h-72 w-full object-contain object-center" /> -->
-        <!-- Product Gallery with advanced scroll and hover effects -->
-        <section ref="productGalleryRef" class="pt-16 overflow-hidden">
-      <div class="mx-auto px-4">
-        <h2 class="text-xl font-bold text-center mb-12 slide-up">
-          Shop Artworks
-        </h2>
-
-        <div v-if="loading" class="flex justify-center items-center py-20">
-          <div class="relative">
-            <div
-              class="animate-spin rounded-full h-20 w-20 border-4 border-gray-200"
-            ></div>
-            <div
-              class="animate-spin rounded-full h-20 w-20 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"
-            ></div>
-            <div class="absolute inset-0 flex items-center justify-center">
-              <div class="w-8 h-8 bg-gray-900 rounded-full animate-pulse"></div>
-            </div>
-          </div>
-        </div>
-
-        <div v-else class="relative product-slider">
-          <!-- Navigation Arrows -->
-          <button
-            class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-md hover:bg-gray-100 transition-colors"
-            @click="scrollProducts('left')"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div class="relative product-slider">
+            <!-- Navigation Arrows -->
+            <button
+              class="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-md hover:bg-gray-100 transition-colors"
+              @click="scrollProducts('left')"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-
-          <ProductsMap :products="sortedProducts" />
-          <!-- <div
-            ref="productContainerRef"
-            class="flex space-x-6 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory"
-            @mousedown="startDrag"
-            @mousemove="onDrag"
-            @mouseup="endDrag"
-            @mouseleave="endDrag"
-            @touchstart="startDragTouch"
-            @touchmove="onDragTouch"
-            @touchend="endDragTouch"
-          >
-            <div
-              v-for="(product, index) in products"
-              :key="index"
-              class="product-card flex-shrink-0 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 snap-start relative group"
-              :ref="
-                (el) => {
-                  if (el) productRefs[index] = el;
-                }
-              "
-            >
-              <div class="relative mb-4 overflow-hidden">
-                <img
-                  :src="product.images[0]"
-                  :alt="product.title"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
                 />
-                <div
-                  v-if="product.isFeatured"
-                  class="absolute top-2 rounded-lg left-2 bg-black text-white text-xs px-2 py-1"
-                >
-                  Sale
-                </div>
-                <div
-                  v-if="product.isNew"
-                  class="absolute top-2 rounded-lg left-2 bg-black text-white text-xs px-2 py-1"
-                >
-                  New Arrival
-                </div>
-                <div
-                  v-if="product.isBestseller"
-                  class="absolute top-2 rounded-lg left-2 bg-black text-white text-xs px-2 py-1"
-                >
-                  Best Seller
-                </div>
-                <div
-                  class="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center"
-                >
-                  <button
-                    class="bg-white text-black text-sm px-6 py-2 font-medium hover:bg-gray-100 transition quick-view-button"
-                    @click="navigateTo(`/artworks/${product.id}`)"
-                  >
-                    Quick View
-                  </button>
-                </div>
-              </div>
-              <h3 class="text-center font-semibold text-lg mb-1">
-                {{ product?.name }}
-              </h3>
-              <p class="text-center font-semibold text-sm text-gray-700 mb-1">
-               From  {{ getConvertedMinPrice(product) }} 
-                or {{ getConvertedInstallmentPayment() }}/month
-              </p>
-            </div>
-          </div> -->
-
-          <button
-            class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-md hover:bg-gray-100 transition-colors"
-            @click="scrollProducts('right')"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+              </svg>
+            </button>
+            
+            <ProductsMap :products="sortedProducts" />
+            
+            <button
+              class="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-3 shadow-md hover:bg-gray-100 transition-colors"
+              @click="scrollProducts('right')"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Gallery & Portrait Order Section with hover animations -->
-    <section class="grid grid-cols-1 md:grid-cols-2">
-      <!-- Gallery Section -->
-      <CustomGallery />
+      <!-- Gallery & Portrait Order Section -->
+      <section class="grid grid-cols-1 md:grid-cols-2">
+        <CustomGallery />
+        <CustomPortrait />
+      </section>
 
-      <!-- Portrait Order Section -->
-    <CustomPortrait />
-    </section>
-
-    <!-- <CourseTestimonialCarousel /> -->
-    <TestimonialsCarousel />
+      <TestimonialsCarousel />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, reactive } from "vue";
+import { ref, onMounted, onBeforeUnmount, reactive, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import hero1 from "@/assets/img/commission-art1.jpg";
 import hero2 from "@/assets/img/raymond-hero.png";
 import { useFetchProducts } from "@/composables/modules/products/useFetchProducts";
 import { useFetchPromosale } from "@/composables/modules/promosale/useFetchPromosale";
-import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter"
+import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter";
+// import { fixedInstallmentPayment } from "@/constants"; // Declare the variable before using it
+
+// Splash Screen Control
+const showSplash = ref(true);
+
+const onSplashHide = () => {
+  showSplash.value = false;
+};
 
 // Initialize currency converter
 const {
@@ -183,77 +107,63 @@ const {
   initializeUserCurrency,
   convertFromUSD,
   convertCurrency,
-} = useCurrencyConverter()
+} = useCurrencyConverter();
 
-// import { useCurrencyConverter } from "@/composables/useConvertCurrency"
-// const {
-//   countryCode,
-//   currency,
-//   isLoading,
-//   error,
-//   currencyCode,
-//   currencySymbol,
-//   currencyName,
-//   detectCountry,
-//   formatCurrency,
-//   setCurrency,
-//   setCountry,
-//   getSupportedCurrencies,
-//   getSupportedCountries
-// } = useCurrencyConverter()
-
-// const fixedInstallmentPayment = ref(50)
-
-// const fixedInstallmentPayment = ref(50) // USD base amount
-
-const convertedPrice = ref<any>({})
-const fromCurrency = ref<string>('USD')
-const toCurrency = ref<string>('NGN')
-const manualConversionResult = ref<any>(null)
-
-
-// // Auto-detect country on mount
-// onMounted(() => {
-//   detectCountry()
-// })
-
+const convertedPrice = ref<any>({});
+const fromCurrency = ref<string>('USD');
+const toCurrency = ref<string>('NGN');
+const manualConversionResult = ref<any>(null);
 
 // Available currencies for dropdown
 const availableCurrencies = computed(() => {
-  return Object.keys(exchangeRates.value).sort()
-})
+  return Object.keys(exchangeRates.value).sort();
+});
 
 // Initialize on mount
 onMounted(async () => {
-  await initializeUserCurrency()
-  updateConvertedPrice()
-})
+  await initializeUserCurrency();
+  updateConvertedPrice();
+});
 
 // Watch for currency changes
 watch([userCurrency, exchangeRates], () => {
-  updateConvertedPrice()
-})
+  updateConvertedPrice();
+});
 
 // Update converted price when user currency or exchange rates change
 const updateConvertedPrice = () => {
   if (userCurrency.value && Object.keys(exchangeRates.value).length > 0) {
-    convertedPrice.value = convertFromUSD(100) // Example conversion
+    convertedPrice.value = convertFromUSD(100); // Example conversion
   }
-}
+};
 
 // Retry initialization on error
 const retryInitialization = async () => {
-  await initializeUserCurrency()
-  updateConvertedPrice()
-}
+  await initializeUserCurrency();
+  updateConvertedPrice();
+};
 
 // Set default target currency to user currency when it changes
 watch(userCurrency, (newCurrency) => {
-  toCurrency.value = newCurrency
-})
+  toCurrency.value = newCurrency;
+});
 
 const { products, loading } = useFetchProducts();
 const { promosale, loading: fetchingPromoSale } = useFetchPromosale();
+
+// Watch loading states and control splash screen
+watch([loading, fetchingPromoSale, currencyLoading], ([productsLoading, promoLoading, currencyLoad]) => {
+  const isAnyLoading = productsLoading || promoLoading || currencyLoad;
+  
+  if (!isAnyLoading && showSplash.value) {
+    // Add a minimum display time for better UX
+    setTimeout(() => {
+      showSplash.value = false;
+    }, 1500);
+  } else if (isAnyLoading) {
+    showSplash.value = true;
+  }
+});
 
 import gsap from "gsap";
 import PromoSaleCTA from "../components/PromoSaleCTA.vue";
@@ -299,7 +209,6 @@ const handleScroll = () => {
     const scrollPosition = window.scrollY;
     const promotionPosition = promotionRef.value.offsetTop;
     const offset = scrollPosition - promotionPosition;
-
     if (
       scrollPosition > promotionPosition - window.innerHeight &&
       scrollPosition < promotionPosition + promotionRef.value.offsetHeight
@@ -311,32 +220,27 @@ const handleScroll = () => {
 
 // Updated function to get converted installment payment
 const getConvertedInstallmentPayment = () => {
-  const converted = convertFromUSD(fixedInstallmentPayment.value)
-  return converted.formattedAmount || fixedInstallmentPayment.value
-}
+  const converted = convertFromUSD(fixedInstallmentPayment);
+  return converted.formattedAmount || fixedInstallmentPayment;
+};
 
 // Updated function to get converted minimum price for each product
 const getConvertedMinPrice = (product: any) => {
-  let minUSDPrice = 0
-  
+  let minUSDPrice = 0;
   if (product.sizes && product.sizes.length > 0) {
-    minUSDPrice = Math.min(...product.sizes.map((size: any) => size.price))
+    minUSDPrice = Math.min(...product.sizes.map((size: any) => size.price));
   } else {
-    minUSDPrice = product.price || 0
+    minUSDPrice = product.price || 0;
   }
   
   // Convert from USD to user's currency using the composable
-  const converted = convertFromUSD(minUSDPrice)
-  return converted.formattedAmount || minUSDPrice
-  // const converted = convertFromUSD(100, 'NGN')
-  // return converted
-}
-
+  const converted = convertFromUSD(minUSDPrice);
+  return converted.formattedAmount || minUSDPrice;
+};
 
 // Product slider drag functionality
 const startDrag = (e: MouseEvent) => {
   if (!productContainerRef.value) return;
-
   isDragging.value = true;
   startX.value = e.pageX - productContainerRef.value.offsetLeft;
   scrollLeft.value = productContainerRef.value.scrollLeft;
@@ -344,7 +248,6 @@ const startDrag = (e: MouseEvent) => {
 
 const onDrag = (e: MouseEvent) => {
   if (!isDragging.value || !productContainerRef.value) return;
-
   e.preventDefault();
   const x = e.pageX - productContainerRef.value.offsetLeft;
   const walk = (x - startX.value) * 2; // Scroll speed multiplier
@@ -358,7 +261,6 @@ const endDrag = () => {
 // Touch events for mobile
 const startDragTouch = (e: TouchEvent) => {
   if (!productContainerRef.value) return;
-
   isDragging.value = true;
   startX.value = e.touches[0].pageX - productContainerRef.value.offsetLeft;
   scrollLeft.value = productContainerRef.value.scrollLeft;
@@ -366,7 +268,6 @@ const startDragTouch = (e: TouchEvent) => {
 
 const onDragTouch = (e: TouchEvent) => {
   if (!isDragging.value || !productContainerRef.value) return;
-
   const x = e.touches[0].pageX - productContainerRef.value.offsetLeft;
   const walk = (x - startX.value) * 2;
   productContainerRef.value.scrollLeft = scrollLeft.value - walk;
@@ -379,7 +280,6 @@ const endDragTouch = () => {
 // Button scroll functionality
 const scrollProducts = (direction: "left" | "right") => {
   if (!productContainerRef.value) return;
-
   const scrollAmount = productContainerRef.value.clientWidth * 0.8;
   if (direction === "left") {
     productContainerRef.value.scrollBy({
@@ -426,7 +326,6 @@ onMounted(() => {
       duration: 1,
       ease: "power3.out",
     });
-
     gsap.from(taglineRef.value.querySelector(".typewriter-text"), {
       width: 0,
       duration: 3,
@@ -442,21 +341,18 @@ onMounted(() => {
   animateOnScroll();
 });
 
-
 // Computed property to sort products by position and filter out unavailable products
 const sortedProducts = computed(() => {
-  if (!products.value) return []
-  
+  if (!products.value) return [];
   return [...products.value]
     .filter(product => product.isAvailable !== false) // Filter out products that are explicitly unavailable
     .sort((a, b) => {
       // Handle cases where position might be undefined or null
-      const positionA = a.position ?? Number.MAX_SAFE_INTEGER
-      const positionB = b.position ?? Number.MAX_SAFE_INTEGER
-      
-      return positionA - positionB
-    })
-})
+      const positionA = a.position ?? Number.MAX_SAFE_INTEGER;
+      const positionB = b.position ?? Number.MAX_SAFE_INTEGER;
+      return positionA - positionB;
+    });
+});
 
 onBeforeUnmount(() => {
   // Clean up
@@ -470,6 +366,7 @@ onBeforeUnmount(() => {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
 }

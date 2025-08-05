@@ -1,112 +1,122 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50">
-    <!-- Hero Section -->
-    <!-- {{ content }} -->
-    <PrintsHeroSection class="mb-10" :loading="fetchingContent" :content="content" :images="content?.images" />
+    <!-- Splash Screen for Loading States -->
+    <SplashScreen 
+      :show="showSplash" 
+      :duration="0"
+      loading-message="Loading curated collection..."
+      @hide="onSplashHide"
+    />
+    
+    <!-- Main Content - Hidden when splash is showing -->
+    <div v-show="!showSplash">
+      <!-- Hero Section -->
+      <PrintsHeroSection 
+        class="mb-10" 
+        :loading="fetchingContent" 
+        :content="content" 
+        :images="content?.images" 
+      />
 
-    <div class="container mx-auto px-3 lg:px-6">
-      <div class="text-center mb-16 animate-fade-in-up">
-        <h2 class="text-4xl font-light text-gray-900 mb-4">Curated Collection</h2>
-        <div class="w-24 h-1 bg-gradient-to-r from-gray-400 to-gray-600 mx-auto rounded-full"></div>
-        <p class="text-gray-600 mt-6 max-w-2xl mx-auto">Each piece tells a story, crafted with precision and passion to bring art into your space.</p>
-      </div>
-
-      <!-- Loading Spinner -->
-      <div v-if="loading" class="flex justify-center items-center py-20">
-        <div class="relative">
-          <div class="animate-spin rounded-full h-20 w-20 border-4 border-gray-200"></div>
-          <div class="animate-spin rounded-full h-20 w-20 border-4 border-gray-900 border-t-transparent absolute top-0 left-0"></div>
-          <div class="absolute inset-0 flex items-center justify-center">
-            <div class="w-8 h-8 bg-gray-900 rounded-full animate-pulse"></div>
-          </div>
+      <div class="container mx-auto px-3 lg:px-6">
+        <div class="text-center mb-16 animate-fade-in-up">
+          <h2 class="text-4xl font-light text-gray-900 mb-4">Curated Collection</h2>
+          <div class="w-24 h-1 bg-gradient-to-r from-gray-400 to-gray-600 mx-auto rounded-full"></div>
+          <p class="text-gray-600 mt-6 max-w-2xl mx-auto">
+            Each piece tells a story, crafted with precision and passion to bring art into your space.
+          </p>
         </div>
-      </div>
 
-      <!-- Products Grid -->
-      <div v-else class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-        <div
-          v-for="(product, index) in sortedProducts"
-          :key="product._id"
-          class="product-card group cursor-pointer animate-fade-in-up"
-          :style="{ animationDelay: `${index * 100}ms` }"
-          @mouseenter="handleProductHover(index, true)"
-          @mouseleave="handleProductHover(index, false)"
-          @click="openProductModal(product._id)"
-        >
-          <!-- Product Card Container -->
-          <div class="bg-white rounded-2xl shadow-lg group-hover:shadow-2xl transition-all duration-700 h-[500px] flex flex-col">
-            <!-- Product Image Container -->
-            <div class="relative overflow-hidden rounded-t-2xl flex-1">
-              <!-- Product Tag -->
-              <div v-if="getProductTag(product)" class="absolute top-4 left-4 z-10">
-                <span class="bg-white/95 backdrop-blur-sm text-gray-900 text-xs px-3 py-2 font-medium rounded-full shadow-lg">
-                  {{ getProductTag(product) }}
-                </span>
-              </div>
+        <!-- Products Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+          <div
+            v-for="(product, index) in sortedProducts"
+            :key="product._id"
+            class="product-card group cursor-pointer animate-fade-in-up"
+            :style="{ animationDelay: `${index * 100}ms` }"
+            @mouseenter="handleProductHover(index, true)"
+            @mouseleave="handleProductHover(index, false)"
+            @click="openProductModal(product._id)"
+          >
+            <!-- Product Card Container -->
+            <div class="bg-white rounded-2xl shadow-lg group-hover:shadow-2xl transition-all duration-700 h-[500px] flex flex-col">
+              <!-- Product Image Container -->
+              <div class="relative overflow-hidden rounded-t-2xl flex-1">
+                <!-- Product Tag -->
+                <div v-if="getProductTag(product)" class="absolute top-4 left-4 z-10">
+                  <span class="bg-white/95 backdrop-blur-sm text-gray-900 text-xs px-3 py-2 font-medium rounded-full shadow-lg">
+                    {{ getProductTag(product) }}
+                  </span>
+                </div>
 
-              <!-- Main Product Image -->
-              <div class="overflow-hidden h-full">
-                <img
-                  :src="getProductImage(product, index)"
-                  :alt="product.name"
-                  class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
-                  @load="handleImageLoad(index)"
-                  @error="handleImageError(index)"
-                />
-              </div>
+                <!-- Main Product Image -->
+                <div class="overflow-hidden h-full">
+                  <img
+                    :src="getProductImage(product, index)"
+                    :alt="product.name"
+                    class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                    @load="handleImageLoad(index)"
+                    @error="handleImageError(index)"
+                  />
+                </div>
 
-              <!-- Loading Overlay -->
-              <div v-if="imageLoading[index]" class="absolute inset-0 bg-gray-100 flex items-center justify-center">
-                <div class="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-gray-600"></div>
-              </div>
+                <!-- Loading Overlay -->
+                <div v-if="imageLoading[index]" class="absolute inset-0 bg-gray-100 flex items-center justify-center">
+                  <div class="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-gray-600"></div>
+                </div>
 
-              <!-- Quick View Overlay (optional - for hover effect) -->
-              <div class="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
-                <div class="transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 opacity-0 group-hover:opacity-100">
-                  <span class="text-white text-lg font-medium tracking-wide">Quick View</span>
-                  <div class="w-16 h-0.5 bg-white mx-auto mt-2 scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                <!-- Quick View Overlay -->
+                <div class="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
+                  <div class="transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 opacity-0 group-hover:opacity-100">
+                    <span class="text-white text-lg font-medium tracking-wide">Quick View</span>
+                    <div class="w-16 h-0.5 bg-white mx-auto mt-2 scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Product Info Section - Below Image -->
-            <div class="p-6 flex flex-col justify-between flex-shrink-0">
-              <!-- Product Title -->
-              <div class="text-center mb-4">
-                <h3 class="text-lg font-medium text-gray-900 tracking-wide mb-2">{{ product?.name ?? 'Nil' }}</h3>
-                <!-- Divider Line -->
-                <div class="w-8 h-0.5 bg-gray-900 mx-auto mb-4"></div>
-                <!-- Price Info -->
-                <p class="text-gray-600 font-light mb-2 text-sm">
-                  From {{ getConvertedMinPrice(product) }}
-                  <span v-if="hasInstallmentOptions(product)">
-                    or {{ getConvertedInstallmentPayment(product) }}/month
-                  </span>
-                </p>
-                <!-- Promotion Text -->
-                <p v-if="product?.promotionText" class="text-gray-500 text-xs mb-4">{{ product?.promotionText }}</p>
+              <!-- Product Info Section - Below Image -->
+              <div class="p-6 flex flex-col justify-between flex-shrink-0">
+                <!-- Product Title -->
+                <div class="text-center mb-4">
+                  <h3 class="text-lg font-medium text-gray-900 tracking-wide mb-2">
+                    {{ product?.name ?? 'Nil' }}
+                  </h3>
+                  <!-- Divider Line -->
+                  <div class="w-8 h-0.5 bg-gray-900 mx-auto mb-4"></div>
+                  <!-- Price Info -->
+                  <p class="text-gray-600 font-light mb-2 text-sm">
+                    From {{ getConvertedMinPrice(product) }}
+                    <span v-if="hasInstallmentOptions(product)">
+                      or {{ getConvertedInstallmentPayment(product) }}/month
+                    </span>
+                  </p>
+                  <!-- Promotion Text -->
+                  <p v-if="product?.promotionText" class="text-gray-500 text-xs mb-4">
+                    {{ product?.promotionText }}
+                  </p>
+                </div>
+
+                <!-- Add to Cart Button -->
+                <button 
+                  class="w-full bg-gray-900 text-white py-3 text-sm px-6 rounded-xl font-medium hover:bg-gray-800 transition-all duration-300 hover:scale-105 shadow-lg"
+                  @click.stop="router.push(`/artworks/${product._id}`)"
+                >
+                  Add to Cart
+                </button>
               </div>
-
-              <!-- Add to Cart Button -->
-              <button 
-                class="w-full bg-gray-900 text-white py-3 text-sm px-6 rounded-xl font-medium hover:bg-gray-800 transition-all duration-300 hover:scale-105 shadow-lg"
-                @click.stop="router.push(`/artworks/${product._id}`)"
-              >
-                Add to Cart
-              </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Product Preview Modal -->
-    <ProductPreviewModal
-      :is-open="modalOpen"
-      :product-id="selectedProductId"
-      :on-close="closeProductModal"
-      :on-add-to-cart="handleAddToCart"
-    />
+      <!-- Product Preview Modal -->
+      <ProductPreviewModal
+        :is-open="modalOpen"
+        :product-id="selectedProductId"
+        :on-close="closeProductModal"
+        :on-add-to-cart="handleAddToCart"
+      />
+    </div>
   </div>
 </template>
 
@@ -121,6 +131,13 @@ import { useCurrencyConverter } from "@/composables/core/useCurrencyConverter"
 import { useFetchContentByType } from "@/composables/modules/content/useFetchContentByType"
 
 const { fetchContentByType, loading: fetchingContent, content } = useFetchContentByType()
+
+// Splash Screen Control
+const showSplash = ref(true)
+
+const onSplashHide = () => {
+  showSplash.value = false
+}
 
 // Initialize currency converter
 const {
@@ -178,7 +195,6 @@ watch(userCurrency, (newCurrency) => {
 const { addToCart: addItemToCart } = useCartStore()
 const { showToast } = useCustomToast()
 const { promosale, loading: fetchingPromoSale } = useFetchPromosale()
-
 const router = useRouter()
 
 interface Product {
@@ -219,17 +235,29 @@ const hoveredProducts = reactive<Record<number, boolean>>({})
 // Fetch products
 const { products, loading } = useFetchProducts()
 
+// Watch loading states and control splash screen
+watch([loading, fetchingContent, currencyLoading], ([productsLoading, contentLoading, currencyLoad]) => {
+  const isAnyLoading = productsLoading || contentLoading || currencyLoad
+  
+  if (!isAnyLoading && showSplash.value) {
+    // Add a minimum display time for better UX
+    setTimeout(() => {
+      showSplash.value = false
+    }, 1500)
+  } else if (isAnyLoading) {
+    showSplash.value = true
+  }
+})
+
 // Computed property to sort products by position and filter out unavailable products
 const sortedProducts = computed(() => {
   if (!products.value) return []
-  
   return [...products.value]
     .filter(product => product.isAvailable !== false) // Filter out products that are explicitly unavailable
     .sort((a, b) => {
       // Handle cases where position might be undefined or null
       const positionA = a.position ?? Number.MAX_SAFE_INTEGER
       const positionB = b.position ?? Number.MAX_SAFE_INTEGER
-      
       return positionA - positionB
     })
 })
@@ -283,8 +311,8 @@ const getConvertedMinPrice = (product: any) => {
 const hasInstallmentOptions = (product: any) => {
   if (!product.sizes || product.sizes.length === 0) return false
   return product.sizes.some((size: any) => 
-    size.installmentConfig && 
-    size.installmentConfig.enabled && 
+    size.installmentConfig &&
+    size.installmentConfig.enabled &&
     size.price >= (size.installmentConfig.minimumAmount || 0)
   )
 }
@@ -294,8 +322,8 @@ const getConvertedInstallmentPayment = (product: any) => {
 
   // Find the size with the lowest price that has installment enabled
   const eligibleSizes = product.sizes.filter((size: any) => 
-    size.installmentConfig && 
-    size.installmentConfig.enabled && 
+    size.installmentConfig &&
+    size.installmentConfig.enabled &&
     size.price >= (size.installmentConfig.minimumAmount || 0)
   )
 
@@ -334,11 +362,9 @@ const getProductImage = (product: any, index: number) => {
   if (!product || !product.images || product.images.length === 0) {
     return ''
   }
-
   if (hoveredProducts[index] && product.images.length > 1) {
     return product.images[1]
   }
-
   return product.images[0]
 }
 
