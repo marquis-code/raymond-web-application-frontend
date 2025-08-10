@@ -1194,6 +1194,36 @@ const {
 const router = useRouter()
 const route = useRoute()
 
+// Interface for installment configuration
+interface InstallmentConfig {
+  enabled: boolean
+  minimumAmount: number
+  maxInstallments: number
+  availableTerms: number[]
+  interestRate: number
+  minimumDownPaymentPercentage?: number
+  maximumDownPaymentPercentage?: number
+}
+
+
+interface CartItem {
+  id: string
+  title: string
+  price: number
+  quantity: number
+  size?: string
+  color?: string
+  image?: string
+  hasInstallmentOption?: boolean
+  installmentConfig?: InstallmentConfig
+  productId?: string
+  sizeConfig?: {
+    size: string
+    price: number
+    installmentConfig?: InstallmentConfig
+  }
+}
+
 // Use the enhanced checkout payment composable
 const {
   processCheckout,
@@ -1350,17 +1380,30 @@ const countryOptions = computed(() => {
   }))
 })
 
+// const installmentTermOptions = computed(() => {
+//   return availableInstallmentTerms.value.map(term => {
+//     const estimate = calculateDetailedEstimate(term)
+//     return {
+//       value: term.toString(),
+//       label: `${term} months`,
+//       estimate: estimate,
+//       displayText: `${term} months - ${convertFromUSD(estimate.monthlyPayment).formattedAmount}/month`
+//     }
+//   })
+// })
+
+// AFTER: Clear 20% down payment messaging
 const installmentTermOptions = computed(() => {
   return availableInstallmentTerms.value.map(term => {
-    const estimate = calculateDetailedEstimate(term)
+    const estimate = calculateDetailedEstimate(term);
     return {
       value: term.toString(),
       label: `${term} months`,
       estimate: estimate,
-      displayText: `${term} months - ${convertFromUSD(estimate.monthlyPayment).formattedAmount}/month`
-    }
-  })
-})
+      displayText: `${term} months - ${convertFromUSD(estimate.monthlyPayment).formattedAmount}/month (20% down)`
+    };
+  });
+});
 
 const paymentFrequencyOptions = [
   { value: 'weekly', label: 'Weekly' },
@@ -1386,18 +1429,48 @@ const initializePaymentTypeFromQuery = () => {
 }
 
 // Check if any cart items have installment options
+// const hasInstallmentOptions = computed(() => {
+//   console.log('Checking installment options for cart items:', cartItems.value)
+//   const hasOptions = cartItems.value.some(item => {
+//     const hasInstallment = item.hasInstallmentOption === true &&
+//                            item.installmentConfig &&
+//                            item.installmentConfig.enabled === true
+//     console.log(`Item ${item.id}: hasInstallmentOption=${item.hasInstallmentOption}, config enabled=${item.installmentConfig?.enabled}, result=${hasInstallment}`)
+//     return hasInstallment
+//   })
+//   console.log('Overall hasInstallmentOptions:', hasOptions)
+//   return hasOptions
+// })
+
 const hasInstallmentOptions = computed(() => {
-  console.log('Checking installment options for cart items:', cartItems.value)
+  console.log('Checking installment options for cart items:', cartItems.value);
+  
   const hasOptions = cartItems.value.some(item => {
-    const hasInstallment = item.hasInstallmentOption === true &&
-                           item.installmentConfig &&
-                           item.installmentConfig.enabled === true
-    console.log(`Item ${item.id}: hasInstallmentOption=${item.hasInstallmentOption}, config enabled=${item.installmentConfig?.enabled}, result=${hasInstallment}`)
-    return hasInstallment
-  })
-  console.log('Overall hasInstallmentOptions:', hasOptions)
-  return hasOptions
-})
+    // Check if item has installment options from product data
+    let hasInstallment = false;
+    
+    // First check if the item itself has installment config
+    if (item.installmentConfig?.enabled) {
+      hasInstallment = true;
+    }
+    
+    // If item has size-specific config, check that too
+    if (item.sizeConfig?.installmentConfig?.enabled) {
+      hasInstallment = true;
+    }
+    
+    // Also check the legacy hasInstallmentOption flag
+    if (item.hasInstallmentOption === true) {
+      hasInstallment = true;
+    }
+    
+    console.log(`Item ${item.id}: hasInstallment=${hasInstallment}`);
+    return hasInstallment;
+  });
+  
+  console.log('Overall hasInstallmentOptions:', hasOptions);
+  return hasOptions;
+});
 
 // Get cart items with installment options
 const cartItemsWithInstallments = computed(() => {
@@ -1409,53 +1482,125 @@ const cartItemsWithInstallments = computed(() => {
 })
 
 // Get available installment terms
+// const availableInstallmentTerms = computed(() => {
+//   const allTerms = new Set()
+  
+//   cartItems.value.forEach(item => {
+//     if (item.hasInstallmentOption === true && item.installmentConfig?.enabled === true) {
+//       const config = item.installmentConfig
+//       if (config.availableTerms && Array.isArray(config.availableTerms)) {
+//         config.availableTerms.forEach(term => allTerms.add(term))
+//       }
+//     }
+//   })
+  
+//   const terms = Array.from(allTerms).sort((a, b) => a - b)
+//   console.log('Available installment terms:', terms)
+//   return terms
+// })
+
 const availableInstallmentTerms = computed(() => {
-  const allTerms = new Set()
+  // Fixed terms: 3, 6, and 12 months for all products
+  const fixedTerms = [3, 6, 12];
   
-  cartItems.value.forEach(item => {
-    if (item.hasInstallmentOption === true && item.installmentConfig?.enabled === true) {
-      const config = item.installmentConfig
-      if (config.availableTerms && Array.isArray(config.availableTerms)) {
-        config.availableTerms.forEach(term => allTerms.add(term))
-      }
-    }
-  })
+  // Still check if the product has installment options enabled
+  const hasEnabledInstallments = cartItems.value.some(item => {
+    return item.installmentConfig?.enabled || 
+           item.sizeConfig?.installmentConfig?.enabled || 
+           item.hasInstallmentOption === true;
+  });
   
-  const terms = Array.from(allTerms).sort((a, b) => a - b)
-  console.log('Available installment terms:', terms)
-  return terms
-})
+  if (!hasEnabledInstallments) {
+    return [];
+  }
+  
+  console.log('Available installment terms (fixed):', fixedTerms);
+  return fixedTerms;
+});
+
+// const availableInstallmentTerms = computed(() => {
+//   const allTerms = new Set<number>();
+  
+//   cartItems.value.forEach(item => {
+//     let config: InstallmentConfig | null = null;
+    
+//     // Priority: size-specific config > item config > legacy config
+//     if (item.sizeConfig?.installmentConfig?.enabled) {
+//       config = item.sizeConfig.installmentConfig;
+//     } else if (item.installmentConfig?.enabled) {
+//       config = item.installmentConfig;
+//     }
+    
+//     if (config && config.availableTerms && Array.isArray(config.availableTerms)) {
+//       config.availableTerms.forEach(term => allTerms.add(term));
+//     }
+//   });
+  
+//   const terms = Array.from(allTerms).sort((a, b) => a - b);
+//   console.log('Available installment terms from product data:', terms);
+//   return terms;
+// });
 
 // Get minimum installment amount
+// const getMinimumInstallmentAmount = () => {
+//   if (!hasInstallmentOptions.value || availableInstallmentTerms.value.length === 0) return 0
+  
+//   const total = calculateTotal()
+//   const maxTerms = Math.max(...availableInstallmentTerms.value)
+  
+//   const firstItemWithInstallments = cartItems.value.find(item =>
+//     item.hasInstallmentOption === true &&
+//     item.installmentConfig &&
+//     item.installmentConfig.enabled === true
+//   )
+  
+//   if (!firstItemWithInstallments?.installmentConfig) {
+//     return total / maxTerms
+//   }
+  
+//   const config = firstItemWithInstallments.installmentConfig
+//   const minDownPaymentPercentage = config.minimumDownPaymentPercentage || 20
+//   const minDownPayment = (total * minDownPaymentPercentage) / 100
+//   const remainingAmount = total - minDownPayment
+//   const monthlyInterestRate = (config.interestRate || 0) / 12 / 100
+  
+//   if (monthlyInterestRate > 0) {
+//     const factor = Math.pow(1 + monthlyInterestRate, maxTerms)
+//     return (remainingAmount * monthlyInterestRate * factor) / (factor - 1)
+//   } else {
+//     return remainingAmount / maxTerms
+//   }
+// }
+
 const getMinimumInstallmentAmount = () => {
-  if (!hasInstallmentOptions.value || availableInstallmentTerms.value.length === 0) return 0
+  if (!hasInstallmentOptions.value || availableInstallmentTerms.value.length === 0) return 0;
   
-  const total = calculateTotal()
-  const maxTerms = Math.max(...availableInstallmentTerms.value)
+  const config = getCurrentInstallmentConfig();
+  if (!config) return 0;
   
-  const firstItemWithInstallments = cartItems.value.find(item =>
-    item.hasInstallmentOption === true &&
-    item.installmentConfig &&
-    item.installmentConfig.enabled === true
-  )
+  // Use the minimumAmount from product configuration
+  const productMinimum = config.minimumAmount || 0;
   
-  if (!firstItemWithInstallments?.installmentConfig) {
-    return total / maxTerms
-  }
+  // Calculate based on terms and interest
+  const total = calculateTotal();
+  const maxTerms = Math.max(...availableInstallmentTerms.value);
+  const minDownPaymentPercentage = config.minimumDownPaymentPercentage || 20;
+  const minDownPayment = (total * minDownPaymentPercentage) / 100;
+  const remainingAmount = total - minDownPayment;
+  const monthlyInterestRate = (config.interestRate || 0) / 12 / 100;
   
-  const config = firstItemWithInstallments.installmentConfig
-  const minDownPaymentPercentage = config.minimumDownPaymentPercentage || 20
-  const minDownPayment = (total * minDownPaymentPercentage) / 100
-  const remainingAmount = total - minDownPayment
-  const monthlyInterestRate = (config.interestRate || 0) / 12 / 100
+  let calculatedMinimum = 0;
   
   if (monthlyInterestRate > 0) {
-    const factor = Math.pow(1 + monthlyInterestRate, maxTerms)
-    return (remainingAmount * monthlyInterestRate * factor) / (factor - 1)
+    const factor = Math.pow(1 + monthlyInterestRate, maxTerms);
+    calculatedMinimum = (remainingAmount * monthlyInterestRate * factor) / (factor - 1);
   } else {
-    return remainingAmount / maxTerms
+    calculatedMinimum = remainingAmount / maxTerms;
   }
-}
+  
+  // Return the higher of product minimum or calculated minimum
+  return Math.max(productMinimum, calculatedMinimum);
+};
 
 // Calculate estimated monthly payment
 const calculateEstimatedMonthlyPayment = (term: number) => {
@@ -1480,17 +1625,117 @@ const calculateEstimatedMonthlyPayment = (term: number) => {
   }
 }
 
-// Get current installment configuration
-const getCurrentInstallmentConfig = () => {
-  const firstItemWithInstallments = cartItems.value.find(item =>
-    item.hasInstallmentOption === true &&
-    item.installmentConfig &&
-    item.installmentConfig.enabled === true
-  )
+// const validateInstallmentConfig = () => {
+//   const config = getCurrentInstallmentConfig();
+//   if (!config) return false;
   
-  console.log('Current installment config from item:', currentInstallmentConfig.value)
-  return firstItemWithInstallments?.installmentConfig || null
-}
+//   const selectedTerm = parseInt(installmentConfig.value.numberOfInstallments);
+//   const downPayment = Number(installmentConfig.value.downPayment);
+//   const total = calculateTotal();
+  
+//   // Check if term is available
+//   if (!config.availableTerms.includes(selectedTerm)) {
+//     downPaymentError.value = `${selectedTerm} months is not available for items in your cart`;
+//     return false;
+//   }
+  
+//   // Check if total meets minimum amount requirement
+//   if (config.minimumAmount && total < config.minimumAmount) {
+//     downPaymentError.value = `Minimum order amount for installments is ${convertFromUSD(config.minimumAmount).formattedAmount}`;
+//     return false;
+//   }
+  
+//   // Check if selected term doesn't exceed max installments
+//   if (selectedTerm > config.maxInstallments) {
+//     downPaymentError.value = `Maximum installment period is ${config.maxInstallments} months`;
+//     return false;
+//   }
+  
+//   // Check down payment range
+//   const minDownPayment = getMinimumDownPaymentForSelectedTerm();
+//   const maxDownPayment = getMaximumDownPaymentForSelectedTerm();
+  
+//   if (downPayment < minDownPayment) {
+//     downPaymentError.value = `Minimum down payment for ${selectedTerm} months is ${convertFromUSD(minDownPayment).formattedAmount}`;
+//     return false;
+//   }
+  
+//   if (downPayment > maxDownPayment) {
+//     downPaymentError.value = `Maximum down payment is ${convertFromUSD(maxDownPayment).formattedAmount}`;
+//     return false;
+//   }
+  
+//   return true;
+// };
+
+const validateInstallmentConfig = () => {
+  const config = getCurrentInstallmentConfig();
+  const selectedTerm = parseInt(installmentConfig.value.numberOfInstallments);
+  const downPayment = Number(installmentConfig.value.downPayment);
+  const total = calculateTotal();
+  const expectedDownPayment = total * 0.2;
+  
+  // Check if term is one of the allowed terms (3, 6, 12)
+  if (![3, 6, 12].includes(selectedTerm)) {
+    downPaymentError.value = 'Please select 3, 6, or 12 months payment plan';
+    return false;
+  }
+  
+  // Check if down payment is exactly 20%
+  const tolerance = 0.01; // Allow small rounding differences
+  if (Math.abs(downPayment - expectedDownPayment) > tolerance) {
+    downPaymentError.value = `Down payment must be exactly 20% (${convertFromUSD(expectedDownPayment).formattedAmount})`;
+    return false;
+  }
+  
+  // Check if total meets minimum amount requirement from product config
+  if (config?.minimumAmount && total < config.minimumAmount) {
+    downPaymentError.value = `Minimum order amount for installments is ${convertFromUSD(config.minimumAmount).formattedAmount}`;
+    return false;
+  }
+  
+  return true;
+};
+
+// Get current installment configuration
+// const getCurrentInstallmentConfig = () => {
+//   const firstItemWithInstallments = cartItems.value.find(item =>
+//     item.hasInstallmentOption === true &&
+//     item.installmentConfig &&
+//     item.installmentConfig.enabled === true
+//   )
+  
+//   console.log('Current installment config from item:', currentInstallmentConfig.value)
+//   return firstItemWithInstallments?.installmentConfig || null
+// }
+
+const getCurrentInstallmentConfig = (): InstallmentConfig | null => {
+  const itemWithInstallments = cartItems.value.find(item => {
+    return item.installmentConfig?.enabled || 
+           item.sizeConfig?.installmentConfig?.enabled || 
+           item.hasInstallmentOption === true;
+  });
+  
+  if (!itemWithInstallments) return null;
+  
+  // Priority: size-specific config > item config
+  let config: InstallmentConfig | null = null;
+  
+  if (itemWithInstallments.sizeConfig?.installmentConfig?.enabled) {
+    config = itemWithInstallments.sizeConfig.installmentConfig;
+  } else if (itemWithInstallments.installmentConfig?.enabled) {
+    config = itemWithInstallments.installmentConfig;
+  }
+  
+  // Add default percentages if not provided
+  if (config) {
+    config.minimumDownPaymentPercentage = config.minimumDownPaymentPercentage || 20;
+    config.maximumDownPaymentPercentage = config.maximumDownPaymentPercentage || 80;
+  }
+  
+  console.log('Current installment config from product data:', config);
+  return config;
+};
 
 // Update current installment config when cart changes
 watch(cartItems, () => {
@@ -1499,55 +1744,78 @@ watch(cartItems, () => {
 }, { deep: true })
 
 // Get minimum down payment percentage
-const getMinimumDownPaymentPercentage = () => {
-  return currentInstallmentConfig.value?.minimumDownPaymentPercentage || 20
-}
+// const getMinimumDownPaymentPercentage = () => {
+//   return currentInstallmentConfig.value?.minimumDownPaymentPercentage || 20
+// }
 
 // Get maximum down payment percentage
-const getMaximumDownPaymentPercentage = () => {
-  return currentInstallmentConfig.value?.maximumDownPaymentPercentage || 80
-}
+// const getMaximumDownPaymentPercentage = () => {
+//   return currentInstallmentConfig.value?.maximumDownPaymentPercentage || 80
+// }
 
-// FIXED: Get minimum down payment based on selected term
-const getMinimumDownPaymentForSelectedTerm = () => {
-  if (!installmentConfig.value.numberOfInstallments) return 0
+const getMinimumDownPaymentPercentage = () => {
+  return 20; // Fixed at 20% for all products and terms
+};
+
+const getMaximumDownPaymentPercentage = () => {
+  return 20; // Fixed at 20% for all products and terms
+};
+
+// // FIXED: Get minimum down payment based on selected term
+// const getMinimumDownPaymentForSelectedTerm = () => {
+//   if (!installmentConfig.value.numberOfInstallments) return 0
   
-  const total = calculateTotal()
-  const selectedTerm = parseInt(installmentConfig.value.numberOfInstallments)
+//   const total = calculateTotal()
+//   const selectedTerm = parseInt(installmentConfig.value.numberOfInstallments)
   
-  // Calculate minimum based on what the user can afford for the selected term
-  const config = currentInstallmentConfig.value
-  if (!config) return total * 0.2 // Default 20%
+//   // Calculate minimum based on what the user can afford for the selected term
+//   const config = currentInstallmentConfig.value
+//   if (!config) return total * 0.2 // Default 20%
   
-  const maxAffordableMonthly = total * 0.1 // Assume max 10% of total per month
-  const monthlyInterestRate = (config.interestRate || 0) / 12 / 100
+//   const maxAffordableMonthly = total * 0.1 // Assume max 10% of total per month
+//   const monthlyInterestRate = (config.interestRate || 0) / 12 / 100
   
-  let maxRemainingAmount
-  if (monthlyInterestRate > 0) {
-    const factor = Math.pow(1 + monthlyInterestRate, selectedTerm)
-    maxRemainingAmount = (maxAffordableMonthly * (factor - 1)) / (monthlyInterestRate * factor)
-  } else {
-    maxRemainingAmount = maxAffordableMonthly * selectedTerm
-  }
+//   let maxRemainingAmount
+//   if (monthlyInterestRate > 0) {
+//     const factor = Math.pow(1 + monthlyInterestRate, selectedTerm)
+//     maxRemainingAmount = (maxAffordableMonthly * (factor - 1)) / (monthlyInterestRate * factor)
+//   } else {
+//     maxRemainingAmount = maxAffordableMonthly * selectedTerm
+//   }
   
-  const minDownPayment = Math.max(
-    total - maxRemainingAmount,
-    (total * getMinimumDownPaymentPercentage()) / 100
-  )
+//   const minDownPayment = Math.max(
+//     total - maxRemainingAmount,
+//     (total * getMinimumDownPaymentPercentage()) / 100
+//   )
   
-  return Math.min(minDownPayment, total)
-}
+//   return Math.min(minDownPayment, total)
+// }
 
 // FIXED: Get maximum down payment based on selected term
+// const getMaximumDownPaymentForSelectedTerm = () => {
+//   const total = calculateTotal()
+//   return (total * getMaximumDownPaymentPercentage()) / 100
+// }
+
+const getMinimumDownPaymentForSelectedTerm = () => {
+  const total = calculateTotal();
+  return total * 0.2; // Always 20% regardless of term or product config
+};
+
 const getMaximumDownPaymentForSelectedTerm = () => {
-  const total = calculateTotal()
-  return (total * getMaximumDownPaymentPercentage()) / 100
-}
+  const total = calculateTotal();
+  return total * 0.2; // Always 20% regardless of term or product config
+};
 
 // Get current interest rate
+// const getCurrentInterestRate = () => {
+//   return currentInstallmentConfig.value?.interestRate || 0
+// }
+
 const getCurrentInterestRate = () => {
-  return currentInstallmentConfig.value?.interestRate || 0
-}
+  const config = getCurrentInstallmentConfig();
+  return config?.interestRate || 0;
+};
 
 // Get minimum start date
 const getMinimumStartDate = () => {
@@ -1564,38 +1832,80 @@ const calculateDownPaymentPercentage = () => {
 }
 
 // FIXED: Handle installment term change
+// const handleInstallmentTermChange = () => {
+//   // Reset down payment when term changes
+//   if (installmentConfig.value.numberOfInstallments) {
+//     installmentConfig.value.downPayment = getMinimumDownPaymentForSelectedTerm()
+//     downPaymentError.value = ''
+//   }
+//   calculateInstallmentDetails()
+// }
+
+// AFTER: Always set to 20%
 const handleInstallmentTermChange = () => {
-  // Reset down payment when term changes
+  // Always set down payment to 20% when term changes
   if (installmentConfig.value.numberOfInstallments) {
-    installmentConfig.value.downPayment = getMinimumDownPaymentForSelectedTerm()
-    downPaymentError.value = ''
+    const total = calculateTotal();
+    installmentConfig.value.downPayment = total * 0.2; // Fixed 20%
+    downPaymentError.value = '';
   }
-  calculateInstallmentDetails()
-}
+  
+  calculateInstallmentDetails();
+};
 
 // Handle down payment change with validation
+// const handleDownPaymentChange = () => {
+//   if (!installmentConfig.value.numberOfInstallments) {
+//     downPaymentError.value = 'Please select the number of months first'
+//     return
+//   }
+  
+//   const downPayment = Number(installmentConfig.value.downPayment)
+//   const minPayment = getMinimumDownPaymentForSelectedTerm()
+//   const maxPayment = getMaximumDownPaymentForSelectedTerm()
+  
+//   downPaymentError.value = ''
+  
+//   if (downPayment < minPayment) {
+//     downPaymentError.value = `For ${installmentConfig.value.numberOfInstallments} months, minimum payment is ${convertFromUSD(minPayment).formattedAmount}`
+//   } else if (downPayment > maxPayment) {
+//     downPaymentError.value = `Maximum payment allowed is ${convertFromUSD(maxPayment).formattedAmount} (${getMaximumDownPaymentPercentage()}% of total)`
+//   }
+  
+//   if (!downPaymentError.value) {
+//     calculateInstallmentDetails()
+//   }
+// }
+
+// const handleDownPaymentChange = () => {
+//   if (!installmentConfig.value.numberOfInstallments) {
+//     downPaymentError.value = 'Please select the number of months first';
+//     return;
+//   }
+  
+//   downPaymentError.value = '';
+  
+//   // Validate against product configuration
+//   if (validateInstallmentConfig()) {
+//     calculateInstallmentDetails();
+//   }
+// };
+
+// AFTER: Automatic 20% enforcement
 const handleDownPaymentChange = () => {
   if (!installmentConfig.value.numberOfInstallments) {
-    downPaymentError.value = 'Please select the number of months first'
-    return
+    downPaymentError.value = 'Please select the number of months first';
+    return;
   }
   
-  const downPayment = Number(installmentConfig.value.downPayment)
-  const minPayment = getMinimumDownPaymentForSelectedTerm()
-  const maxPayment = getMaximumDownPaymentForSelectedTerm()
+  // Always enforce 20% down payment
+  const total = calculateTotal();
+  const expectedDownPayment = total * 0.2;
+  installmentConfig.value.downPayment = expectedDownPayment;
   
-  downPaymentError.value = ''
-  
-  if (downPayment < minPayment) {
-    downPaymentError.value = `For ${installmentConfig.value.numberOfInstallments} months, minimum payment is ${convertFromUSD(minPayment).formattedAmount}`
-  } else if (downPayment > maxPayment) {
-    downPaymentError.value = `Maximum payment allowed is ${convertFromUSD(maxPayment).formattedAmount} (${getMaximumDownPaymentPercentage()}% of total)`
-  }
-  
-  if (!downPaymentError.value) {
-    calculateInstallmentDetails()
-  }
-}
+  downPaymentError.value = '';
+  calculateInstallmentDetails();
+};
 
 // Handle down payment blur (when user finishes typing)
 const handleDownPaymentBlur = () => {
@@ -1675,47 +1985,92 @@ const calculateInstallmentDetails = () => {
 }
 
 // Check if payment configuration is valid
+// const isPaymentConfigValid = computed(() => {
+//   console.log('Checking payment config validity...')
+//   console.log('Payment type:', selectedPaymentType.value)
+//   console.log('Payment method:', paymentMethod.value)
+  
+//   if (selectedPaymentType.value === 'full') {
+//     const isValid = paymentMethod.value !== ''
+//     console.log('Full payment valid:', isValid)
+//     return isValid
+//   } else if (selectedPaymentType.value === 'installment') {
+//     const config = installmentConfig.value
+//     const isValid = (
+//       paymentMethod.value !== '' &&
+//       config.numberOfInstallments !== '' &&
+//       config.paymentFrequency !== '' &&
+//       config.downPayment > 0 &&
+//       config.startDate !== '' &&
+//       config.paymentMethod !== '' &&
+//       config.downPayment >= getMinimumDownPaymentForSelectedTerm() &&
+//       config.downPayment <= getMaximumDownPaymentForSelectedTerm() &&
+//       typeof config.needsFormalAgreement === 'boolean' &&
+//       !downPaymentError.value
+//     )
+    
+//     console.log('Installment payment validation:', {
+//       paymentMethod: paymentMethod.value !== '',
+//       numberOfInstallments: config.numberOfInstallments !== '',
+//       paymentFrequency: config.paymentFrequency !== '',
+//       downPayment: config.downPayment > 0,
+//       startDate: config.startDate !== '',
+//       installmentPaymentMethod: config.paymentMethod !== '',
+//       downPaymentRange: config.downPayment >= getMinimumDownPaymentForSelectedTerm() && config.downPayment <= getMaximumDownPaymentForSelectedTerm(),
+//       formalAgreement: typeof config.needsFormalAgreement === 'boolean',
+//       noDownPaymentError: !downPaymentError.value,
+//       overall: isValid
+//     })
+    
+//     return isValid
+//   }
+//   return false
+// })
+
 const isPaymentConfigValid = computed(() => {
-  console.log('Checking payment config validity...')
-  console.log('Payment type:', selectedPaymentType.value)
-  console.log('Payment method:', paymentMethod.value)
+  console.log('Checking payment config validity...');
+  console.log('Payment type:', selectedPaymentType.value);
+  console.log('Payment method:', paymentMethod.value);
   
   if (selectedPaymentType.value === 'full') {
-    const isValid = paymentMethod.value !== ''
-    console.log('Full payment valid:', isValid)
-    return isValid
+    const isValid = paymentMethod.value !== '';
+    console.log('Full payment valid:', isValid);
+    return isValid;
   } else if (selectedPaymentType.value === 'installment') {
-    const config = installmentConfig.value
-    const isValid = (
+    const config = installmentConfig.value;
+    const productConfig = getCurrentInstallmentConfig();
+    
+    if (!productConfig) {
+      console.log('No product installment config available');
+      return false;
+    }
+    
+    const basicValidation = (
       paymentMethod.value !== '' &&
       config.numberOfInstallments !== '' &&
       config.paymentFrequency !== '' &&
       config.downPayment > 0 &&
       config.startDate !== '' &&
       config.paymentMethod !== '' &&
-      config.downPayment >= getMinimumDownPaymentForSelectedTerm() &&
-      config.downPayment <= getMaximumDownPaymentForSelectedTerm() &&
       typeof config.needsFormalAgreement === 'boolean' &&
       !downPaymentError.value
-    )
+    );
+    
+    // Additional product-specific validation
+    const productValidation = validateInstallmentConfig();
+    
+    const isValid = basicValidation && productValidation;
     
     console.log('Installment payment validation:', {
-      paymentMethod: paymentMethod.value !== '',
-      numberOfInstallments: config.numberOfInstallments !== '',
-      paymentFrequency: config.paymentFrequency !== '',
-      downPayment: config.downPayment > 0,
-      startDate: config.startDate !== '',
-      installmentPaymentMethod: config.paymentMethod !== '',
-      downPaymentRange: config.downPayment >= getMinimumDownPaymentForSelectedTerm() && config.downPayment <= getMaximumDownPaymentForSelectedTerm(),
-      formalAgreement: typeof config.needsFormalAgreement === 'boolean',
-      noDownPaymentError: !downPaymentError.value,
+      basicValidation,
+      productValidation,
       overall: isValid
-    })
+    });
     
-    return isValid
+    return isValid;
   }
-  return false
-})
+  return false;
+});
 
 // Get payment button text
 const getPaymentButtonText = () => {
@@ -1746,13 +2101,63 @@ const handlePaymentTypeChange = (type: string) => {
 }
 
 // FIXED: Handle country change to work with CustomDropdown
-const handleCountryChange = (countryCode: string) => {
-  const country = availableCountries.value.find(c => c.countryCode === countryCode)
+// const handleCountryChange = (countryCode: string) => {
+//   const country = availableCountries.value.find(c => c.countryCode === countryCode)
   
+//   if (country) {
+//     selectedCountryInfo.value = country
+    
+//     const shippingConfig = shippingConfigs.value.find(config => 
+//       config.countryCode === countryCode && config.isActive
+//     )
+//     console.log(shippingConfig, 'selected shipping config')
+    
+//     if (shippingConfig) {
+//       currentShippingFee.value = shippingConfig.shippingRate
+//     } else {
+//       currentShippingFee.value = countryCode === 'NG' ? 0 : 25
+//     }
+    
+//     const taxConfig = taxConfigs.value.find(config => 
+//       config.countryCode === countryCode && config.isActive
+//     )
+    
+//     if (taxConfig) {
+//       currentTaxRate.value = taxConfig.vatRate
+//     } else {
+//       const defaultTaxRates = {
+//         'NG': 7.5,
+//         'US': 8.5,
+//         'GB': 20,
+//         'CA': 13,
+//         'AU': 10,
+//         'DE': 19,
+//         'FR': 20
+//       }
+//       currentTaxRate.value = defaultTaxRates[countryCode] || 0
+//     }
+    
+//     persistCheckoutData()
+//   }
+// }
+
+const handleCountryChange = (value: string | number | null) => {
+  // Handle null case - early return if no value selected
+  if (!value) {
+    selectedCountryInfo.value = null
+    currentShippingFee.value = 0
+    currentTaxRate.value = 0
+    return
+  }
+
+  // Convert to string (in case it's a number)
+  const countryCode = String(value)
+  
+  const country = availableCountries.value.find(c => c.countryCode === countryCode)
   if (country) {
     selectedCountryInfo.value = country
     
-    const shippingConfig = shippingConfigs.value.find(config => 
+    const shippingConfig = shippingConfigs.value.find(config =>
       config.countryCode === countryCode && config.isActive
     )
     console.log(shippingConfig, 'selected shipping config')
@@ -1763,14 +2168,14 @@ const handleCountryChange = (countryCode: string) => {
       currentShippingFee.value = countryCode === 'NG' ? 0 : 25
     }
     
-    const taxConfig = taxConfigs.value.find(config => 
+    const taxConfig = taxConfigs.value.find(config =>
       config.countryCode === countryCode && config.isActive
     )
     
     if (taxConfig) {
       currentTaxRate.value = taxConfig.vatRate
     } else {
-      const defaultTaxRates = {
+      const defaultTaxRates: Record<string, number> = {
         'NG': 7.5,
         'US': 8.5,
         'GB': 20,
@@ -1782,7 +2187,7 @@ const handleCountryChange = (countryCode: string) => {
       currentTaxRate.value = defaultTaxRates[countryCode] || 0
     }
     
-    persistCheckoutData()
+    // persistCheckoutData() // Uncomment if you have this function
   }
 }
 
@@ -2437,37 +2842,72 @@ onMounted(async () => {
   console.log('Selected payment type:', selectedPaymentType.value)
 })
 
+// const calculateDetailedEstimate = (term: number) => {
+//   const total = calculateTotal()
+//   const config = currentInstallmentConfig.value
+  
+//   if (!config) {
+//     const defaultDownPayment = total * 0.2
+//     const remainingAmount = total - defaultDownPayment
+//     return {
+//       monthlyPayment: remainingAmount / term,
+//       downPayment: defaultDownPayment,
+//       totalInterest: 0,
+//       totalPayable: total,
+//       interestRate: 0
+//     }
+//   }
+  
+//   const minDownPaymentPercentage = config.minimumDownPaymentPercentage || 20;
+//   const downPayment = (total * minDownPaymentPercentage) / 100
+//   const remainingAmount = total - downPayment
+//   const monthlyInterestRate = (config.interestRate || 0) / 12 / 100
+  
+//   let monthlyPayment = 0
+//   let totalInterest = 0
+  
+//   if (monthlyInterestRate > 0) {
+//     const factor = Math.pow(1 + monthlyInterestRate, term)
+//     monthlyPayment = (remainingAmount * monthlyInterestRate * factor) / (factor - 1)
+//     totalInterest = monthlyPayment * term - remainingAmount
+//   } else {
+//     monthlyPayment = remainingAmount / term
+//     totalInterest = 0
+//   }
+  
+//   return {
+//     monthlyPayment,
+//     downPayment,
+//     totalInterest,
+//     totalPayable: downPayment + monthlyPayment * term,
+//     interestRate: config.interestRate || 0,
+//     term
+//   }
+// }
+
+// AFTER: Always 20% down payment
 const calculateDetailedEstimate = (term: number) => {
-  const total = calculateTotal()
-  const config = currentInstallmentConfig.value
+  const total = calculateTotal();
+  const config = getCurrentInstallmentConfig();
   
-  if (!config) {
-    const defaultDownPayment = total * 0.2
-    const remainingAmount = total - defaultDownPayment
-    return {
-      monthlyPayment: remainingAmount / term,
-      downPayment: defaultDownPayment,
-      totalInterest: 0,
-      totalPayable: total,
-      interestRate: 0
-    }
-  }
+  // Fixed 20% down payment for all terms
+  const downPayment = total * 0.2;
+  const remainingAmount = total - downPayment;
   
-  const minDownPaymentPercentage = config.minimumDownPaymentPercentage || 20
-  const downPayment = (total * minDownPaymentPercentage) / 100
-  const remainingAmount = total - downPayment
-  const monthlyInterestRate = (config.interestRate || 0) / 12 / 100
+  // Use interest rate from product config or default to 5%
+  const interestRate = config?.interestRate || 5;
+  const monthlyInterestRate = interestRate / 12 / 100;
   
-  let monthlyPayment = 0
-  let totalInterest = 0
+  let monthlyPayment = 0;
+  let totalInterest = 0;
   
   if (monthlyInterestRate > 0) {
-    const factor = Math.pow(1 + monthlyInterestRate, term)
-    monthlyPayment = (remainingAmount * monthlyInterestRate * factor) / (factor - 1)
-    totalInterest = monthlyPayment * term - remainingAmount
+    const factor = Math.pow(1 + monthlyInterestRate, term);
+    monthlyPayment = (remainingAmount * monthlyInterestRate * factor) / (factor - 1);
+    totalInterest = monthlyPayment * term - remainingAmount;
   } else {
-    monthlyPayment = remainingAmount / term
-    totalInterest = 0
+    monthlyPayment = remainingAmount / term;
+    totalInterest = 0;
   }
   
   return {
@@ -2475,10 +2915,10 @@ const calculateDetailedEstimate = (term: number) => {
     downPayment,
     totalInterest,
     totalPayable: downPayment + monthlyPayment * term,
-    interestRate: config.interestRate || 0,
+    interestRate,
     term
-  }
-}
+  };
+};
 
 const showBreakdownModal = ref(false)
 const selectedTermBreakdown = ref(null)

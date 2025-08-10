@@ -20,7 +20,7 @@
                 </div>
                 <div>
                   <h2 class="text-2xl md:text-3xl font-bold text-indigo-700 mb-4">
-                    FREE SHIPPING
+                    SHIPPING
                   </h2>
                   <div class="prose prose-indigo max-w-none">
                     <p class="text-gray-700">
@@ -47,7 +47,7 @@ const { products, loading } = useFetchProducts() -->
                   Important Information
                 </h3>
                 <p class="text-gray-700">
-                  Standard flat shipping rate ranges from $30 - $50 while multiple print orders are shipped for free
+                  Standard flat shipping rate ranges from $30 - $50 while multiple print orders are shipped
                   <!-- Standard Flat Rate worldwide shipping is <span class="font-bold text-indigo-600">free of charge</span> for prints. Please note that while shipping is free of charge, although rare, you will be responsible for any local tax duties outside of the UK and EU. -->
                 </p>
               </div>

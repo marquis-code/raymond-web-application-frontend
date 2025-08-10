@@ -39,6 +39,7 @@
               
               <!-- Main Logo - Larger and More Prominent -->
               <div class="relative bg-white rounded-full p-12 shadow-2xl animate-logo-entrance">
+                <!-- <img src="@/assets/img/raymond-logo.png"  class="w-24 h-2 rounded-full text-purple-600 animate-logo-spin" /> -->
                 <!-- Company Art Logo - Made Larger -->
                 <svg
                   class="w-24 h-24 text-purple-600 animate-logo-spin"
@@ -61,7 +62,7 @@
   
           <!-- Brand Name - Enhanced -->
           <div class="space-y-4">
-            <h1 class="text-5xl md:text-7xl font-bold text-white animate-text-reveal">
+            <!-- <h1 class="text-5xl md:text-7xl font-bold text-white animate-text-reveal">
               <span class="inline-block animate-letter-1">A</span>
               <span class="inline-block animate-letter-2">r</span>
               <span class="inline-block animate-letter-3">t</span>
@@ -69,10 +70,28 @@
               <span class="inline-block animate-letter-5">h</span>
               <span class="inline-block animate-letter-6">o</span>
               <span class="inline-block animate-letter-7">p</span>
-            </h1>
+            </h1> -->
+            <h1 class="text-3xl font-bold text-white animate-text-reveal">
+                <span class="inline-block animate-letter-1">R</span>
+                <span class="inline-block animate-letter-2">A</span>
+                <span class="inline-block animate-letter-3">Y</span>
+                <span class="inline-block animate-letter-4">M</span>
+                <span class="inline-block animate-letter-5">O</span>
+                <span class="inline-block animate-letter-6">N</span>
+                <span class="inline-block animate-letter-7">D</span>
+                <span class="inline-block animate-letter-8 ml-6">A</span>
+                <span class="inline-block animate-letter-9">W</span>
+                <span class="inline-block animate-letter-10">O</span>
+                <span class="inline-block animate-letter-11">R</span>
+                <span class="inline-block animate-letter-12">O</span>
+                <span class="inline-block animate-letter-13 ml-6">A</span>
+                <span class="inline-block animate-letter-14">R</span>
+                <span class="inline-block animate-letter-15">T</span>
+              </h1>
+
             
             <p class="text-xl md:text-2xl text-purple-200 animate-subtitle-fade font-light">
-              Where Art Comes to Life
+              Creating Art; Exploring Life at the Intersection of Faith and Creativity
             </p>
           </div>
   

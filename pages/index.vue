@@ -74,7 +74,9 @@
         <CustomPortrait />
       </section>
 
-      <TestimonialsCarousel />
+      <!-- <TestimonialsCarousel /> -->
+
+      <TestimonialScroll />
     </div>
   </div>
 </template>

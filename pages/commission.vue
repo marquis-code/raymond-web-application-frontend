@@ -39,9 +39,9 @@
             </div>
 
             <!-- 2. REFERENCE PHOTO -->
-            <div v-for="section in content?.metadata?.sections" :key="section?.title" class="mb-12 animate-slide-up bg-white rounded-xl shadow-lg p-6 md:p-8 border-l-4 border-blue-500" style="animation-delay: 0.2s;">
+            <div v-for="(section, idx) in content?.metadata?.sections" :key="section?.title" class="mb-12 animate-slide-up bg-white rounded-xl shadow-lg p-6 md:p-8 border-l-4 border-blue-500" style="animation-delay: 0.2s;">
               <h3 class="text-xl md:text-2xl font-bold mb-6 text-blue-600 flex items-center">
-                <span class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                <span class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">{{ idx + 2 }}</span>
                 {{ section?.title }}
               </h3>
               <div class="space-y-4 text-gray-700 leading-loose text-sm md:text-base">
@@ -515,7 +515,8 @@
       </div>
     </transition>
 
-    <TestimonialsCarousel />
+    <!-- <TestimonialsCarousel /> -->
+    <TestimonialScroll />
   </div>
 </template>
 

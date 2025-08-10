@@ -146,7 +146,7 @@
                   <button class="text-xl">{{ openSections.shippingInfo ? '-' : '+' }}</button>
                 </div>
                 <div v-if="openSections.shippingInfo" class="mt-2 text-sm">
-                  <p>Free worldwide shipping</p>
+                  <p>worldwide shipping</p>
                   <p>Estimated delivery time: 5-8 Business days after placing order.</p>
                 </div>
               </div>

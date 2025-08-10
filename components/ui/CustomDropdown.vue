@@ -1,11 +1,12 @@
 <template>
     <div class="relative" ref="dropdownRef">
       <button
-        @click="toggleDropdown"
+        @click.prevent="toggleDropdown"
         :class="[
           'w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white text-left flex items-center justify-between',
           { 'border-red-300 ring-2 ring-red-200': hasError }
         ]"
+        type="button"
         :disabled="disabled"
       >
         <span :class="{ 'text-slate-400': !selectedOption, 'text-slate-800': selectedOption }">
@@ -24,7 +25,7 @@
           <div
             v-for="option in options"
             :key="option.value"
-            @click="selectOption(option)"
+             @click.stop="selectOption(option)"
             class="px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors duration-150 flex items-center justify-between"
             :class="{ 'bg-blue-50 text-blue-700': selectedOption?.value === option.value }"
           >
@@ -79,11 +80,21 @@
     return props.options.find(option => option.value === props.modelValue) || null
   })
   
-  const toggleDropdown = () => {
-    if (!props.disabled) {
-      isOpen.value = !isOpen.value
-    }
+  // const toggleDropdown = () => {
+  //   if (!props.disabled) {
+  //     isOpen.value = !isOpen.value
+  //   }
+  // }
+
+  const toggleDropdown = (event: Event) => {
+  event.preventDefault()
+  event.stopPropagation()
+  
+  if (!props.disabled) {
+    isOpen.value = !isOpen.value
   }
+}
+
   
   const selectOption = (option: Option) => {
     emit('update:modelValue', option.value)
